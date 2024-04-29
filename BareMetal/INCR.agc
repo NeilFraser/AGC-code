@@ -1,0 +1,12 @@
+		SETLOC	4000
+		INHINT
+
+		CAE 1234        #IS ZERO
+		CAF TEN
+		TS 1234
+		INCR 1234
+		CAE 1234
+		NOOP
+		NOOP
+
+TEN             DEC     10

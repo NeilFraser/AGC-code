@@ -1,0 +1,8 @@
+		SETLOC	4000
+
+		INHINT
+		NOOP
+		NOOP
+		NOOP
+		NOOP
+		NOOP

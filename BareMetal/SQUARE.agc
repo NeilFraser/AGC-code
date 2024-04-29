@@ -1,0 +1,10 @@
+		SETLOC	4000
+		INHINT
+
+		CAF FIVE
+		EXTEND
+		SQUARE
+		NOOP
+		NOOP
+A		EQUALS     0
+FIVE            DEC     5

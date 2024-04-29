@@ -1,0 +1,8 @@
+
+Debug:
+	yaYUL MAIN.agc > BareMetal.lst
+	mv MAIN.agc.bin BareMetal.bin
+	mv MAIN.agc.symtab BareMetal.symtab
+
+cleanDebug:
+	rm BareMetal.lst BareMetal.bin BareMetal.symtab

@@ -1,0 +1,8 @@
+		SETLOC	4000
+
+		INHINT
+		CAF FIVE
+		NOOP
+		NOOP
+		NOOP
+FIVE            DEC     5
