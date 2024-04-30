@@ -1,12 +1,13 @@
 		SETLOC	4000
 		INHINT
 
-		CAE 1234        #IS ZERO
-		CAF TEN
-		TS 1234
-		INCR 1234
-		CAE 1234
-		NOOP
-		NOOP
+				# INCR increments a value in memory.
 
-TEN             DEC     10
+		CAF TEN		# Load 10 into 'A' register.
+		TS 1234		# Store 10 into memory location 1234.
+		INCR 1234	# Increment memory location 1234.
+		CAE 1234	# 'A' register now contains 11.
+
+END		TCF END
+
+TEN		DEC	10

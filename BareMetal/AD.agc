@@ -1,10 +1,13 @@
 		SETLOC	4000
 		INHINT
 
-		CAF FIVE
-		AD SIX
-		NOOP
-		NOOP
+				# AD adds a number to the 'A' register.
 
-FIVE            DEC     5
-SIX             DEC     6
+		CAF FIVE	# Load 5 into 'A' register.
+		AD SIX		# Add 6 to 'A' register.
+		NOOP		# 'A' register now contains 11.
+
+END		TCF END
+
+FIVE		DEC	5
+SIX		DEC	6

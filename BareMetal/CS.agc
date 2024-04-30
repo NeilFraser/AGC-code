@@ -1,9 +1,13 @@
 		SETLOC	4000
 		INHINT
 
-		CS TWO
-		AD FIVE
-                NOOP
+				# CS sets 'A' register to contain the negative of a value.
 
-TWO             DEC     2
-FIVE            DEC     5
+		CS TWO		# Load -2 into 'A' register.
+		AD FIVE		# Add 5 to 'A' register.
+		NOOP		# 'A' regsiter now contains 3.
+
+END		TCF END
+
+TWO		DEC	2
+FIVE		DEC	5

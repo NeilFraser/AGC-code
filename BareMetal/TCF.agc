@@ -1,7 +1,9 @@
 		SETLOC	4000
 		INHINT
 
-START           EXTEND
-                AUG 0
-		TCF START
+				# TCF is a jump to a label.
+
+START		EXTEND
+		AUG 0		# Increment the 'A' register (address 0).
+		TCF START	# Infinite loop.
 

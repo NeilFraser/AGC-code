@@ -1,14 +1,22 @@
 		SETLOC	4000
 		INHINT
 
-		CAF FIVE
-		EXTEND
-		AUG 0
-		CAF -TEN
-		EXTEND
-		AUG 0
-		NOOP
-		NOOP
+				# AUG increases the absolute value.
+				# Positive numbers increment.
+				# Negativo numbers decrement.
 
-FIVE            DEC     5
--TEN           DEC     -10
+		CAF FIVE	# Load 5 into 'A' register.
+		EXTEND
+		AUG A		# Augment the 'A' register.
+		NOOP		# 'A' register now contains 6.
+
+		CAF -TEN	# Load -10 into 'A' register.
+		EXTEND
+		AUG A		# Augment the 'A' register.
+		NOOP		# 'A' register now contains -11.
+
+END		TCF END
+
+A		=	0
+FIVE		DEC	5
+-TEN		DEC	-10

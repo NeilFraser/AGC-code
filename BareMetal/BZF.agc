@@ -1,13 +1,17 @@
 		SETLOC	4000
 		INHINT
 
-START		CAF FIVE
-                EXTEND
-                BZF START
+				# BZF jumps if 'A' is zero.
 
-                CA 7    #ZERO REGISTER
-                EXTEND
-                BZF START
-                NOOP
+START		CAF FIVE	# Load 5 into 'A' register.
+		EXTEND
+		BZF START	# This branch does not happen.
 
-FIVE            DEC     5
+		CA ZERO		# Load 0 into 'A' register.
+		EXTEND
+		BZF START	# This branch does happen.
+
+		NOOP		# Never executed.
+
+FIVE	DEC	5
+ZERO	=	7

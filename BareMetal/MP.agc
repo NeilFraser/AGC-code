@@ -1,11 +1,14 @@
 		SETLOC	4000
 		INHINT
 
-		CAF FIVE
-		EXTEND
-		MP SIX
-		NOOP
-		NOOP
+				# MP multiplies the 'A' register with another number.
 
-FIVE            DEC     5
-SIX             DEC     6
+		CAF SIX	# Load 5 into 'A' register.
+		EXTEND
+		MP SEVEN	# Multiply 6 * 7.
+		NOOP		# 'A' register now contains 42.
+
+END		TCF END
+
+SIX		DEC	6
+SEVEN		DEC	7

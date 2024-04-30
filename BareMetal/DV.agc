@@ -1,14 +1,16 @@
 		SETLOC	4000
 		INHINT
 
-		CAE 1234        #IS ZERO
-		CAF TEN
-		TS 1234
-		CAF FIVE
-		EXTEND
-                DV 1234
-		NOOP
-		NOOP
+				# DV divides a value in memory by the 'A' register.
 
-FIVE            DEC     5
-TEN             DEC     20
+		CAF TEN		# Load 10 into 'A' register.
+		TS 1234		# Store 10 into memory location 1234.
+		CAF FIVE	# Load 5 into 'A' register.
+		EXTEND
+		DV 1234		# Divide 5 by 10.
+		NOOP		# 'A' register now contains 0.5 (8192).
+
+END		TCF END
+
+FIVE		DEC	5
+TEN		DEC	10
