@@ -4,9 +4,9 @@
 				# COM negates the 'A' register.
 
 		CAF FIVE	# Load 5 into 'A' register.
-		COM		# Negate
+		COM		# Negate.
 		NOOP		# 'A' register now contains -5 (32762).
-		COM		# Negate
+		COM		# Negate.
 		NOOP		# 'A' register now contains 5.
 
 END		TCF END
