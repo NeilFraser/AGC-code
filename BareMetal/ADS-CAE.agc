@@ -2,7 +2,7 @@
 		INHINT
 
 				# ADS stores the 'A' register to memory.
-				# CAE loades memory to the 'A' register.
+				# CAE loads memory to the 'A' register.
 
 		CAF FIVE	# Load 5 into 'A' register.
 		ADS 1234	# Store 5 into memory location 1234.
