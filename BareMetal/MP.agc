@@ -3,7 +3,7 @@
 
 				# MP multiplies the 'A' register with another number.
 
-		CAF SIX	# Load 5 into 'A' register.
+		CAF SIX	        # Load 5 into 'A' register.
 		EXTEND
 		MP SEVEN	# Multiply 6 * 7.
 		NOOP		# 'A' register now contains 42.
