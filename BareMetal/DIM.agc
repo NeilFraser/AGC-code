@@ -3,7 +3,7 @@
 
 				# DIM decreases the absolute value.
 				# Positive numbers decrement.
-				# Negativo numbers increment.
+				# Negative numbers increment.
 
 		CAF FIVE	# Load 5 into 'A' register.
 		EXTEND
