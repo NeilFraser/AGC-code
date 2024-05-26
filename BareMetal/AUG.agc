@@ -3,7 +3,7 @@
 
 				# AUG increases the absolute value.
 				# Positive numbers increment.
-				# Negativo numbers decrement.
+				# Negative numbers decrement.
 
 		CAF FIVE	# Load 5 into 'A' register.
 		EXTEND

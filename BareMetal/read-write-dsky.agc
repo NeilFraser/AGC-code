@@ -1,4 +1,3 @@
-
 		SETLOC	4000
 
                 TCF START       # Power up
@@ -6,7 +5,8 @@
                 NOOP
                 NOOP
 
-                RESUME # T6 (interrupt #1) (Disable all interuptions except keystroke)
+                # Ignore all interupts except keystroke.
+                RESUME # T6 (interrupt #1)
                 NOOP
                 NOOP
                 NOOP
@@ -61,27 +61,36 @@ START		CAF NOLIGHTS
 		EXTEND
 		WRITE 0163      # disable restart light (io channel 0163)
 
-END             CS NEWJOB
+END             CS NEWJOB       # Continually tickle the newjob register to prevent system restart.
                 TCF END
 
 BUTTON  	EXTEND
-                READ 15         # read dsky keystrokes (io channel oct 15)
-                EXTEND
-                DIM 0           # diminish twice (only 1&2 will show 12, 0 comes as dec 16)
-                EXTEND
-                DIM 0
-                EXTEND
-                BZF D1          # if is zero display 12 (jump to D1)
-                CAF DATA2       # not zero so display 21
-                TC CONT         # jump so don't load 12 as data
-D1              CAF DATA1
+                READ 15         # Read DSKY keystrokes (io channel octal 15)
+                INDEX 0         # Get num from A that is from io channel
+                CAF NUMDATA0
 
-CONT		EXTEND
+		EXTEND
 		WRITE 010       # write to display (io channel oct 10) !weird bin for numbers! check developer.html
 		RESUME
 
 
-DATA1           DEC     10361 # 12 (weird bin num made up of display location & display data)
-DATA2           DEC     11043 # 21
+NUMDATA0        DEC    0        # Not used cuz seystroke 0 gives back 16 into A
+                DEC    12291    # display 1
+                DEC    12313    # display 2
+                DEC    12315    # display 3
+                DEC    12303    # display 4
+                DEC    12318    # display 5
+                DEC    12316    # display 6
+                DEC    12307    # display 7
+                DEC    12317    # display 8
+                DEC    12319    # display 9
+                DEC    0
+                DEC    0
+                DEC    0
+                DEC    0
+                DEC    0
+                DEC    0
+                DEC    12309    # display 0
+
 NOLIGHTS        DEC     0
 NEWJOB          =       67

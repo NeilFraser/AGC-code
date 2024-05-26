@@ -1,13 +1,22 @@
 		SETLOC	4000
 		INHINT
 
-				# INCR increments a value in memory.
+				# DIM decreases the absolute value.
+				# Positive numbers increment.
+				# Negative numbers increment.
 
-		CAF TEN		# Load 10 into 'A' register.
-		TS 1234		# Store 10 into memory location 1234.
-		INCR 1234	# Increment memory location 1234.
-		CAE 1234	# 'A' register now contains 11.
+		CAF FIVE	# Load 5 into 'A' register.
+		INCR A		# Diminish the 'A' register.
+		NOOP		# 'A' register now contains 6.
+
+		CAF -TEN	# Load -10 into 'A' register (65525).
+		INCR A		# Diminish the 'A' register.
+		NOOP		# 'A' register now contains -9 (65526).
+
+		COM		# Negate to see 9.
 
 END		TCF END
 
-TEN		DEC	10
+A		=	0
+FIVE		DEC	5
+-TEN		DEC	-10

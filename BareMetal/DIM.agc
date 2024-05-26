@@ -10,12 +10,12 @@
 		DIM A		# Diminish the 'A' register.
 		NOOP		# 'A' register now contains 4.
 
-		CAF -TEN	# Load -10 into 'A' register.
+		CAF -TEN	# Load -10 into 'A' register (65525).
 		EXTEND
 		DIM A		# Diminish the 'A' register.
-		NOOP		# 'A' register now contains -11.
+		NOOP		# 'A' register now contains -9 (65526).
 
-		COM		# Negate to see 11.
+		COM		# Negate to see 9.
 
 END		TCF END
 

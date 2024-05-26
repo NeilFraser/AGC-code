@@ -1,2 +1,4 @@
 *.layout
+*.lst
+*.bin
 core
