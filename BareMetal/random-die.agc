@@ -73,7 +73,7 @@ STEP            EXTEND
                 TCF END         # Loop again (to contantly get new num)
 
 WRAP            CAF SIX         # A = 6, because it was at 0 (restart num from 6)
-                TC STEP         # Go save new A to Rand6
+                TCF STEP        # Go save new A to Rand6
 
 
 BUTTON  	CAE RAND6       # on keyRupt get current Rand6 number
