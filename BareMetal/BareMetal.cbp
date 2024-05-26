@@ -21,43 +21,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="AD.agc" />
-		<Unit filename="ADS-CAE.agc" />
-		<Unit filename="AGC Instruction Set.xlsx" />
-		<Unit filename="AUG.agc" />
-		<Unit filename="BZF.agc" />
-		<Unit filename="BZMF.agc" />
-		<Unit filename="BareMetal.bin" />
-		<Unit filename="BareMetal.cbp" />
-		<Unit filename="BareMetal.layout" />
-		<Unit filename="BareMetal.lst" />
-		<Unit filename="BareMetal.symtab" />
-		<Unit filename="CA.agc" />
-		<Unit filename="CAF.agc" />
-		<Unit filename="COM.agc" />
-		<Unit filename="CS.agc" />
-		<Unit filename="DIM.agc" />
-		<Unit filename="DOUBLE.agc" />
-		<Unit filename="DV.agc" />
-		<Unit filename="Default.style" />
-		<Unit filename="INCR.agc" />
-		<Unit filename="INDEX_KEYSHOW.agc" />
-		<Unit filename="LXCH-QXCH.agc" />
-		<Unit filename="MAIN.agc" />
-		<Unit filename="MP.agc" />
-		<Unit filename="Main.annotation" />
-		<Unit filename="Makefile" />
-		<Unit filename="Makefile.BareMetal" />
-		<Unit filename="NOOP.agc" />
-		<Unit filename="RandomDIE.agc" />
-		<Unit filename="SQUARE.agc" />
-		<Unit filename="SU.agc" />
-		<Unit filename="TCF.agc" />
-		<Unit filename="core" />
-		<Unit filename="io.agc" />
+		<UnitsGlob directory="./" recursive="1"/>
 		<Extensions>
-			<code_completion />
-			<debugger />
+			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="8" indent="8" eol_mode="2" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
