@@ -5,7 +5,6 @@
                 NOOP
                 NOOP
 
-                # Ignore all interupts except keystroke.
                 RESUME # T6 (interrupt #1)
                 NOOP
                 NOOP
@@ -16,18 +15,20 @@
                 NOOP
                 NOOP
 
-                RESUME # T3 (interrupt #3)
+                # T3 (interrupt #3)
+                XCH     ARUPT  # Back up A register
+                TCF     T3RUPT
+                NOOP
+                NOOP
+
+                RESUME  # T4 (interrupt #4)
                 NOOP
                 NOOP
                 NOOP
 
-                RESUME # T4 (interrupt #4)
-                NOOP
-                NOOP
-                NOOP
-
-                TCF BUTTON # DSKY1 (interrupt #5) (dsky1 interrupt, jump to programm)
-                NOOP
+                # DSKY1 (interrupt #5)
+                XCH     ARUPT  # Back up A register
+                TCF     BUTTON
                 NOOP
                 NOOP
 
@@ -36,36 +37,79 @@
                 NOOP
                 NOOP
 
-                RESUME # UP (interrupt #7)
+                RESUME # Uplink (interrupt #7)
                 NOOP
                 NOOP
                 NOOP
 
-                RESUME # DOWN (interrupt #8)
+                RESUME # Downlink (interrupt #8)
                 NOOP
                 NOOP
                 NOOP
 
-                RESUME # RADAR (interrupt #9)
+                RESUME # Radar (interrupt #9)
                 NOOP
                 NOOP
                 NOOP
 
-                RESUME # 10 (interrupt #10)
+                RESUME # Hand controller (interrupt #10)
                 NOOP
                 NOOP
                 NOOP
 
+# The interrupt-service routine for the TIME3 interrupt every 100 ms.
+T3RUPT          CAF     T3-100MS      # Schedule another TIME3 interrupt in 100 ms.
+                TS      TIME3
 
-START		CAF NOLIGHTS    # Disable restart light (io channel 0163)
+                # Tickle NEWJOB to keep Night Watchman GOJAMs from happening.
+                # You normally would NOT do this kind of thing in an interrupt-service
+                # routine, because it would actually prevent you from detecting
+                # true misbehavior in the main program.  If you're concerned about
+                # that, just comment out the next instruction and instead sprinkle
+                # your main code with "CS NEWJOB" instructions at strategic points.
+                CAE      NEWJOB
+
+                XCH    ARUPT       # Restore A, and exit the interrupt
+                RESUME
+
+START
+                # Set up the TIME3 interrupt, T3RUPT.  TIME3 is a 15-bit
+                # register at address 026, which automatically increments every
+                # 10 ms, and a T3RUPT interrupt occurs when the timer
+                # overflows.  Thus if it is initially loaded with 037766,
+                # and overflows when it hits 040000, then it will
+                # interrupt after 100 ms.
+                CA        T3-100MS
+                TS        TIME3
+
+                CAF NOLIGHTS    # Disable restart light (io channel 0163)
 		EXTEND
 		WRITE 0163
 		TCR ERASEFUNC   # Clear the board.
+        CA PLAYERX
+        TS BOARD7
+#        CA PLAYERO
+#        TS BOARD8
+#        CA PLAYERX
+#        TS BOARD9
+#        CA PLAYERO
+#        TS BOARD4
+#        CA PLAYERX
+#        TS BOARD5
+#        CA PLAYERO
+#        TS BOARD6
+#        CA PLAYERX
+#        TS BOARD1
+#        CA PLAYERO
+#        TS BOARD2
+#        CA PLAYERX
+#        TS BOARD3
+                TCR DRAWFUNC   # coment out to clears screen on reset
+
 		CA ZEROREG      # Initialize RAND9 to zero.
 		TS RAND9
 
-END             CA NEWJOB       # Tickle the night watchman.
-TICK            CAE RAND9       # Step RAND9 by -1 (wrapping around to 9 after 1).
+END             CAE RAND9       # Step RAND9 by -1 (wrapping around to 9 after 1).
                 EXTEND
                 BZF WRAP        # if A is Zero, make it 9 again.
 STEP            EXTEND
@@ -81,7 +125,7 @@ ERASEFUNC       CA NINE         # Set the board to all zeros.
 ERASELOOP       CA L
                 EXTEND
                 BZF ERASEDONE
-                CA ZEROREG		# Clear and add 0 into 'A' register.
+                CA ZEROREG	# Clear and add 0 into 'A' register.
                 INDEX L
                 TS BOARD
                 EXTEND
@@ -91,56 +135,49 @@ ERASEDONE       RETURN
 
 
 DRAWFUNC                        # Draw the board on the DSKY.
-                                # Line 8 has digit 11 (board position 7).
+                                # Pair 8 has digit 11 (board position 7).
                 CCS BOARD7
-                TCF DIMDOWN     # 1 (X)
-                NOOP            # +0 ( )
-                NOOP            # -1 (O)
-                TCF ENDDOWN     # -0 (N/A)
-                CAF LINE8
-
+                TCF DRAW7X      # 1 (X)
+                TCF DRAW7-      # +0 ( )
+                TCF DRAW7O      # -1 (O)
+                TCF DRAW7-      # -0 (N/A)
+DRAW7X          CA DISPLAYX
+                TCF DRAW7
+DRAW7O          CA DISPLAYO
+                TCF DRAW7
+DRAW7-          CA DISPLAY-
+                TCF DRAW7
+DRAW7           AD PAIR8
                 EXTEND
                 WRITE 010
-                                # Line 7 has digit 13 (board position 8).
-                                # Line 6 has digit 15 (board position 9).
-                                # Line 5 has digit 21 (board position 4).
-                                # Line 4 has digit 23 (board position 5).
-                                # Line 3 has digit 25 and 31 (board positions 6 and 1).
-                                # Line 2 has digit 33 (board position 2).
-                                # Line 1 has digit 35 (board position 3).
+                                # Pair 7 has digit 13 (board position 8).
+                                # Pair 6 has digit 15 (board position 9).
+                                # Pair 5 has digit 21 (board position 4).
+                                # Pair 4 has digit 23 (board position 5).
+                                # Pair 3 has digit 25 and 31 (board positions 6 and 1).
+                                # Pair 2 has digit 33 (board position 2).
+                                # Pair 1 has digit 35 (board position 3).
+                RETURN
 
 
-BUTTON  	CAE RAND9       # on keyRupt get current Rand6 number
-                INDEX A         # get correct display num for what is in Rand6
-                CAF NUMDATA0
-
-		EXTEND
-		WRITE 010       # write to display (io channel oct 10) !weird bin for numbers! check developer.html
+BUTTON
 		RESUME          # resume last program (in this case no other interupts; so to START)
 
 
-NUMDATA0        DEC    12291    # display 1
-                DEC    12313    # display 2
-                DEC    12315    # display 3
-                DEC    12303    # display 4
-                DEC    12318    # display 5
-                DEC    12316    # display 6
-                DEC    12307    # display 7
-                DEC    12317    # display 8
-                DEC    12319    # display 9
-                DEC    12309    # display 0; not used
+DISPLAYX        DEC     3    # display '1'
+DISPLAYO        DEC     21    # display '0'
+DISPLAY-        DEC     0    # display ' '
 
 NOLIGHTS        DEC     0
-NEWJOB          =       67
 NINE            DEC     9
-LINE8           OCT     40000   # DSKY digit pair addresses.
-LINE7           OCT     34000
-LINE6           OCT     30000
-LINE5           OCT     24000
-LINE4           OCT     20000
-LINE3           OCT     14000
-LINE2           OCT     10000
-LINE1           OCT     04000
+PAIR8           OCT     40000   # DSKY digit pair addresses.
+PAIR7           OCT     34000
+PAIR6           OCT     30000
+PAIR5           OCT     24000
+PAIR4           OCT     20000
+PAIR3           OCT     14000
+PAIR2           OCT     10000
+PAIR1           OCT     04000
 DIGIT-C-0       OCT     1240
 DIGIT-C-1       OCT     140
 DIGIT-D-0       OCT     21
@@ -149,6 +186,7 @@ A               =       00      # A register.
 L               =       01      # L register.
 Q		=	02	# Q register.
 ZEROREG		=	07
+NEWJOB          =       067     # Night watchman.
 RAND9           =       061     # Address for random number.
 TURN            =       062     # Whose turn is it?
 BOARD           =       062     # Address for start of board (0 is not used).
@@ -161,3 +199,8 @@ BOARD6          =       068
 BOARD7          =       069
 BOARD8          =       070
 BOARD9          =       071
+ARUPT           EQUALS  10
+TIME3           EQUALS  26
+T3-100MS        OCT     37766
+PLAYERX         DEC     1
+PLAYERO         DEC     -1
