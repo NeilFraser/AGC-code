@@ -27,10 +27,10 @@
                 NOOP
 
                                 # DSKY1 (interrupt #5)
-                XCH     ARUPT   # Back up A register
-                TCF     BUTTON
-                NOOP
-                NOOP
+                DXCH    ARUPT   # Back up A,L register
+                EXTEND
+                QXCH    QRUPT
+                TCF     FBUTTON
 
                 RESUME          # DSKY2 (interrupt #6)
                 NOOP
@@ -82,29 +82,11 @@ START
                 CA      T3-100MS
                 TS      TIME3
 
-                CAF     NOLIGHTS        # Disable restart light (io channel 0163)
+                CAE     ZEROREG        # Disable restart light (io channel 0163)
 		EXTEND
 		WRITE   0163
-		TCR     ERASEFUNC       # Clear the board.
-                CA      PLAYEROB
-                TS      BOARD7
-#                CA      PLAYERO
-#                TS      BOARD8
-#                CA      PLAYERX
-#                TS      BOARD9
-#                CA      PLAYERO
-#                TS      BOARD4
-#                CA      PLAYERX
-#                TS      BOARD5
-#                CA      PLAYERO
-#                TS      BOARD6
-#                CA      PLAYERX
-#                TS      BOARD1
-#                CA      PLAYERO
-#                TS      BOARD2
-#                CA      PLAYERX
-#                TS      BOARD3
-                TCR     DRAWFUNC        # coment out to clears screen on reset
+		TCR     GAMEINI      # coment out to clears screen on reset
+
 
 		CA      ZEROREG         # Initialize RAND9 to zero.
 		TS      RAND9
@@ -119,80 +101,185 @@ STEP            EXTEND
 WRAP            CAF     NINE            # A = 9, because it was at 0 (restart num from 9)
                 TCF     STEP            # Go save new A to Rand9
 
+# Initialize new game
+GAMEINI	        CA      Q               # Save return pointer, cuz of TCs
+                TS      QPOINT2         # Q1 used in FDRAW
+                CA      PLAYERX
+		TS      TURN
+		TCR     FCLEAR          # Clear board values
+                TCR     FDRAW
+                CA      QPOINT2         # Restore Q
+                TS      Q
+                RETURN
 
-ERASEFUNC       CA      NINE            # Set the board to all zeros.
-                TS      L
-ERASELOOP       CA      L
-                EXTEND
-                BZF     ERASEDONE
-                CA      ZEROREG	        # Clear and add 0 into 'A' register.
-                INDEX   L
-                TS      BOARD
-                EXTEND
-                DIM     L
-                TCF     ERASELOOP
-ERASEDONE       RETURN
-
-
-DRAWFUNC                                # Draw the board on the DSKY.
-                # Pair 8 has digit 11 (board position 7).
-                CCS     BOARD7
-                TCF     DRAW7X          # +2 (X) or +1 if blinking.
-                TCF     DRAW7-          # +0 ( )
-                TCF     DRAW7O          # -2 (O) or -1 if blinking.
-                TCF     DRAW7-          # -0 (N/A)
-DRAW7X          EXTEND
-                BZF     DRAW7-          # Blinking, draw blank.
-                CA      DISPLAYX
-                TCF     DRAW7           # Draw X ('1')
-DRAW7O          EXTEND
-                BZF     DRAW7-          # Blinking, draw blank.
-                CA      DISPLAYO
-                TCF     DRAW7           # Draw O ('0')
-DRAW7-          CA      DISPLAY-        # Draw blank.
-                TCF     DRAW7
-DRAW7           AD      PAIR8
-                EXTEND
-                WRITE   010
-
-                # Pair 7 has digit 13 (board position 8).
-
-                # Pair 6 has digit 15 (board position 9).
-
-                # Pair 5 has digit 21 (board position 4).
-
-                # Pair 4 has digit 23 (board position 5).
-
-                # Pair 3 has digit 25 and 31 (board positions 6 and 1).
-
-                # Pair 2 has digit 33 (board position 2).
-
-                # Pair 1 has digit 35 (board position 3).
-
+# Set the board to all zeros.   # Using loop takes 2 more instructions
+FCLEAR          CA      ZEROREG
+                TS      BOARD1
+                TS      BOARD2
+                TS      BOARD3
+                TS      BOARD4
+                TS      BOARD5
+                TS      BOARD6
+                TS      BOARD7
+                TS      BOARD8
+                TS      BOARD9
                 RETURN
 
 
-BUTTON
-                CA      PLAYERO
-                TS      BOARD7
-                TCF     DRAWFUNC
+# Check if sell is X/O/-
+FCELLVAL        CCS     A
+                TCF     CELLX          # +2 (X) or +1 if blinking.
+                TCF     CELL-          # +0 ( )
+                TCF     CELLO          # -2 (O) or -1 if blinking.
+                TCF     CELL-          # -0 (N/A)
+CELLX           EXTEND
+                BZF     CELL-          # Blinking, draw blank.
+                CA      DISPLAYX
+                RETURN                 # Draw X ('1')
+CELLO           EXTEND
+                BZF     CELL-          # Blinking, draw blank.
+                CA      DISPLAYO
+                RETURN                 # Draw O ('0')
+CELL-           CA      DISPLAY-       # Draw blank.
+                RETURN
+
+
+# Draw the board on the DSKY.
+FDRAW           CA      Q               # Save return pointer, cuz of TCs
+                TS      QPOINT1
+                # Pair 8 has digit 11 (board position 7).
+                CA      BOARD7
+                TCR     FCELLVAL
+                AD      PAIR8
+                TCR     FSEND
+
+                # Pair 7 has digit 13 (board position 8).
+                CA      BOARD8
+                TCR     FCELLVAL
+                AD      PAIR7
+                TCR     FSEND
+                # Pair 6 has digit 15 (board position 9).
+                CA      BOARD9
+                TCR     FCELLVAL
+                AD      PAIR6
+                TCR     FSEND
+                # Pair 5 has digit 21 (board position 4).
+                CA      BOARD4
+                TCR     FCELLVAL
+                EXTEND
+                MP      CSHIFT          # Shift for CCCCC Position (*32)
+                XCH     L               # MP Val gets stored in L
+                AD      PAIR5
+                TCR     FSEND
+                # Pair 4 has digit 23 (board position 5).
+                CA      BOARD5
+                TCR     FCELLVAL
+                EXTEND
+                MP      CSHIFT          # Shift for CCCCC Position (*32)
+                XCH     L               # MP Val gets stored in L
+                AD      PAIR4
+                TCR     FSEND
+
+                # Pair 3 has digit 25 and 31 (board positions 6 and 1).
+                CA      BOARD6
+                TCR     FCELLVAL
+                EXTEND                  # Shift for CCCCC Position (*32)
+                MP      CSHIFT          # MP Val gets stored in L
+                CA      BOARD1
+                TCR     FCELLVAL
+                AD      L
+                AD      PAIR3
+                TCR     FSEND
+
+                # Pair 2 has digit 33 (board position 2).
+                CA      BOARD2
+                TCR     FCELLVAL
+                AD      PAIR2
+                TCR     FSEND
+
+                # Pair 1 has digit 35 (board position 3).
+                CA      BOARD3
+                TCR     FCELLVAL
+                AD      PAIR1
+                TCR     FSEND
+
+                CA      QPOINT1         # Restore Q
+                TS      Q
+                RETURN
+
+
+# Write A to DSKY
+FSEND           EXTEND
+                WRITE   IODSPL
+                RETURN
+
+# Btn pressed, compute input
+FBUTTON         CA      OPR-ERR # Turn off OPR-ERR lamp
+                COM
+                EXTEND
+                WAND    IOLAMP
+
+                CA      NINE
+                TS      Q
+                EXTEND
+                READ    IOKEY   # Read DSKY keystrokes (io channel octal 15)
+                TS      L
+                EXTEND
+                SU      Q       # Check if button is 1-9
+                EXTEND
+                BZMF    BTN1-9
+                EXTEND
+                SU      Q       # Check if is 18 (RSET btn)
+                EXTEND
+                BZF     TRANS
+                TCF     B-ERROR
+TRANS           TCR     GAMEINI
+                TC      B-END
+
+BTN1-9          INDEX   L
+                CA      BOARD
+                EXTEND
+                BZF     BTN-FREE # Check if btn is available (free cell)
+                TC      B-ERROR
+
+BTN-FREE        CA      TURN
+                INDEX   L
+                TS      BOARD
+                TCR     FDRAW
+
+                CA      TURN    # Flip TURN value (-2 or 2)
+                EXTEND
+                SU      TURN
+                EXTEND
+                SU      TURN
+                TS      TURN
+
+B-END           DXCH    ARUPT   # Restore registers
+                EXTEND
+                QXCH    QRUPT
 		RESUME
 
-# System values
-A               =       00      # A register.
-L               =       01      # L register.
-Q		=	02	# Q register.
-ZEROREG		=	07      # Zero register.
-NEWJOB          =       067     # Night watchman.
-ARUPT           =       10
-TIME3           =       26
-T3-100MS        OCT     37766
+B-ERROR         CA      OPR-ERR # Turn on OPR-ERR lamp
+                EXTEND
+                WOR     IOLAMP
+                TC      B-END
 
+
+# Values:
+T3-100MS        OCT     37766
+NINE            DEC     9
+CSHIFT          DEC     32
+OPR-ERR         DEC     64
+# Values for Board:
+PLAYERX         DEC     2       # X
+PLAYERXB        DEC     1       # X (blinking)
+PLAYERO         DEC     -2      # O
+PLAYEROB        DEC     -1      # O (blinking)
+# IO Values for X/O/-
 DISPLAYX        DEC     3       # DSKY code for '1'
 DISPLAYO        DEC     21      # DSKY code for '0'
 DISPLAY-        DEC     0       # DSKY code for ' '
-
-NOLIGHTS        DEC     0
+# IO Values for Pair
 PAIR8           OCT     40000   # DSKY digit pair addresses.
 PAIR7           OCT     34000
 PAIR6           OCT     30000
@@ -200,13 +287,22 @@ PAIR5           OCT     24000
 PAIR4           OCT     20000
 PAIR3           OCT     14000
 PAIR2           OCT     10000
-PAIR1           OCT     04000
-DIGIT-C-0       OCT     1240
-DIGIT-C-1       OCT     140
-DIGIT-D-0       OCT     21
-DIGIT-D-1       OCT     03
+PAIR1           OCT     04000   # Number of squares.
 
-NINE            DEC     9       # Number of squares.
+# System Address Locations
+A               =       00      # A register.
+ARUPT           =       10
+L               =       01      # L register.
+Q		=	02	# Q register.
+QRUPT           =       12
+ZEROREG		=	07      # Zero register.
+NEWJOB          =       067     # Night watchman.
+TIME3           =       26
+# IO Channels
+IODSPL          =       010
+IOLAMP          =       0163
+IOKEY           =       015
+# Address Locations
 RAND9           =       061     # Address for random number.
 TURN            =       062     # Whose turn is it? (Positive= X, Negative = O)
 BOARD           =       062     # Address for start of board (0 is not used).
@@ -215,13 +311,10 @@ BOARD2          =       064
 BOARD3          =       065
 BOARD4          =       066
 BOARD5          =       067
-BOARD6          =       068
-BOARD7          =       069
-BOARD8          =       070
-BOARD9          =       071
+BOARD6          =       070
+BOARD7          =       071
+BOARD8          =       072
+BOARD9          =       073
+QPOINT1         =       074
+QPOINT2         =       075
 
-                                # Values for Board:
-PLAYERX         DEC     2       # X
-PLAYERXB        DEC     1       # X (blinking)
-PLAYERO         DEC     -2      # O
-PLAYEROB        DEC     -1      # O (blinking)

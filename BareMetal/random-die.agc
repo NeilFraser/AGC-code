@@ -67,9 +67,9 @@ T3RUPT          CAF     T3-100MS        # Schedule another TIME3 interrupt in 10
                 # true misbehavior in the main program.  If you're concerned about
                 # that, just comment out the next instruction and instead sprinkle
                 # your main code with "CS NEWJOB" instructions at strategic points.
-                CAE      NEWJOB
+                CAE     NEWJOB
 
-                XCH    ARUPT            # Restore A, and exit the interrupt
+                XCH     ARUPT            # Restore A, and exit the interrupt
                 RESUME
 
 START
@@ -79,8 +79,8 @@ START
                 # overflows.  Thus if it is initially loaded with 037766,
                 # and overflows when it hits 040000, then it will
                 # interrupt after 100 ms.
-                CA        T3-100MS
-                TS        TIME3
+                CA      T3-100MS
+                TS      TIME3
 
                 CAF     NOLIGHTS
 		EXTEND
@@ -89,7 +89,7 @@ START
 		EXTEND
 		WRITE   010             # write to display (io channel oct 10) !weird bin for numbers! check developer.html
 
-		CA      ZEROREG              # Set A to Zero
+		CA      ZEROREG         # Set A to Zero
 		TS      RAND6           # Set Rand6 to Zero(A)
 
 
