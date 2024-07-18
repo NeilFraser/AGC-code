@@ -5,10 +5,11 @@
                 NOOP
                 NOOP
 
-                RESUME          # T6 (interrupt #1)
-                NOOP
-                NOOP
-                NOOP
+                                # T6 (interrupt #1)
+                DXCH    ARUPT   # Back up A,L register
+                EXTEND
+                QXCH    QRUPT
+                TCF     T6RUPT
 
                 RESUME          # T5 (interrupt #2)
                 NOOP
@@ -57,62 +58,94 @@
                 NOOP
                 NOOP
 
-# The interrupt-service routine for the TIME3 interrupt every 100 ms.
-T3RUPT          CAF     T3-100MS      # Schedule another TIME3 interrupt in 100 ms.
+# T3RUPT every 100 ms.
+T3RUPT          CAF     T3-100MS        # Schedule another T3RUPT in 100 ms.
                 TS      TIME3
 
-                # Tickle NEWJOB to keep Night Watchman GOJAMs from happening.
-                # You normally would NOT do this kind of thing in an interrupt-service
-                # routine, because it would actually prevent you from detecting
-                # true misbehavior in the main program.  If you're concerned about
-                # that, just comment out the next instruction and instead sprinkle
-                # your main code with "CS NEWJOB" instructions at strategic points.
-                CAE     NEWJOB
+                CAE     NEWJOB          # Tickle NEWJOB to keep Night Watchman GOJAMs from happening
 
-                XCH     ARUPT   # Restore A, and exit the interrupt
+                XCH     ARUPT           # Restore A, and exit the interrupt
                 RESUME
 
-START
-                # Set up the TIME3 interrupt, T3RUPT.  TIME3 is a 15-bit
-                # register at address 026, which automatically increments every
-                # 10 ms, and a T3RUPT interrupt occurs when the timer
-                # overflows.  Thus if it is initially loaded with 037766,
-                # and overflows when it hits 040000, then it will
-                # interrupt after 100 ms.
-                CA      T3-100MS
+# T6RUPT every second, except OP-ERR.
+T6RUPT          CA      OPR-ERR         # Turn off OPR-ERR lamp (even if its not on...)
+                COM
+                EXTEND
+                WAND    LAMP163
+                CA      TURN            # Check if Game Over
+                EXTEND
+                BZF     T6WIN           # Game Over, blink
+                RESUME
+
+T6WIN           TCR     FDRAW           # Not drawing right after THINK, so draw here
+
+                CA      CALC            # Check if need to rest values
+                EXTEND
+                BZF     T6UNDO          # Change win val back to 2
+                TCR     THINK
+                RESUME
+
+T6UNDO          EXTEND
+                AUG     CALC            # Set CALC to 1
+                CAF     T6-1SEC         # Schedule next T6RUPT to blink wins
+                TS      TIME6
+                CA      T6START
+		EXTEND
+		WOR     IO-13
+
+                CA      NINE            # Change win val back to 2
+                TS      L
+T6LOOP          INDEX   L
+                CA      BOARD
+                EXTEND
+                BZF     T6NEXT
+                EXTEND
+                DIM     A               # Not DIM BOARD, cuz that changes BOARD val
+                EXTEND
+                BZF     T6AUG
+                TCF     T6NEXT
+T6AUG           EXTEND
+                INDEX   L
+                AUG     BOARD           # Increment value
+T6NEXT          EXTEND
+                DIM     L
+                CA      L
+                EXTEND
+                BZF     T6DONE
+                TC      T6LOOP
+T6DONE          RESUME
+
+# Start, Idle place
+START           CA      T3-100MS        # T3RUPT in 100 ms to tickle night watchman
                 TS      TIME3
 
-                CAE     ZEROREG        # Disable restart light (io channel 0163)
+                CAE     ZEROREG         # Disable all lamps (io channel 0163)
 		EXTEND
-		WRITE   0163
-		TCR     GAMEINI      # coment out to clears screen on reset
+		WRITE   LAMP163 ################################
+		TCR     GAMEINI         # Clear board values
 
 
 		CA      ZEROREG         # Initialize RAND9 to zero.
 		TS      RAND9
 
-END             CAE     RAND9           # Step RAND9 by -1 (wrapping around to 9 after 1).
-                EXTEND
-                BZF     WRAP            # if A is Zero, make it 9 again.
-STEP            EXTEND
-                DIM     0               # Decrease A by 1.
-                TS      RAND9           # Save new num to Rand9
-                TCF     END             # Loop again (to contantly get new num)
-WRAP            CAF     NINE            # A = 9, because it was at 0 (restart num from 9)
-                TCF     STEP            # Go save new A to Rand9
+LOOP            CCS     RAND9           # CCS instead of BZF, less steps
+                TCF     STEP            # RAND9 > 0 (A = RAND9-1)
+                CAF     EIGHT           # RAND9 = 0, make it 8 again
+STEP            TS      RAND9
+                TCF     LOOP            # Loop again (wrapping around to 8 after 0)
 
 # Initialize new game
 GAMEINI	        CA      Q               # Save return pointer, cuz of TCs
-                TS      QPOINT2         # Q1 used in FDRAW
-                CA      PLAYERX
+                TS      QPOINT1         # Q1 used in FDRAW
+                CA      PLAYERO
 		TS      TURN
 		TCR     FCLEAR          # Clear board values
                 TCR     FDRAW
-                CA      QPOINT2         # Restore Q
+                CA      QPOINT1         # Restore Q
                 TS      Q
                 RETURN
 
-# Set the board to all zeros.   # Using loop takes 2 more instructions
+# Set all boards to 0   # Using loop takes 2 more instructions
 FCLEAR          CA      ZEROREG
                 TS      BOARD1
                 TS      BOARD2
@@ -126,44 +159,44 @@ FCLEAR          CA      ZEROREG
                 RETURN
 
 
-# Check if sell is X/O/-
+# Check if cell is X/O/-
 FCELLVAL        CCS     A
-                TCF     CELLX          # +2 (X) or +1 if blinking.
+                TCF     CELLX          # +2 (X) or +1 if blinking
                 TCF     CELL-          # +0 ( )
-                TCF     CELLO          # -2 (O) or -1 if blinking.
+                TCF     CELLO          # -2 (O) or -1 if blinking
                 TCF     CELL-          # -0 (N/A)
 CELLX           EXTEND
-                BZF     CELL-          # Blinking, draw blank.
+                BZF     CELL-          # Blinking, draw blank
                 CA      DISPLAYX
                 RETURN                 # Draw X ('1')
 CELLO           EXTEND
-                BZF     CELL-          # Blinking, draw blank.
+                BZF     CELL-          # Blinking, draw blank
                 CA      DISPLAYO
                 RETURN                 # Draw O ('0')
-CELL-           CA      DISPLAY-       # Draw blank.
+CELL-           CA      DISPLAY-       # Draw blank
                 RETURN
 
 
-# Draw the board on the DSKY.
-FDRAW           CA      Q               # Save return pointer, cuz of TCs
-                TS      QPOINT1
-                # Pair 8 has digit 11 (board position 7).
+# Draw board on to the DSKY
+FDRAW           CA      Q              # Save return pointer, cuz of TCs
+                TS      QPOINT2
+                # Pair 8 has digit 11 (board position 7)
                 CA      BOARD7
                 TCR     FCELLVAL
                 AD      PAIR8
                 TCR     FSEND
 
-                # Pair 7 has digit 13 (board position 8).
+                # Pair 7 has digit 13 (board position 8)
                 CA      BOARD8
                 TCR     FCELLVAL
                 AD      PAIR7
                 TCR     FSEND
-                # Pair 6 has digit 15 (board position 9).
+                # Pair 6 has digit 15 (board position 9)
                 CA      BOARD9
                 TCR     FCELLVAL
                 AD      PAIR6
                 TCR     FSEND
-                # Pair 5 has digit 21 (board position 4).
+                # Pair 5 has digit 21 (board position 4)
                 CA      BOARD4
                 TCR     FCELLVAL
                 EXTEND
@@ -171,7 +204,7 @@ FDRAW           CA      Q               # Save return pointer, cuz of TCs
                 XCH     L               # MP Val gets stored in L
                 AD      PAIR5
                 TCR     FSEND
-                # Pair 4 has digit 23 (board position 5).
+                # Pair 4 has digit 23 (board position 5)
                 CA      BOARD5
                 TCR     FCELLVAL
                 EXTEND
@@ -180,7 +213,7 @@ FDRAW           CA      Q               # Save return pointer, cuz of TCs
                 AD      PAIR4
                 TCR     FSEND
 
-                # Pair 3 has digit 25 and 31 (board positions 6 and 1).
+                # Pair 3 has digit 25 and 31 (board positions 6 and 1)
                 CA      BOARD6
                 TCR     FCELLVAL
                 EXTEND                  # Shift for CCCCC Position (*32)
@@ -191,45 +224,40 @@ FDRAW           CA      Q               # Save return pointer, cuz of TCs
                 AD      PAIR3
                 TCR     FSEND
 
-                # Pair 2 has digit 33 (board position 2).
+                # Pair 2 has digit 33 (board positioBOARDn 2)
                 CA      BOARD2
                 TCR     FCELLVAL
                 AD      PAIR2
                 TCR     FSEND
 
-                # Pair 1 has digit 35 (board position 3).
+                # Pair 1 has digit 35 (board position 3)
                 CA      BOARD3
                 TCR     FCELLVAL
                 AD      PAIR1
                 TCR     FSEND
 
-                CA      QPOINT1         # Restore Q
+                CA      QPOINT2         # Restore Q
                 TS      Q
                 RETURN
 
 
 # Write A to DSKY
 FSEND           EXTEND
-                WRITE   IODSPL
+                WRITE   DSPL10
                 RETURN
 
 # Btn pressed, compute input
-FBUTTON         CA      OPR-ERR # Turn off OPR-ERR lamp
-                COM
-                EXTEND
-                WAND    IOLAMP
-
-                CA      NINE
+FBUTTON         CA      NINE
                 TS      Q
                 EXTEND
-                READ    IOKEY   # Read DSKY keystrokes (io channel octal 15)
+                READ    KEY15           # Read DSKY keystrokes (io channel 015)
                 TS      L
                 EXTEND
-                SU      Q       # Check if button is 1-9
+                SU      Q               # Check if btn is 1-9
                 EXTEND
                 BZMF    BTN1-9
                 EXTEND
-                SU      Q       # Check if is 18 (RSET btn)
+                SU      Q               # Check if is 18 (RSET btn)
                 EXTEND
                 BZF     TRANS
                 TCF     B-ERROR
@@ -239,34 +267,128 @@ TRANS           TCR     GAMEINI
 BTN1-9          INDEX   L
                 CA      BOARD
                 EXTEND
-                BZF     BTN-FREE # Check if btn is available (free cell)
+                BZF     BTN-FREE        # Check if btn is available (free cell)
                 TC      B-ERROR
 
 BTN-FREE        CA      TURN
+                EXTEND
+                BZF     B-ERROR         # Game Over
                 INDEX   L
                 TS      BOARD
                 TCR     FDRAW
-
-                CA      TURN    # Flip TURN value (-2 or 2)
+                TCR     THINK           # Analize board & check win (not AI)
+                CA      TURN
                 EXTEND
-                SU      TURN
-                EXTEND
-                SU      TURN
+                BZF     GOVER           # Check if Game Over
+                COM                     # Flip TURN value (+ <-> -)
                 TS      TURN
 
-B-END           DXCH    ARUPT   # Restore registers
+B-END           DXCH    ARUPT           # Restore registers
                 EXTEND
                 QXCH    QRUPT
 		RESUME
 
-B-ERROR         CA      OPR-ERR # Turn on OPR-ERR lamp
+GOVER           CAF     T6-1SEC         # Schedule T6RUPT to blink wins
+                TS      TIME6
+                CA      T6START
+		EXTEND
+		WOR     IO-13
+		TC      B-END
+
+B-ERROR         CA      OPR-ERR         # Turn on OPR-ERR lamp
                 EXTEND
-                WOR     IOLAMP
+                WOR     LAMP163
+
+                CAF     T6-1SEC         # Schedule T6RUPT in 1 second to turn off OPR-ERR
+                TS      TIME6
+                CA      T6START
+		EXTEND
+		WOR     IO-13
+
                 TC      B-END
 
+# Computer Brain, check win, ###next move
+THINK           CA      EIGHT
+                TS      L
+T-LOOP          EXTEND
+                DIM     L
+                INDEX   L               # Add up the values of each line on the board
+                CA      CHECK1
+                INDEX   A
+                CA      BOARD
+                TS      CALC
+
+                INDEX   L
+                CA      CHECK2
+                INDEX   A
+                CA      BOARD
+                AD      CALC
+                TS      CALC
+
+                INDEX   L
+                CA      CHECK3
+                INDEX   A
+                CA      BOARD
+                AD      CALC
+
+                EXTEND                  # Take absolute value
+                BZMF    T-NEG
+                COM
+T-NEG           AD      FIVE            # 5 bc T-WIN changes BOARD to blink Nr (-1/1), on next check it will only be 5
+                EXTEND
+                BZMF    T-WIN           # Found a win
+T-NEXT          CA      L
+                EXTEND
+                BZF     T-DONE          # Checked all options
+                TCF     T-LOOP
+
+T-DONE          CA      ZEROREG
+                TS      CALC
+                RETURN
+
+T-WIN           CA      Q              # Save return pointer, cuz of TCs
+                TS      QPOINT2
+                CA      ZEROREG
+                TS      TURN            # Set TURN for Game Over
+
+                INDEX   L
+                CA      CHECK1
+                TCR     T-MOD
+                INDEX   L
+                CA      CHECK2
+                TCR     T-MOD
+                INDEX   L
+                CA      CHECK3
+                TCR     T-MOD
+
+                CAF     T6-1SEC         # Schedule next T6RUPT to blink wins
+                TS      TIME6
+                CA      T6START
+		EXTEND
+		WOR     IO-13
+
+                CA      QPOINT2         # Restore Q
+                TS      Q
+                TCF     T-NEXT
+
+T-MOD           TS      CALC
+                CA      CALC
+                INDEX   A
+                CA      BOARD
+                EXTEND
+                DIM     A
+                EXTEND
+                BZF     T-MODEND
+                INDEX   CALC
+                TS      BOARD           # Set BOARD to blink (-1/1)
+T-MODEND        RETURN
 
 # Values:
 T3-100MS        OCT     37766
+T6-1SEC         OCT     1600
+T6START         DEC     16384
+FIVE            DEC     5
+EIGHT           DEC     8
 NINE            DEC     9
 CSHIFT          DEC     32
 OPR-ERR         DEC     64
@@ -288,6 +410,34 @@ PAIR4           OCT     20000
 PAIR3           OCT     14000
 PAIR2           OCT     10000
 PAIR1           OCT     04000   # Number of squares.
+# Values for check
+CHECK1          DEC     7
+                DEC     4
+                DEC     1
+                DEC     7
+                DEC     8
+                DEC     9
+                DEC     7
+                DEC     9
+
+CHECK2          DEC     8
+                DEC     5
+                DEC     2
+                DEC     4
+                DEC     5
+                DEC     6
+                DEC     5
+                DEC     5
+
+CHECK3          DEC     9
+                DEC     6
+                DEC     3
+                DEC     1
+                DEC     2
+                DEC     3
+                DEC     3
+                DEC     1
+
 
 # System Address Locations
 A               =       00      # A register.
@@ -298,15 +448,17 @@ QRUPT           =       12
 ZEROREG		=	07      # Zero register.
 NEWJOB          =       067     # Night watchman.
 TIME3           =       26
+TIME6           =       31
 # IO Channels
-IODSPL          =       010
-IOLAMP          =       0163
-IOKEY           =       015
+DSPL10          =       010
+LAMP163         =       0163
+KEY15           =       015
+IO-13           =       013
 # Address Locations
 RAND9           =       061     # Address for random number.
-TURN            =       062     # Whose turn is it? (Positive= X, Negative = O)
-BOARD           =       062     # Address for start of board (0 is not used).
-BOARD1          =       063
+TURN            =       062     # Whose turn is it? (2 = X, -2 = O, 0 = END)
+BOARD           =       062
+BOARD1          =       063     # Address for start of board.
 BOARD2          =       064
 BOARD3          =       065
 BOARD4          =       066
@@ -317,4 +469,5 @@ BOARD8          =       072
 BOARD9          =       073
 QPOINT1         =       074
 QPOINT2         =       075
+CALC            =       076
 
