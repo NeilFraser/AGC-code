@@ -153,6 +153,8 @@ GAMEINI	CA	Q	# Save return pointer, cuz of TCRs
 	CA	PLAYERX	# Starting Player, can change to PLAYERO
 	TS	TURN
 	TCR	CLEAR	# Clear board values
+	CA 	NINE	# Reset the countdown of moves.
+	TS	CNTDOWN
 	TCR	DRAW
 	CA	QGAMEINI	# Restore Q
 	TS	Q
@@ -196,14 +198,14 @@ CELL-	CA	DISPLAY-	# Draw blank
 	RETURN
 
 
-# Function to draw the entire board on the DSKY, including the player number as the Verb.
+# Function to draw the entire board on the DSKY, including the player number as the Prog.
 # No inputs or outputs.
 DRAW	CA	Q	# Save return pointer, cuz of TCRs
 	TS	QDRAW
-	# Pair 10 VERB to indicate whos turn it is #TODO# COMP ACTY if computers turn
+	# Pair 11 PROG to indicate whos turn it is #TODO# COMP ACTY if computers turn
 	CA	TURN
 	TCR	CELLVAL
-	AD	PAIR10
+	AD	PAIR11
 	EXTEND
 	WRITE	DSPL10
 	# Pair 8 has digit 11 (board position 7)
@@ -302,7 +304,9 @@ BTN-FREE	CA	TURN
 	INDEX	L
 	TS	BOARD
 	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
-	TS	TURN	# before drawing board so VERB can show whos turn it is
+	TS	TURN	# before drawing board so VERB can show whose turn it is
+	EXTEND		# Decrement the number of remaining moves.
+	DIM	CNTDOWN
 	TCR	DRAW
 	TCR	THINK	# Analize board & check win (not AI)
 
@@ -330,6 +334,8 @@ THINK			# For each of the eight possible lines,
 			#  2 +  2 +  2 =  6
 			# If the sum is -6, then O has three in that line.
 			# -2 + -2 + -2 = -6
+	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QTHINK
 	CA	EIGHT
 	TS	L	# L is the line counter (7 -> 0).
 T-LOOP	EXTEND
@@ -358,17 +364,21 @@ T-NEG	AD	FIVE	# Compare with 5 (not 6) since one cell might intersect with anoth
 	BZMF	T-WIN	# Found a win
 T-NEXT	CA	L
 	EXTEND
-	BZF	T-DONE	# Checked all options
+	BZF	T-NOLOOP	# Checked all options
 	TCF	T-LOOP
-
+T-NOLOOP	CA	CNTDOWN
+	EXTEND
+	BZF	T-FULL
 T-DONE	CA	ZEROREG
 	TS	DOBLINK
+	CA	QTHINK	# Restore Q
+	TS	Q
 	RETURN
 
-T-WIN	CA	Q	# Save return pointer, cuz of TCRs
-	TS	QTHINK
-	CA	ZEROREG
-	TS	TURN	# Set TURN for Game Over
+T-FULL	TCR	T-OVER
+	TCF	T-DONE
+
+T-WIN	TCR	T-OVER
 	INDEX	L
 	CA	CHECK1
 	TCR	T-MOD
@@ -383,8 +393,6 @@ T-WIN	CA	Q	# Save return pointer, cuz of TCRs
 	CA	T6START
 	EXTEND
 	WOR	IO-13
-	CA	QTHINK	# Restore Q
-	TS	Q
 	TCF	T-NEXT
 
 
@@ -402,6 +410,13 @@ T-MOD	TS	CALC	# For the cell specified in A, signal it to blink if not blank.
 	TS	BOARD	# Set BOARD to blink (-1/1)
 T-MODEND	RETURN
 
+T-OVER	CA	ZEROREG	# Set TURN for Game Over
+	TS	TURN
+	CA	DISPLAY-	# Blank the Prog turn display
+	AD	PAIR11
+	EXTEND
+	WRITE	DSPL10
+	RETURN
 
 # Values:
 T3-100MS	OCT	37766
@@ -422,7 +437,7 @@ DISPLAYX	DEC	3	# DSKY code for '1'
 DISPLAYO	DEC	21	# DSKY code for '0'
 DISPLAY-	DEC	0	# DSKY code for ' '
 # IO Values for Pair
-PAIR10	OCT	50000	# Verb pair
+PAIR11	OCT	54000	# Prog pair
 PAIR8	OCT	40000	# DSKY digit pair address
 PAIR7	OCT	34000
 PAIR6	OCT	30000
@@ -493,3 +508,4 @@ QDRAW	=	075
 QTHINK	=	076
 CALC	=	077	# Local scratchpad (ran out of free registers)
 DOBLINK	=	100	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
+CNTDOWN	=	101	# Countdown of moves from 9 to 0.  Game ends at 0.
