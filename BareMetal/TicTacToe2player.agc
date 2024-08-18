@@ -133,7 +133,7 @@ START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
 	TS	TIME3
 	CAE	ZEROREG	# Disable all lamps (io channel 0163)
 	EXTEND
-	WRITE	LAMP163	################################
+	WRITE	LAMP163	################################ #TODO# WOR or so
 	TCR	GAMEINI	# Clear BOARD values
 	CA	ZEROREG	# Initialize RAND9 to zero
 	TS	RAND9
@@ -193,9 +193,11 @@ CELL-	CA	DISPLAY-	# Draw blank
 # Draw board on to the DSKY
 FDRAW	CA	Q	# Save return pointer, cuz of TCs
 	TS	QPOINT2
-	# Check TURN & draw player nr under verb, COMP ACTY if computer turn
-
-
+	# Pair 10 VERB to indicate whos turn it is #TODO# COMP ACTY if computers turn
+	CA	TURN
+	TCR	FCELLVAL
+	AD	PAIR10
+	TCR	FSEND
 	# Pair 8 has digit 11 (board position 7)
 	CA	BOARD7
 	TCR	FCELLVAL
@@ -271,10 +273,10 @@ FBUTTON	CA	NINE
 	EXTEND
 	SU	Q	# Check if is 18 (RSET btn)
 	EXTEND
-	BZF	TRANS
+	BZF	RSET
 	TCF	B-ERROR
 
-TRANS	TCR	GAMEINI
+RSET	TCR	GAMEINI
 	TC	B-END
 
 BTN1-9	INDEX	L
@@ -288,13 +290,13 @@ BTN-FREE	CA	TURN
 	BZF	B-ERROR	# Game Over
 	INDEX	L
 	TS	BOARD
+	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
+	TS	TURN	# before drawing board so VERB can show whos turn it is
 	TCR	FDRAW
 	TCR	THINK	# Analize board & check win (not AI)
 	CA	TURN
 	EXTEND
-	BZF	GOVER	# Check if Game Over
-	COM		# Flip TURN value (+ <-> -)
-	TS	TURN
+	BZF	GOVER	# Check if Game Over #TODO# if game over, VERB only clears once T6Rupt, since no draw here.
 B-END	DXCH	ARUPT	# Restore registers
 	EXTEND
 	QXCH	QRUPT
@@ -318,7 +320,7 @@ B-ERROR	CA	OPR-ERR	# Turn on OPR-ERR lamp
 	TC	B-END
 
 
-# Computer Brain, check win, 	###next move
+# Computer Brain, check win, #TODO# computer do next move
 THINK	CA	EIGHT
 	TS	L
 T-LOOP	EXTEND
@@ -408,6 +410,7 @@ DISPLAYX	DEC	3	# DSKY code for '1'
 DISPLAYO	DEC	21	# DSKY code for '0'
 DISPLAY-	DEC	0	# DSKY code for ' '
 # IO Values for Pair
+PAIR10	OCT	50000	# Verb pair
 PAIR8	OCT	40000	# DSKY digit pair address
 PAIR7	OCT	34000
 PAIR6	OCT	30000
