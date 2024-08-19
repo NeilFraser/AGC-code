@@ -142,11 +142,17 @@ START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
 	TCR	PROGLAMP	# DSKY PROG light
 	CA	ZEROREG	# Initialize RAND9 to zero
 	TS	RAND9
-LOOP	CCS	RAND9	# CCS instead of BZF, fewer steps
-	TCF	STEP	# RAND9 > 0 (A = RAND9-1)
+IDLELOOP	TCR	RANDSTEP
+	TCF	IDLELOOP	# Loop again (wrapping around to 8 after 0)
+
+
+# Function to step the random number by one.
+# No inputs or outputs.
+RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
+	TCF	RANDSTORE	# RAND9 > 0 (A = RAND9-1)
 	CAF	EIGHT	# RAND9 = 0, make it 8 again
-STEP	TS	RAND9
-	TCF	LOOP	# Loop again (wrapping around to 8 after 0)
+RANDSTORE	TS	RAND9
+	RETURN
 
 
 # Function to initialize a new game.
