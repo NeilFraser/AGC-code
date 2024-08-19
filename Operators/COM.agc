@@ -1,3 +1,5 @@
+# Minimal demo of the COM operator.
+
 		SETLOC	4000
 		INHINT
 

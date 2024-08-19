@@ -2,15 +2,15 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="BareMetal" />
-		<Option makefile="Makefile.BareMetal" />
+		<Option title="Editor" />
+		<Option makefile="Makefile.Editor" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="agc_yayul_assembler" />
 		<Build>
 			<Target title="Debug">
-				<Option output="BareMetal.bin" prefix_auto="0" extension_auto="0" />
-				<Option object_output="/home/pi/virtualagc/BareMetal/.objs" />
+				<Option output="Editor.bin" prefix_auto="0" extension_auto="0" />
+				<Option object_output="/home/pi/virtualagc/Editor/.objs" />
 				<Option type="0" />
 				<Option compiler="agc_yayul_assembler" />
 				<Compiler>

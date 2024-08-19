@@ -1,3 +1,5 @@
+# Minimal demo of the ADS, CAE, and TS operators.
+
 		SETLOC	4000
 		INHINT
 
@@ -9,7 +11,7 @@
 		TS MEMORY 	# Store 5 into a memory location.
 
 		CAF SIX 	# Load 6 into 'A' register.
-		ADS MEMORY 	# Add 6 into the memory location.
+		ADS MEMORY	# Add 6 into the memory location.
 
 		CAE MEMORY	# Load memory the memory location back into 'A' register.
 		NOOP		# 'A' regsiter now contains 11.
@@ -17,5 +19,5 @@
 END		TCF END
 
 FIVE		DEC	5
-SIX             DEC     6
-MEMORY          =       1234    # Some erasable memory location.
+SIX		DEC	6
+MEMORY		=	1234	# Some erasable memory location.

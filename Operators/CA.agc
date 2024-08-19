@@ -1,3 +1,5 @@
+# Minimal demo of the CA operator.
+
 		SETLOC	4000
 		INHINT
 

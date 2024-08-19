@@ -1,3 +1,5 @@
+# Minimal demo of the AUG operator.
+
 		SETLOC	4000
 		INHINT
 

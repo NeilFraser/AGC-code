@@ -1,3 +1,5 @@
+# Minimal demo of the LXCH and QXCH operators.
+
 		SETLOC	4000
 		INHINT
 

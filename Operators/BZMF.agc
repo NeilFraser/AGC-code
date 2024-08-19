@@ -1,3 +1,5 @@
+# Minimal demo of the BZMF operator.
+
 		SETLOC	4000
 		INHINT
 
@@ -5,7 +7,7 @@
 
 START		CAF FIVE	# Load 5 into 'A' register.
 		EXTEND
-		BZMF START	# This branch does not happen. 
+		BZMF START	# This branch does not happen.
 
 		CAF -FIVE	# Load -5 into 'A' register.
 		EXTEND

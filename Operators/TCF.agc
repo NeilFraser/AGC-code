@@ -1,3 +1,5 @@
+# Minimal demo of the TCF operator.
+
 		SETLOC	4000
 		INHINT
 

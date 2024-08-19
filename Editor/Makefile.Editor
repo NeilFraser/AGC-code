@@ -1,0 +1,8 @@
+
+Debug:
+	yaYUL MAIN.agc > Editor.lst
+	mv MAIN.agc.bin Editor.bin
+	mv MAIN.agc.symtab Editor.symtab
+
+cleanDebug:
+	rm Editor.lst Editor.bin Editor.symtab

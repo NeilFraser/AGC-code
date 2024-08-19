@@ -1,7 +1,17 @@
+# Copyright:	Public domain.
+# Filename:	Random-Die.agc
+# Purpose:	Demonstrating a minimal AGC program that
+#		prints a random 1-6 digit every time any
+#		button is pressed.
+# Assembler:	yaYUL
+# Contact:	Lena Ku <lenaku@163.com>
+# Contact:	Neil Fraser <agc@neil.fraser.name>
+
+# Interrupts, must have 4 lines per interrupt
 	SETLOC	4000
 
 	# Power up
-	TCF     START
+	TCF	START
 	NOOP
 	NOOP
 	NOOP
@@ -19,8 +29,8 @@
 	NOOP
 
 	# T3 (interrupt #3)
-	XCH     ARUPT   # Back up A register
-	TCF     T3RUPT
+	XCH	ARUPT	# Back up A register
+	TCF	T3RUPT
 	NOOP
 	NOOP
 
@@ -31,8 +41,8 @@
 	NOOP
 
 	# DSKY1 (interrupt #5)
-	XCH     ARUPT   # Back up A register
-	TCF     BUTTON
+	XCH	ARUPT	# Back up A register
+	TCF	BUTTON
 	NOOP
 	NOOP
 
@@ -67,7 +77,7 @@
 	NOOP
 
 # The interrupt-service routine for the TIME3 interrupt every 100 ms.
-T3RUPT	CAF     T3-100MS	# Schedule another TIME3 interrupt in 100 ms.
+T3RUPT	CAF	T3-100MS	# Schedule another TIME3 interrupt in 100 ms.
 	TS	TIME3
 
 	# Tickle NEWJOB to keep Night Watchman GOJAMs from happening.
@@ -78,7 +88,7 @@ T3RUPT	CAF     T3-100MS	# Schedule another TIME3 interrupt in 100 ms.
 	# your main code with "CS NEWJOB" instructions at strategic points.
 	CAE	NEWJOB
 
-	XCH	ARUPT	    # Restore A, and exit the interrupt
+	XCH	ARUPT		# Restore A, and exit the interrupt
 	RESUME
 
 START
