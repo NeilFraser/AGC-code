@@ -35,7 +35,7 @@
 	DXCH	ARUPT	# Back up A,L register
 	EXTEND
 	QXCH	QRUPT
-	TCF	FBUTTON
+	TCF	KEYRUPT1
 
 	# DSKY2 (interrupt #6)
 	RESUME
@@ -68,7 +68,8 @@
 	NOOP
 
 
-# T3RUPT every 100 ms
+# Time3 interrupt every 100 ms.
+# No inputs or outputs.
 T3RUPT	CAF	T3-100MS	# Schedule another T3RUPT in 100 ms
 	TS	TIME3
 
@@ -78,7 +79,8 @@ T3RUPT	CAF	T3-100MS	# Schedule another T3RUPT in 100 ms
 	RESUME
 
 
-# T6RUPT every second, except OPR-ERR
+# Time6 interrupt.  Every second when blinking a winner.  One second single call on OPP-ERR.
+# No inputs or outputs.
 T6RUPT	CA	OPR-ERR	# Turn off OPR-ERR lamp (even if its not on...)
 	COM
 	EXTEND
@@ -86,18 +88,21 @@ T6RUPT	CA	OPR-ERR	# Turn off OPR-ERR lamp (even if its not on...)
 	CA	TURN	# Check if Game Over
 	EXTEND
 	BZF	T6WIN	# Game Over, blink
-	RESUME
+	CA	HUMANTURN
+	EXTEND
+	BZF	T6CPU
+	TCF	T6DONE
 
-T6WIN	TCR	FDRAW	# Not drawing right after THINK, so draw here
-	CA	CALC	# Check if need to reset values
+T6WIN	TCR	DRAW	# Not drawing right after THINK, so draw here
+	CA	DOBLINK	# Check if need to reset +/- 1s to +/- 2s
 	EXTEND
 	BZF	T6UNDO	# Change win val back to 2
 	TCR	THINK
-	RESUME
+	TCF	T6DONE
 
 T6UNDO	EXTEND
-	AUG	CALC	# Set CALC to 1
-	CAF	T6-1SEC	# Schedule next T6RUPT to blink wins
+	AUG	DOBLINK	# Set DOBLINK to 1
+	CAF	T6-1SEC	# Schedule T6RUPT in 1 second to restore the blinked win cells
 	TS	TIME6
 	CA	T6START
 	EXTEND
@@ -123,40 +128,78 @@ T6NEXT	EXTEND
 	CA	L
 	EXTEND
 	BZF	T6DONE
-	TC	T6LOOP
+	TCF	T6LOOP
 
-T6DONE	RESUME
+T6CPU	TCR	CPUPLAY
+	TCR	COMPOFF
+	TCF	T6DONE
+
+T6DONE	DXCH	ARUPT	# Restore registers
+	EXTEND
+	QXCH	QRUPT
+	RESUME
 
 
-# Start, Idle place
+# Main program start.  Initializes, then idle loops.
 START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
 	TS	TIME3
 	CAE	ZEROREG	# Disable all lamps (io channel 0163)
 	EXTEND
 	WRITE	LAMP163	################################ #TODO# WOR or so
+	CA	TRUE	# Set CPUPLAYER to 1
+	TS	CPUPLAYER
+	TCR	PROGLAMP	# Update DSKY PROG lamp
+	CA	PLAYERX
+	TS	STARTPYR
 	TCR	GAMEINI	# Clear BOARD values
+
 	CA	ZEROREG	# Initialize RAND9 to zero
 	TS	RAND9
-LOOP	CCS	RAND9	# CCS instead of BZF, less steps
-	TCF	STEP	# RAND9 > 0 (A = RAND9-1)
+IDLELOOP	CCS	RAND9	# CCS instead of BZF, fewer steps
+	TCF	RANDSTOR1	# RAND9 > 0 (A = RAND9-1)
 	CAF	EIGHT	# RAND9 = 0, make it 8 again
-STEP	TS	RAND9
-	TCF	LOOP	# Loop again (wrapping around to 8 after 0)
+RANDSTOR1	TS	RAND9
+	TCF	IDLELOOP	# Loop again (wrapping around to 8 after 0)
 
-# Initialize new game
-GAMEINI	CA	Q	# Save return pointer, cuz of TCs
-	TS	QPOINT1	# Q1 used in FDRAW
-	CA	PLAYERO	# Starting Player # Can change to PLAYERX
+
+# Function to initialize a new game.
+# No inputs or outputs.
+GAMEINI	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QGAMEINI
+	CA	STARTPYR	# Starting player
 	TS	TURN
-	TCR	FCLEAR	# Clear board values
-	TCR	FDRAW
-	CA	QPOINT1	# Restore Q
+	COM		# Toggle the starting player for the next game.
+	TS	STARTPYR
+	TCR	CLEAR	# Clear board values
+	CA 	NINE	# Reset the countdown of moves.
+	TS	CNTDOWN
+
+	CA	CPUPLAYER	# No CPU player means 2 person game.
+	EXTEND
+	BZF	INIHUMAN
+	CA	TURN	# If current Turn is 'O' (-2), CPU starts.
+	COM
+	EXTEND
+	BZMF	INIHUMAN
+	CA	ZEROREG
+	TCF	INISAVE
+INIHUMAN	CA	TRUE	# Humans first! (TM)
+INISAVE	TS	HUMANTURN
+	EXTEND
+	BZF	INICPU
+
+INIDRAW	TCR	DRAW
+	CA	QGAMEINI	# Restore Q
 	TS	Q
 	RETURN
 
+INICPU	TCR	CPUPLAY
+	TCF	INIDRAW
 
-# Set all boards to 0	# Using loop takes 2 more instructions
-FCLEAR	CA	ZEROREG
+
+# Function to set all cells to 0.
+# No inputs or outputs.
+CLEAR	CA	ZEROREG	# Using loop takes 2 more instructions
 	TS	BOARD1
 	TS	BOARD2
 	TS	BOARD3
@@ -169,8 +212,9 @@ FCLEAR	CA	ZEROREG
 	RETURN
 
 
-# Check if cell is X/O/-
-FCELLVAL	CCS	A
+# Function to convert cell value (2,1,0,-1,-2) into DSKY code for '1', '0', or ' '.
+# Input: A is cell value.  Output: A is DSKY code.
+CELLVAL	CCS	A
 	TCF	CELLX	# +2 (X) or +1 if blinking
 	TCF	CELL-	# +0 ( )
 	TCF	CELLO	# -2 (O) or -1 if blinking
@@ -190,79 +234,100 @@ CELL-	CA	DISPLAY-	# Draw blank
 	RETURN
 
 
-# Draw board on to the DSKY
-FDRAW	CA	Q	# Save return pointer, cuz of TCs
-	TS	QPOINT2
-	# Pair 10 VERB to indicate whos turn it is #TODO# COMP ACTY if computers turn
+# Function to draw the entire board on the DSKY, including the player number as the Prog.
+# No inputs or outputs.
+DRAW	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QDRAW
+	# Pair 11 PROG to indicate whos turn it is #TODO# COMP ACTY if computers turn
 	CA	TURN
-	TCR	FCELLVAL
-	AD	PAIR10
-	TCR	FSEND
+	TCR	CELLVAL
+	AD	PAIR11
+	EXTEND
+	WRITE	DSPL10
 	# Pair 8 has digit 11 (board position 7)
 	CA	BOARD7
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	PAIR8
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 7 has digit 13 (board position 8)
 	CA	BOARD8
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	PAIR7
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 6 has digit 15 (board position 9)
 	CA	BOARD9
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	PAIR6
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 5 has digit 21 (board position 4)
 	CA	BOARD4
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	EXTEND
 	MP	CSHIFT	# Shift for CCCCC Position (*32)
 	XCH	L	# MP Val gets stored in L
 	AD	PAIR5
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 4 has digit 23 (board position 5)
 	CA	BOARD5
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	EXTEND
 	MP	CSHIFT	# Shift for CCCCC Position (*32)
 	XCH	L	# MP Val gets stored in L
 	AD	PAIR4
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 3 has digit 25 and 31 (board positions 6 and 1)
 	CA	BOARD6
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	EXTEND		# Shift for CCCCC Position (*32)
 	MP	CSHIFT	# MP Val gets stored in L
 	CA	BOARD1
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	L
 	AD	PAIR3
-	TCR	FSEND
-	# Pair 2 has digit 33 (board positioBOARDn 2)
+	EXTEND
+	WRITE	DSPL10
+	# Pair 2 has digit 33 (board position 2)
 	CA	BOARD2
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	PAIR2
-	TCR	FSEND
+	EXTEND
+	WRITE	DSPL10
 	# Pair 1 has digit 35 (board position 3)
 	CA	BOARD3
-	TCR	FCELLVAL
+	TCR	CELLVAL
 	AD	PAIR1
-	TCR	FSEND
-	CA	QPOINT2	# Restore Q
+	EXTEND
+	WRITE	DSPL10
+	CA	QDRAW	# Restore Q
 	TS	Q
 	RETURN
 
 
-# Write A to DSKY
-FSEND	EXTEND
+# Function to turn on or off the Prog lamp, controlled by 'CPUPLAYER'
+# No inputs or outputs.
+PROGLAMP	CA	CPUPLAYER
+	EXTEND
+	BZF	LAMPOFF
+	CA	PAIR12
+	AD	PROGBIT
+	TCF	LAMPSEND
+LAMPOFF	CA	PAIR12
+LAMPSEND	EXTEND
 	WRITE	DSPL10
 	RETURN
 
 
-# Btn pressed, compute input
-FBUTTON	CA	NINE
+# Interrupt called when button pushed.  Handle the keystroke.
+# No inputs or outputs.
+KEYRUPT1	CA	NINE
 	TS	Q
+	CA	EIGHT
+	TS	CALC
 	EXTEND
 	READ	KEY15	# Read DSKY keystrokes (io channel 015)
 	TS	L
@@ -273,63 +338,127 @@ FBUTTON	CA	NINE
 	EXTEND
 	SU	Q	# Check if is 18 (RSET btn)
 	EXTEND
-	BZF	RSET
+	BZF	BTNRSET
+	EXTEND
+	SU	CALC	# Check if is 26 (+ btn)
+	EXTEND
+	BZF	BTN2PL
+	EXTEND
+	DIM	A	# Check if is 27 (- btn)
+	EXTEND
+	BZF	BTN1PL
 	TCF	B-ERROR
 
-RSET	TCR	GAMEINI
-	TC	B-END
+BTNRSET	TCR	GAMEINI
+	TCF	B-END
+
+BTN2PL	CA	ZEROREG
+	TS	CPUPLAYER	# Set to Zero, no CPU player
+	TCR	PROGLAMP	# DSKY PROG light
+	TCF	B-END
+
+BTN1PL	CA	TRUE	# Set CPUPLAYER to 1
+	TS	CPUPLAYER
+	TCR	PROGLAMP	# DSKY PROG light
+	TCF	B-END
 
 BTN1-9	INDEX	L
 	CA	BOARD
 	EXTEND
 	BZF	BTN-FREE	# Check if btn is available (free cell)
-	TC	B-ERROR
+	TCF	B-ERROR
 
 BTN-FREE	CA	TURN
 	EXTEND
-	BZF	B-ERROR	# Game Over
-	INDEX	L
-	TS	BOARD
-	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
-	TS	TURN	# before drawing board so VERB can show whos turn it is
-	TCR	FDRAW
-	TCR	THINK	# Analize board & check win (not AI)
+	BZF	B-ERROR	# Game was already over
+	CA	HUMANTURN
+	EXTEND
+	BZF	B-ERROR	# Keyboard locked due to pending CPU move.
+	TCR	PLAYHERE	# Play Humans move
+	CA	CPUPLAYER # If a 2 player game, skip the CPU player.
+	EXTEND
+	BZF	B-END
+
 	CA	TURN
 	EXTEND
-	BZF	GOVER	# Check if Game Over #TODO# if game over, VERB only clears once T6Rupt, since no draw here.
+	BZF	B-END	# Game over after human played
+	CA	ZEROREG
+	TS	HUMANTURN
+	TCR	COMPON
+	TCR	CALLT6
+
 B-END	DXCH	ARUPT	# Restore registers
 	EXTEND
 	QXCH	QRUPT
 	RESUME
 
-GOVER	CAF	T6-1SEC	# Schedule T6RUPT to blink wins
-	TS	TIME6
-	CA	T6START
-	EXTEND
-	WOR	IO-13
-	TC	B-END
-
 B-ERROR	CA	OPR-ERR	# Turn on OPR-ERR lamp
 	EXTEND
 	WOR	LAMP163
-	CAF	T6-1SEC	# Schedule T6RUPT in 1 second to turn off OPR-ERR
+	TCR	CALLT6
+	TCF	B-END
+
+
+# Function to schedule T6RUPT in 1 second.
+# No inputs or outputs.
+CALLT6	CAF	T6-1SEC
 	TS	TIME6
 	CA	T6START
 	EXTEND
 	WOR	IO-13
-	TC	B-END
+	RETURN
+
+# Function to turn COMP ACTY light on or off
+# No inputs or outputs.
+COMPON	CA	COMPBIT
+	EXTEND
+	WOR	IO-11
+	RETURN
+
+COMPOFF	CA	COMPBIT
+	COM
+	EXTEND
+	WAND	IO-11
+	RETURN
 
 
-# Computer Brain, check win, #TODO# computer do next move
-THINK	CA	EIGHT
-	TS	L
+# Function to play in a cell.
+# Input: L is the cell number to play.  No outputs.
+PLAYHERE	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QPLAYHERE
+	CA	TURN
+	INDEX	L
+	TS	BOARD
+	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
+	TS	TURN	# before drawing board so VERB can show whose turn it is
+	EXTEND		# Decrement the number of remaining moves.
+	DIM	CNTDOWN
+	TCR	DRAW
+	TCR	THINK	# Analyze board & check win (not AI)
+	CA	QPLAYHERE	# Restore Q
+	TS	Q
+	RETURN
+
+
+# Function to check for winning condition.  Ends game if needed.
+# No inputs or outputs.
+THINK			# For each of the eight possible lines,
+			# add up the values of the three cells on that line.
+			# If the sum is 6, then X has three in that line.
+			#  2 +  2 +  2 =  6
+			# If the sum is -6, then O has three in that line.
+			# -2 + -2 + -2 = -6
+	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QTHINK
+	CA	EIGHT
+	TS	L	# L is the line counter (7 -> 0).
 T-LOOP	EXTEND
 	DIM	L
 	INDEX	L	# Add up the values of each line on the board
 	CA	CHECK1
 	INDEX	A
 	CA	BOARD
-	TS	CALC
+	TS	CALC	# CALC is a local summing location
 	INDEX	L
 	CA	CHECK2
 	INDEX	A
@@ -341,25 +470,29 @@ T-LOOP	EXTEND
 	INDEX	A
 	CA	BOARD
 	AD	CALC
-	EXTEND		# Take absolute value
+	EXTEND		# Take absolute negative value
 	BZMF	T-NEG
 	COM
-T-NEG	AD	FIVE	# 5 bc T-WIN changes BOARD to blink Nr (-1/1), on next check it will only be 5
+T-NEG	AD	FIVE	# Compare with 5 (not 6) since one cell might intersect with another winning line.
 	EXTEND
 	BZMF	T-WIN	# Found a win
 T-NEXT	CA	L
 	EXTEND
-	BZF	T-DONE	# Checked all options
+	BZF	T-NOLOOP	# Checked all options
 	TCF	T-LOOP
-
+T-NOLOOP	CA	CNTDOWN
+	EXTEND
+	BZF	T-FULL
 T-DONE	CA	ZEROREG
-	TS	CALC
+	TS	DOBLINK
+	CA	QTHINK	# Restore Q
+	TS	Q
 	RETURN
 
-T-WIN	CA	Q	# Save return pointer, cuz of TCs
-	TS	QPOINT2
-	CA	ZEROREG
-	TS	TURN	# Set TURN for Game Over
+T-FULL	TCR	T-OVER	# The board is completely full (tie or win)
+	TCF	T-DONE
+
+T-WIN	TCR	T-OVER	# A player has won, modify current line to blink
 	INDEX	L
 	CA	CHECK1
 	TCR	T-MOD
@@ -369,17 +502,26 @@ T-WIN	CA	Q	# Save return pointer, cuz of TCs
 	INDEX	L
 	CA	CHECK3
 	TCR	T-MOD
-	CAF	T6-1SEC	# Schedule next T6RUPT to blink wins
+	CAF	T6-1SEC	# Schedule T6RUPT in 1 second to blink off win cells
 	TS	TIME6
 	CA	T6START
 	EXTEND
 	WOR	IO-13
-	CA	QPOINT2	# Restore Q
-	TS	Q
 	TCF	T-NEXT
 
-T-MOD	TS	CALC
-	CA	CALC
+T-OVER	CA	ZEROREG	# Set TURN for Game Over
+	TS	TURN
+	CA	DISPLAY-	# Blank the Prog turn display
+	AD	PAIR11
+	EXTEND
+	WRITE	DSPL10
+	RETURN
+
+
+# Function to modify a cell to blink if not blank.
+# Input: A is cell index.  No outputs.
+T-MOD	TS	CALC	# For the cell specified in A, signal it to blink if not blank.
+			# Thus change 2 -> 1, -2 -> -1, but leave 0 alone.
 	INDEX	A
 	CA	BOARD
 	EXTEND
@@ -391,15 +533,121 @@ T-MOD	TS	CALC
 T-MODEND	RETURN
 
 
+# Function to compute the CPU player's move.
+# No inputs or outputs.
+CPUPLAY	CA	TURN	# Bail if game is over
+	EXTEND
+	BZF	CPUOVER
+	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QCPUPLAY
+	CA	TURN	# Strategy 1: Search for winning hole.
+	TCR	SEARCH
+	EXTEND
+	BZF	PLAYBLOCK
+	TCF	PLAYSPOT
+PLAYBLOCK	CA	TURN
+	COM		# Strategy 2: Search for blocking hole.
+	TCR	SEARCH
+	EXTEND
+	BZF	PLAYRAND
+	TCF	PLAYSPOT
+
+PLAYRAND	INDEX	RAND9	# Strategy 3: Out of good ideas, just play randomly.
+	CA	BOARD1
+	EXTEND
+	BZF	PLAYFREE	# If cell is not empty, step the random number
+RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
+	TCF	RANDSTOR2	# RAND9 > 0 (A = RAND9-1)
+	CAF	EIGHT	# RAND9 = 0, make it 8 again
+RANDSTOR2	TS	RAND9
+	TCF	PLAYRAND
+PLAYFREE	CA	RAND9	# Found a free cell, play here.
+	EXTEND
+	AUG	A	# RAND9 is 0-8, the board is 1-9.
+PLAYSPOT	TS	L
+	TCR	PLAYHERE
+	CA	TRUE	# Human turn next.
+	TS	HUMANTURN
+	CA	QCPUPLAY	# Restore Q
+	TS	Q
+CPUOVER	RETURN
+
+
+# Function to search the board for lines with two of a player and a blank.
+# Input: A is desired player (2 or -2).  Output: A is cell number to play, or zero.
+SEARCH			# For each of the eight possible lines,
+			# add up the values of the three cells on that line.
+			# If the sum is 4, then X has two in that line.
+			#  2 +  0 +  2 =  4
+			# If the sum is -4, then O has two in that line.
+			# -2 + -2 +  0 = -4
+	DOUBLE
+	TS	GOAL
+	CA	EIGHT
+	TS	L	# L is the line counter (7 -> 0).
+S-LOOP	EXTEND
+	DIM	L
+	INDEX	L	# Add up the values of each line on the board
+	CA	CHECK1
+	INDEX	A
+	CA	BOARD
+	TS	CALC	# CALC is a local summing location
+	INDEX	L
+	CA	CHECK2
+	INDEX	A
+	CA	BOARD
+	AD	CALC
+	TS	CALC
+	INDEX	L
+	CA	CHECK3
+	INDEX	A
+	CA	BOARD
+	AD	CALC
+
+	EXTEND
+	SU	GOAL	# Compare with 4 or -4.
+	EXTEND
+	BZF	S-MATCH	# Found a match.
+	CA	L
+	EXTEND
+	BZF	S-NOLOOP	# Checked all options, no match.
+	TCF	S-LOOP
+S-NOLOOP	CA	ZEROREG
+	RETURN
+
+S-MATCH	INDEX	L	# Check first cell for hole.
+	CA	CHECK1
+	TS	CALC
+	INDEX	A
+	CA	BOARD
+	EXTEND
+	BZF	S-HOLE
+	INDEX	L	# Check second cell for hole.
+	CA	CHECK2
+	TS	CALC
+	INDEX	A
+	CA	BOARD
+	EXTEND
+	BZF	S-HOLE
+	INDEX	L	# Must be third cell.
+	CA	CHECK3
+	TS	CALC
+S-HOLE	CA	CALC
+	RETURN
+
+
 # Values:
 T3-100MS	OCT	37766
 T6-1SEC	OCT	1600
 T6START	DEC	16384
+TRUE	DEC	1
 FIVE	DEC	5
 EIGHT	DEC	8
 NINE	DEC	9
 CSHIFT	DEC	32
 OPR-ERR	DEC	64
+PROGBIT	DEC	256
+COMPBIT	DEC	2
 # Values for Board:
 PLAYERX	DEC	2	# X
 PLAYERXB	DEC	1	# X (blinking)
@@ -409,9 +657,10 @@ PLAYEROB	DEC	-1	# O (blinking)
 DISPLAYX	DEC	3	# DSKY code for '1'
 DISPLAYO	DEC	21	# DSKY code for '0'
 DISPLAY-	DEC	0	# DSKY code for ' '
-# IO Values for Pair
-PAIR10	OCT	50000	# Verb pair
-PAIR8	OCT	40000	# DSKY digit pair address
+# IO Values for DSKY pairs
+PAIR12	OCT	60000	# Status lamp address
+PAIR11	OCT	54000	# Prog 7-segment pair address
+PAIR8	OCT	40000	# DSKY 7-segment pair addresses
 PAIR7	OCT	34000
 PAIR6	OCT	30000
 PAIR5	OCT	24000
@@ -419,7 +668,7 @@ PAIR4	OCT	20000
 PAIR3	OCT	14000
 PAIR2	OCT	10000
 PAIR1	OCT	04000
-# Values for check
+# Cell indicies for every possible line (7/8/9, 4/5/6, etc)
 CHECK1	DEC	7
 	DEC	4
 	DEC	1
@@ -462,6 +711,7 @@ TIME6	=	31
 DSPL10	=	010
 LAMP163	=	0163
 KEY15	=	015
+IO-11	=	011
 IO-13	=	013
 # Address Locations
 RAND9	=	061	# Address for random number
@@ -476,6 +726,17 @@ BOARD6	=	070
 BOARD7	=	071
 BOARD8	=	072
 BOARD9	=	073
-QPOINT1	=	074
-QPOINT2	=	075
-CALC	=	076
+
+QGAMEINI	=	074	# Backup locations for Q register (allows more than one function call depth).
+QDRAW	=	075	# Some of these could be shared, if space is tight.
+QTHINK	=	076
+QCPUPLAY	=	077
+QPLAYHERE	=	100
+
+CALC	=	101	# Local scratchpad (ran out of free registers)
+DOBLINK	=	102	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
+CNTDOWN	=	103	# Countdown of moves from 9 to 0.  Game ends at 0.
+CPUPLAYER	=	104	# If Computer has to play (0 = False, 1 is player O)
+HUMANTURN	=	105	# Waiting for human (1), or computer player is scheduled to play within a second (0).
+STARTPYR	=	106	# Which player (2 = X, -2 = O) starts the game.
+GOAL	=	107	# Local scratchpad (ran out of free registers)

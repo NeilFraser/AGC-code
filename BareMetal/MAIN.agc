@@ -443,7 +443,7 @@ PLAYHERE	CA	Q	# Save return pointer, cuz of TCRs
 # Function to check for winning condition.  Ends game if needed.
 # No inputs or outputs.
 THINK			# For each of the eight possible lines,
-			# add up the values of the three cells on thah line.
+			# add up the values of the three cells on that line.
 			# If the sum is 6, then X has three in that line.
 			#  2 +  2 +  2 =  6
 			# If the sum is -6, then O has three in that line.
@@ -540,8 +540,20 @@ CPUPLAY	CA	TURN	# Bail if game is over
 	BZF	CPUOVER
 	CA	Q	# Save return pointer, cuz of TCRs
 	TS	QCPUPLAY
-PLAYRAND	INDEX	RAND9	# Out of good ideas, just play randomly.
-	CA	BOARD
+	CA	TURN	# Strategy 1: Search for winning hole.
+	TCR	SEARCH
+	EXTEND
+	BZF	PLAYBLOCK
+	TCF	PLAYSPOT
+PLAYBLOCK	CA	TURN
+	COM		# Strategy 2: Search for blocking hole.
+	TCR	SEARCH
+	EXTEND
+	BZF	PLAYRAND
+	TCF	PLAYSPOT
+
+PLAYRAND	INDEX	RAND9	# Strategy 3: Out of good ideas, just play randomly.
+	CA	BOARD1
 	EXTEND
 	BZF	PLAYFREE	# If cell is not empty, step the random number
 RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
@@ -550,13 +562,79 @@ RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
 RANDSTOR2	TS	RAND9
 	TCF	PLAYRAND
 PLAYFREE	CA	RAND9	# Found a free cell, play here.
-	TS	L
+	EXTEND
+	AUG	A	# RAND9 is 0-8, the board is 1-9.
+PLAYSPOT	TS	L
 	TCR	PLAYHERE
 	CA	TRUE	# Human turn next.
 	TS	HUMANTURN
 	CA	QCPUPLAY	# Restore Q
 	TS	Q
 CPUOVER	RETURN
+
+
+# Function to search the board for lines with two of a player and a blank.
+# Input: A is desired player (2 or -2).  Output: A is cell number to play, or zero.
+SEARCH			# For each of the eight possible lines,
+			# add up the values of the three cells on that line.
+			# If the sum is 4, then X has two in that line.
+			#  2 +  0 +  2 =  4
+			# If the sum is -4, then O has two in that line.
+			# -2 + -2 +  0 = -4
+	DOUBLE
+	TS	GOAL
+	CA	EIGHT
+	TS	L	# L is the line counter (7 -> 0).
+S-LOOP	EXTEND
+	DIM	L
+	INDEX	L	# Add up the values of each line on the board
+	CA	CHECK1
+	INDEX	A
+	CA	BOARD
+	TS	CALC	# CALC is a local summing location
+	INDEX	L
+	CA	CHECK2
+	INDEX	A
+	CA	BOARD
+	AD	CALC
+	TS	CALC
+	INDEX	L
+	CA	CHECK3
+	INDEX	A
+	CA	BOARD
+	AD	CALC
+
+	EXTEND
+	SU	GOAL	# Compare with 4 or -4.
+	EXTEND
+	BZF	S-MATCH	# Found a match.
+	CA	L
+	EXTEND
+	BZF	S-NOLOOP	# Checked all options, no match.
+	TCF	S-LOOP
+S-NOLOOP	CA	ZEROREG
+	RETURN
+
+S-MATCH	INDEX	L	# Check first cell for hole.
+	CA	CHECK1
+	TS	CALC
+	INDEX	A
+	CA	BOARD
+	EXTEND
+	BZF	S-HOLE
+	INDEX	L	# Check second cell for hole.
+	CA	CHECK2
+	TS	CALC
+	INDEX	A
+	CA	BOARD
+	EXTEND
+	BZF	S-HOLE
+	INDEX	L	# Must be third cell.
+	CA	CHECK3
+	TS	CALC
+S-HOLE	CA	CALC
+	RETURN
+
 
 # Values:
 T3-100MS	OCT	37766
@@ -648,14 +726,17 @@ BOARD6	=	070
 BOARD7	=	071
 BOARD8	=	072
 BOARD9	=	073
-QGAMEINI	=	074
-QDRAW	=	075
+
+QGAMEINI	=	074	# Backup locations for Q register (allows more than one function call depth).
+QDRAW	=	075	# Some of these could be shared, if space is tight.
 QTHINK	=	076
 QCPUPLAY	=	077
 QPLAYHERE	=	100
+
 CALC	=	101	# Local scratchpad (ran out of free registers)
 DOBLINK	=	102	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
 CNTDOWN	=	103	# Countdown of moves from 9 to 0.  Game ends at 0.
 CPUPLAYER	=	104	# If Computer has to play (0 = False, 1 is player O)
 HUMANTURN	=	105	# Waiting for human (1), or computer player is scheduled to play within a second (0).
 STARTPYR	=	106	# Which player (2 = X, -2 = O) starts the game.
+GOAL	=	107	# Local scratchpad (ran out of free registers)
