@@ -88,14 +88,17 @@ T6RUPT	CA	OPR-ERR	# Turn off OPR-ERR lamp (even if its not on...)
 	CA	TURN	# Check if Game Over
 	EXTEND
 	BZF	T6WIN	# Game Over, blink
-	RESUME
+	CA	HUMANTURN
+	EXTEND
+	BZF	T6CPU
+	TCF	T6DONE
 
 T6WIN	TCR	DRAW	# Not drawing right after THINK, so draw here
 	CA	DOBLINK	# Check if need to reset +/- 1s to +/- 2s
 	EXTEND
 	BZF	T6UNDO	# Change win val back to 2
 	TCR	THINK
-	RESUME
+	TCF	T6DONE
 
 T6UNDO	EXTEND
 	AUG	DOBLINK	# Set DOBLINK to 1
@@ -127,7 +130,16 @@ T6NEXT	EXTEND
 	BZF	T6DONE
 	TCF	T6LOOP
 
-T6DONE	RESUME
+T6CPU	CA	TRUE	# CPU's turn
+	TS	HUMANTURN
+	TCR	CPUPLAY
+	TCR	COMPOFF
+	TCF	T6DONE
+
+T6DONE	DXCH	ARUPT	# Restore registers
+	EXTEND
+	QXCH	QRUPT
+	RESUME
 
 
 # Main program start.  Initializes, then idle loops.
@@ -136,35 +148,50 @@ START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
 	CAE	ZEROREG	# Disable all lamps (io channel 0163)
 	EXTEND
 	WRITE	LAMP163	################################ #TODO# WOR or so
+	CA	TRUE	# Set CPUPLAYER to 1
+	TS	CPUPLAYER
+	TCR	PROGLAMP	# Update DSKY PROG lamp
+	CA	PLAYERX
+	TS	STARTPYR
 	TCR	GAMEINI	# Clear BOARD values
-	CA	PLAYERO
-	TS	CPUPLAY	# Set CPUPLAY to O
-	TCR	PROGLAMP	# DSKY PROG light
+
 	CA	ZEROREG	# Initialize RAND9 to zero
 	TS	RAND9
-IDLELOOP	TCR	RANDSTEP
-	TCF	IDLELOOP	# Loop again (wrapping around to 8 after 0)
-
-
-# Function to step the random number by one.
-# No inputs or outputs.
-RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
-	TCF	RANDSTORE	# RAND9 > 0 (A = RAND9-1)
+IDLELOOP	CCS	RAND9	# CCS instead of BZF, fewer steps
+	TCF	RANDSTOR1	# RAND9 > 0 (A = RAND9-1)
 	CAF	EIGHT	# RAND9 = 0, make it 8 again
-RANDSTORE	TS	RAND9
-	RETURN
+RANDSTOR1	TS	RAND9
+	TCF	IDLELOOP	# Loop again (wrapping around to 8 after 0)
 
 
 # Function to initialize a new game.
 # No inputs or outputs.
 GAMEINI	CA	Q	# Save return pointer, cuz of TCRs
 	TS	QGAMEINI
-	CA	PLAYERX	# Starting Player, can change to PLAYERO
+	CA	STARTPYR	# Starting player
 	TS	TURN
+	COM		# Toggle the starting player for the next game.
+	TS	STARTPYR
 	TCR	CLEAR	# Clear board values
 	CA 	NINE	# Reset the countdown of moves.
 	TS	CNTDOWN
-	TCR	DRAW
+
+	CA	CPUPLAYER	# No CPU player means 2 person game.
+	EXTEND
+	BZF	INIHUMAN
+	CA	TURN	# If current Turn is 'O' (-2), CPU starts.
+	COM
+	EXTEND
+	BZMF	INIHUMAN
+	CA	ZEROREG
+	TCF	INISAVE
+INIHUMAN	CA	TRUE	# Humans first! (TM)
+INISAVE	TS	HUMANTURN
+	EXTEND
+	BZF	INIDRAW
+	TCR	CPUPLAY
+
+INIDRAW	TCR	DRAW
 	CA	QGAMEINI	# Restore Q
 	TS	Q
 	RETURN
@@ -281,9 +308,9 @@ DRAW	CA	Q	# Save return pointer, cuz of TCRs
 	RETURN
 
 
-# Function to turn on or off the Prog lamp, controlled by 'CPUPLAY'
+# Function to turn on or off the Prog lamp, controlled by 'CPUPLAYER'
 # No inputs or outputs.
-PROGLAMP	CA	CPUPLAY
+PROGLAMP	CA	CPUPLAYER
 	EXTEND
 	BZF	LAMPOFF
 	CA	PAIR12
@@ -326,12 +353,12 @@ BTNRSET	TCR	GAMEINI
 	TCF	B-END
 
 BTN2PL	CA	ZEROREG
-	TS	CPUPLAY	# Set to Zero, no CPU play
+	TS	CPUPLAYER	# Set to Zero, no CPU player
 	TCR	PROGLAMP	# DSKY PROG light
 	TCF	B-END
 
-BTN1PL	CA	PLAYERO
-	TS	CPUPLAY	# Set CPUPLAY to O
+BTN1PL	CA	TRUE	# Set CPUPLAYER to 1
+	TS	CPUPLAYER
 	TCR	PROGLAMP	# DSKY PROG light
 	TCF	B-END
 
@@ -343,15 +370,22 @@ BTN1-9	INDEX	L
 
 BTN-FREE	CA	TURN
 	EXTEND
-	BZF	B-ERROR	# Game Over
-	INDEX	L
-	TS	BOARD
-	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
-	TS	TURN	# before drawing board so VERB can show whose turn it is
-	EXTEND		# Decrement the number of remaining moves.
-	DIM	CNTDOWN
-	TCR	DRAW
-	TCR	THINK	# Analize board & check win (not AI)
+	BZF	B-ERROR	# Game was already over
+	CA	HUMANTURN
+	EXTEND
+	BZF	B-ERROR	# Keyboard locked due to pending CPU move.
+	TCR	PLAYHERE	# Play Humans move
+	CA	CPUPLAYER # If a 2 player game, skip the CPU player.
+	EXTEND
+	BZF	B-END
+
+	CA	TURN
+	EXTEND
+	BZF	B-END	# Game over after human played
+	CA	ZEROREG
+	TS	HUMANTURN
+	TCR	COMPON
+	TCR	CALLT6
 
 B-END	DXCH	ARUPT	# Restore registers
 	EXTEND
@@ -361,12 +395,49 @@ B-END	DXCH	ARUPT	# Restore registers
 B-ERROR	CA	OPR-ERR	# Turn on OPR-ERR lamp
 	EXTEND
 	WOR	LAMP163
-	CAF	T6-1SEC	# Schedule T6RUPT in 1 second to turn off OPR-ERR
+	TCR	CALLT6
+	TCF	B-END
+
+
+# Function to schedule T6RUPT in 1 second.
+# No inputs or outputs.
+CALLT6	CAF	T6-1SEC
 	TS	TIME6
 	CA	T6START
 	EXTEND
 	WOR	IO-13
-	TCF	B-END
+	RETURN
+
+# Function to turn COMP ACTY light on or off
+# No inputs or outputs.
+COMPON	CA	COMPBIT
+	EXTEND
+	WOR	IO-11
+	RETURN
+
+COMPOFF	CA	COMPBIT
+	COM
+	EXTEND
+	WAND	IO-11
+	RETURN
+
+
+# Function to play in a cell.
+# Input: L is the cell number to play.  No outputs.
+PLAYHERE	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QPLAYHERE
+	CA	TURN
+	INDEX	L
+	TS	BOARD
+	COM		# Flip TURN value (+ <-> -), here bc after updating BOARD val &
+	TS	TURN	# before drawing board so VERB can show whose turn it is
+	EXTEND		# Decrement the number of remaining moves.
+	DIM	CNTDOWN
+	TCR	DRAW
+	TCR	THINK	# Analyze board & check win (not AI)
+	CA	QPLAYHERE	# Restore Q
+	TS	Q
+	RETURN
 
 
 # Function to check for winning condition.  Ends game if needed.
@@ -418,10 +489,10 @@ T-DONE	CA	ZEROREG
 	TS	Q
 	RETURN
 
-T-FULL	TCR	T-OVER
+T-FULL	TCR	T-OVER	# The board is completely full (tie or win)
 	TCF	T-DONE
 
-T-WIN	TCR	T-OVER
+T-WIN	TCR	T-OVER	# A player has won, modify current line to blink
 	INDEX	L
 	CA	CHECK1
 	TCR	T-MOD
@@ -462,16 +533,41 @@ T-MOD	TS	CALC	# For the cell specified in A, signal it to blink if not blank.
 T-MODEND	RETURN
 
 
+# Function to compute the CPU player's move.
+# No inputs or outputs.
+CPUPLAY	CA	TURN	# Bail if game is over
+	EXTEND
+	BZF	CPUOVER
+	CA	Q	# Save return pointer, cuz of TCRs
+	TS	QCPUPLAY
+PLAYRAND	INDEX	RAND9	# Out of good ideas, just play randomly.
+	CA	BOARD
+	EXTEND
+	BZF	PLAYFREE	# If cell is not empty, step the random number
+RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
+	TCF	RANDSTOR2	# RAND9 > 0 (A = RAND9-1)
+	CAF	EIGHT	# RAND9 = 0, make it 8 again
+RANDSTOR2	TS	RAND9
+	TCF	PLAYRAND
+PLAYFREE	CA	RAND9	# Found a free cell, play here.
+	TS	L
+	TCR	PLAYHERE
+	CA	QCPUPLAY	# Restore Q
+	TS	Q
+CPUOVER	RETURN
+
 # Values:
 T3-100MS	OCT	37766
 T6-1SEC	OCT	1600
 T6START	DEC	16384
+TRUE	DEC	1
 FIVE	DEC	5
 EIGHT	DEC	8
 NINE	DEC	9
 CSHIFT	DEC	32
 OPR-ERR	DEC	64
 PROGBIT	DEC	256
+COMPBIT	DEC	2
 # Values for Board:
 PLAYERX	DEC	2	# X
 PLAYERXB	DEC	1	# X (blinking)
@@ -535,6 +631,7 @@ TIME6	=	31
 DSPL10	=	010
 LAMP163	=	0163
 KEY15	=	015
+IO-11	=	011
 IO-13	=	013
 # Address Locations
 RAND9	=	061	# Address for random number
@@ -552,7 +649,11 @@ BOARD9	=	073
 QGAMEINI	=	074
 QDRAW	=	075
 QTHINK	=	076
-CALC	=	077	# Local scratchpad (ran out of free registers)
-DOBLINK	=	100	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
-CNTDOWN	=	101	# Countdown of moves from 9 to 0.  Game ends at 0.
-CPUPLAY	=	102	# If Computer has to play (0 = False, -2 as player O)
+QCPUPLAY	=	077
+QPLAYHERE	=	100
+CALC	=	101	# Local scratchpad (ran out of free registers)
+DOBLINK	=	102	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
+CNTDOWN	=	103	# Countdown of moves from 9 to 0.  Game ends at 0.
+CPUPLAYER	=	104	# If Computer has to play (0 = False, 1 is player O)
+HUMANTURN	=	105	# Waiting for human (1), or computer player is scheduled to play within a second (0).
+STARTPYR	=	106	# Which player (2 = X, -2 = O) starts the game.
