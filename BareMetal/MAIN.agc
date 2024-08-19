@@ -137,6 +137,9 @@ START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
 	EXTEND
 	WRITE	LAMP163	################################ #TODO# WOR or so
 	TCR	GAMEINI	# Clear BOARD values
+	CA	PLAYERO
+	TS	CPUPLAY	# Set CPUPLAY to O
+	TCR	PROGLAMP	# DSKY PROG light
 	CA	ZEROREG	# Initialize RAND9 to zero
 	TS	RAND9
 LOOP	CCS	RAND9	# CCS instead of BZF, fewer steps
@@ -255,7 +258,7 @@ DRAW	CA	Q	# Save return pointer, cuz of TCRs
 	AD	PAIR3
 	EXTEND
 	WRITE	DSPL10
-	# Pair 2 has digit 33 (board positioBOARDn 2)
+	# Pair 2 has digit 33 (board position 2)
 	CA	BOARD2
 	TCR	CELLVAL
 	AD	PAIR2
@@ -272,10 +275,26 @@ DRAW	CA	Q	# Save return pointer, cuz of TCRs
 	RETURN
 
 
+# Function to turn on or off the Prog lamp, controlled by 'CPUPLAY'
+# No inputs or outputs.
+PROGLAMP	CA	CPUPLAY
+	EXTEND
+	BZF	LAMPOFF
+	CA	PAIR12
+	AD	PROGBIT
+	TCF	LAMPSEND
+LAMPOFF	CA	PAIR12
+LAMPSEND	EXTEND
+	WRITE	DSPL10
+	RETURN
+
+
 # Interrupt called when button pushed.  Handle the keystroke.
 # No inputs or outputs.
 KEYRUPT1	CA	NINE
 	TS	Q
+	CA	EIGHT
+	TS	CALC
 	EXTEND
 	READ	KEY15	# Read DSKY keystrokes (io channel 015)
 	TS	L
@@ -286,10 +305,28 @@ KEYRUPT1	CA	NINE
 	EXTEND
 	SU	Q	# Check if is 18 (RSET btn)
 	EXTEND
-	BZF	RSET
+	BZF	BTNRSET
+	EXTEND
+	SU	CALC	# Check if is 26 (+ btn)
+	EXTEND
+	BZF	BTN2PL
+	EXTEND
+	DIM	A	# Check if is 27 (- btn)
+	EXTEND
+	BZF	BTN1PL
 	TCF	B-ERROR
 
-RSET	TCR	GAMEINI
+BTNRSET	TCR	GAMEINI
+	TCF	B-END
+
+BTN2PL	CA	ZEROREG
+	TS	CPUPLAY	# Set to Zero, no CPU play
+	TCR	PROGLAMP	# DSKY PROG light
+	TCF	B-END
+
+BTN1PL	CA	PLAYERO
+	TS	CPUPLAY	# Set CPUPLAY to O
+	TCR	PROGLAMP	# DSKY PROG light
 	TCF	B-END
 
 BTN1-9	INDEX	L
@@ -395,6 +432,14 @@ T-WIN	TCR	T-OVER
 	WOR	IO-13
 	TCF	T-NEXT
 
+T-OVER	CA	ZEROREG	# Set TURN for Game Over
+	TS	TURN
+	CA	DISPLAY-	# Blank the Prog turn display
+	AD	PAIR11
+	EXTEND
+	WRITE	DSPL10
+	RETURN
+
 
 # Function to modify a cell to blink if not blank.
 # Input: A is cell index.  No outputs.
@@ -410,13 +455,6 @@ T-MOD	TS	CALC	# For the cell specified in A, signal it to blink if not blank.
 	TS	BOARD	# Set BOARD to blink (-1/1)
 T-MODEND	RETURN
 
-T-OVER	CA	ZEROREG	# Set TURN for Game Over
-	TS	TURN
-	CA	DISPLAY-	# Blank the Prog turn display
-	AD	PAIR11
-	EXTEND
-	WRITE	DSPL10
-	RETURN
 
 # Values:
 T3-100MS	OCT	37766
@@ -427,6 +465,7 @@ EIGHT	DEC	8
 NINE	DEC	9
 CSHIFT	DEC	32
 OPR-ERR	DEC	64
+PROGBIT	DEC	256
 # Values for Board:
 PLAYERX	DEC	2	# X
 PLAYERXB	DEC	1	# X (blinking)
@@ -436,9 +475,10 @@ PLAYEROB	DEC	-1	# O (blinking)
 DISPLAYX	DEC	3	# DSKY code for '1'
 DISPLAYO	DEC	21	# DSKY code for '0'
 DISPLAY-	DEC	0	# DSKY code for ' '
-# IO Values for Pair
-PAIR11	OCT	54000	# Prog pair
-PAIR8	OCT	40000	# DSKY digit pair address
+# IO Values for DSKY pairs
+PAIR12	OCT	60000	# Status lamp address
+PAIR11	OCT	54000	# Prog 7-segment pair address
+PAIR8	OCT	40000	# DSKY 7-segment pair addresses
 PAIR7	OCT	34000
 PAIR6	OCT	30000
 PAIR5	OCT	24000
@@ -509,3 +549,4 @@ QTHINK	=	076
 CALC	=	077	# Local scratchpad (ran out of free registers)
 DOBLINK	=	100	# Global flag indicating that a blink out is needed (1=blink, 0=undo blink)
 CNTDOWN	=	101	# Countdown of moves from 9 to 0.  Game ends at 0.
+CPUPLAY	=	102	# If Computer has to play (0 = False, -2 as player O)
