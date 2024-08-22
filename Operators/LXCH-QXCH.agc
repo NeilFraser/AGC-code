@@ -8,7 +8,7 @@
 
 		CAF TEN		# Load 10 into 'A' register.
 		TS L		# Store 10 to 'L' register.
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		TS Q		# Store 5 to 'Q' register.
 		NOOP		# 'L' is 10, 'Q' is 5.
 

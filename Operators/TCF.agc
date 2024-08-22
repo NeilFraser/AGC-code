@@ -7,5 +7,5 @@
 
 START		EXTEND
 		AUG 0		# Increment the 'A' register (address 0).
-		TCF START	# Infinite loop.
+		TCF START		# Infinite loop.
 

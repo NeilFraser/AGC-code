@@ -341,22 +341,23 @@ KEYRUPT1	CA	NINE
 	EXTEND
 	READ	KEY15	# Read DSKY keystrokes (io channel 015)
 	TS	L
-	EXTEND
-	SU	Q	# Check if btn is 1-9
+	EXTEND		# Subtract 9.  Check if btn is 1-9
+	SU	Q
 	EXTEND
 	BZMF	BTN1-9
-	EXTEND
-	SU	Q	# Check if is 18 (RSET btn)
+	EXTEND		# Subtract 9.  Check if is 18 (RSET btn)
+	SU	Q
 	EXTEND
 	BZF	BTNRSET
-	EXTEND
-	SU	CALC	# Check if is 26 (+ btn)
-	EXTEND
-	BZF	BTN2PL
-	EXTEND
-	DIM	A	# Check if is 27 (- btn)
+	EXTEND		# Subtract 8.  Check if is 26 (+ btn)
+	SU	CALC
 	EXTEND
 	BZF	BTN1PL
+	AD	EIGHT	# Subtract 1 (+8,-9).  Check if is 27 (- btn)
+	EXTEND
+	SU	Q
+	EXTEND
+	BZF	BTN2PL
 	TCF	B-ERROR
 
 BTNRSET	TCR	GAMEINI
@@ -384,7 +385,7 @@ BTN-FREE	CA	TURN
 	CA	HUMANTURN
 	EXTEND
 	BZF	B-ERROR	# Keyboard locked due to pending CPU move.
-	TCR	PLAYHERE	# Play Humans move
+	TCR	PLAYHERE	# Play Human's move
 	CA	CPUPLAYER # If a 2 player game, skip the CPU player.
 	EXTEND
 	BZF	B-END
@@ -572,8 +573,7 @@ RANDSTEP	CCS	RAND9	# CCS instead of BZF, fewer steps
 RANDSTOR2	TS	RAND9
 	TCF	PLAYRAND
 PLAYFREE	CA	RAND9	# Found a free cell, play here.
-	EXTEND
-	AUG	A	# RAND9 is 0-8, the board is 1-9.
+	INCR	A	# RAND9 is 0-8, the board is 1-9.
 PLAYSPOT	TS	L
 	TCR	PLAYHERE
 	CA	TRUE	# Human turn next.

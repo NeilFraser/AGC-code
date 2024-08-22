@@ -7,12 +7,12 @@
 				# Positive numbers decrement.
 				# Negative numbers increment.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		EXTEND
 		DIM A		# Diminish the 'A' register.
 		NOOP		# 'A' register now contains 4.
 
-		CAF -TEN	# Load -10 into 'A' register (65525).
+		CAF -TEN		# Load -10 into 'A' register (65525).
 		EXTEND
 		DIM A		# Diminish the 'A' register.
 		NOOP		# 'A' register now contains -9 (65526).

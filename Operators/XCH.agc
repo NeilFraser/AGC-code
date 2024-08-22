@@ -5,9 +5,9 @@
 
 				# XCH swaps the 'A' register and memory.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		TS 1234		# Load 5 into memory.
-		CAF SIX 	# Load 6 into 'A' register.
+		CAF SIX 		# Load 6 into 'A' register.
 
 		XCH 1234
 		NOOP		# 'A' register now contains 5.

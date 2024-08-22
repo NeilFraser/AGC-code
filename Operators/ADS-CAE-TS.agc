@@ -7,10 +7,10 @@
 				# ADS adds the 'A' register to memory.
 				# CAE loads memory to the 'A' register.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		TS MEMORY 	# Store 5 into a memory location.
 
-		CAF SIX 	# Load 6 into 'A' register.
+		CAF SIX 		# Load 6 into 'A' register.
 		ADS MEMORY	# Add 6 into the memory location.
 
 		CAE MEMORY	# Load memory the memory location back into 'A' register.

@@ -5,7 +5,7 @@
 
 				# DOUBLE multiplies the 'A' register by 2.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		DOUBLE		# Add 'A' register to itself.
 		NOOP		# 'A' register now contains 10.
 

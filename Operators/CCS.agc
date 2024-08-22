@@ -8,7 +8,7 @@
 		CAF TWO		# Load 2 into 'A' register.
 		TS L
 
-LOOPDOWN	CCS L
+LOOPDOWN		CCS L
 		TCF DIMDOWN	# Positive
 		NOOP		# +0 (Never reached)
 		NOOP		# Negative
@@ -18,14 +18,14 @@ DIMDOWN		EXTEND
 		TCF LOOPDOWN
 ENDDOWN		NOOP
 
-		CAF -TWO	# Load -2 into 'A' register (65533).
+		CAF -TWO		# Load -2 into 'A' register (65533).
 		TS L
 
 LOOPUP		CCS L
 		NOOP		# Positive
 		NOOP		# +0 (Never reached)
-		TCF DIMUP	# Negative
-		TCF ENDUP	# -0 (End of loop)
+		TCF DIMUP		# Negative
+		TCF ENDUP		# -0 (End of loop)
 DIMUP		EXTEND
 		DIM L
 		TCF LOOPUP

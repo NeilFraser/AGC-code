@@ -9,7 +9,7 @@
 		NOOP		# 2050 <- Jump point.
 		NOOP		# 2051
 
-		CAF ADDR	# Load 5 into 'A' register.
+		CAF ADDR		# Load 5 into 'A' register.
 		TCAA		# Add 6 to 'A' register.
 
 ADDR		DEC	2050

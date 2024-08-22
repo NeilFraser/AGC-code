@@ -7,11 +7,11 @@
 				# Positive numbers increment.
 				# Negative numbers increment.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		INCR A		# Diminish the 'A' register.
 		NOOP		# 'A' register now contains 6.
 
-		CAF -TEN	# Load -10 into 'A' register (65525).
+		CAF -TEN		# Load -10 into 'A' register (65525).
 		INCR A		# Diminish the 'A' register.
 		NOOP		# 'A' register now contains -9 (65526).
 

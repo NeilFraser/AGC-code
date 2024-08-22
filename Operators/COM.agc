@@ -5,9 +5,9 @@
 
 				# COM negates the 'A' register.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		COM		# Negate.
-		NOOP		# 'A' register now contains -5 (32762).
+		NOOP		# 'A' register now contains -5 (65530).
 		COM		# Negate.
 		NOOP		# 'A' register now contains 5.
 

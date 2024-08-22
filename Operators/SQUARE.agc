@@ -5,7 +5,7 @@
 
 				# SQUARE multiplies the 'A' register by itself.
 
-		CAF FIVE	# Load 5 into 'A' register.
+		CAF FIVE		# Load 5 into 'A' register.
 		EXTEND
 		SQUARE		# Square 'A' register.
 		NOOP		# 'A' is 0, 'L' is 25.
