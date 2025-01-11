@@ -128,23 +128,24 @@ BUTTON	INDEX	RAND6	# get correct display num for what is in Rand6
 
 
 NUMDATA0	DEC	12291	# display 1
-	DEC	12313	# display 2
-	DEC	12315	# display 3
-	DEC	12303	# display 4
-	DEC	12318	# display 5
-	DEC	12316	# display 6
-	DEC	12307	# display 7; not used
-	DEC	12317	# display 8; not used
-	DEC	12319	# display 9; not used
-	DEC	12309	# display 0; not used
+		DEC	12313	# display 2
+		DEC	12315	# display 3
+		DEC	12303	# display 4
+		DEC	12318	# display 5
+		DEC	12316	# display 6
+		DEC	12307	# display 7; not used
+		DEC	12317	# display 8; not used
+		DEC	12319	# display 9; not used
+		DEC	12309	# display 0; not used
 NUMBLANK	DEC	12288	# display _
 
+# Constants.
 NOLIGHTS	DEC	0
-NEWJOB	EQUALS	67
-FIVE	DEC	5
-RAND6	=	1234	# some EB location
-ARUPT	EQUALS	10
-TIME3	EQUALS	26
+NEWJOB		=	67
+FIVE		DEC	5
+RAND6		=	1234	# some EB location
+ARUPT		=	10
+TIME3		=	26
 T3-100MS	OCT	37766
-ZEROREG	=	07	# Zero register.
-A	=	0	# A register.
+ZEROREG		=	07	# Zero register.
+A		=	0	# A register.
