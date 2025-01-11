@@ -11,7 +11,7 @@
 	SETLOC	4000
 
 	# Power up
-	CA		100MS
+	CA		100MS	# Schedule T5 soon.
 	TS		T5
 	TC		START
 	NOOP
@@ -24,7 +24,7 @@
 
 	# T5 (interrupt #2)
 	XCH		ARUPT
-	CAF		100MS
+	CAF		100MS	# Reschedule T5 soon.
 	TS		T5
 	TC		T5RUPT
 
@@ -76,19 +76,20 @@
 	NOOP
 	NOOP
 
-T5RUPT	XCH ARUPT
-		CA NEWJOB
-		RESUME
+T5RUPT	CA NEWJOB	# Tickle the night watchman.
+	XCH ARUPT
+	RESUME
 
 
-START	CA ZERO
-		TS 1234
+START	CA ZERO		# A simple loop that counts in memory.
+	TS 1234
 LOOP	EXTEND
-		AUG 1234
-		TC LOOP
+	AUG 1234
+	TC LOOP
 
+# Constants.
 ZERO	= 7
 NEWJOB	= 67
-T5		= 30
+T5	= 30
 100MS	OCT	37766
 ARUPT	= 10
