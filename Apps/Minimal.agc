@@ -1,3 +1,13 @@
+# Copyright:	Public domain.
+# Filename:	Minimal.agc
+# Purpose:	Demonstrating a minimal AGC program that
+#		counts in memory.  Handles all the alarms
+#		which cause reboots.
+# Assembler:	yaYUL
+# Contact:	Lena Ku <lenaku@163.com>
+# Contact:	Neil Fraser <agc@neil.fraser.name>
+
+# Interrupts, must have 4 lines per interrupt
 	SETLOC	4000
 
 	# Power up
