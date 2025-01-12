@@ -21,9 +21,38 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<UnitsGlob directory="./" recursive="1"/>
+		<UnitsGlob directory="./" recursive="1" wildcard="" />
+		<Unit filename="../Apps/Minimal.agc" />
+		<Unit filename="../Apps/Random-Die.agc" />
+		<Unit filename="../Apps/TicTacToe-2P.agc" />
+		<Unit filename="../Apps/TicTacToe.agc" />
+		<Unit filename="../Operators/AD.agc" />
+		<Unit filename="../Operators/ADS-CAE-TS.agc" />
+		<Unit filename="../Operators/AUG.agc" />
+		<Unit filename="../Operators/BZF.agc" />
+		<Unit filename="../Operators/BZMF.agc" />
+		<Unit filename="../Operators/CA.agc" />
+		<Unit filename="../Operators/CAF.agc" />
+		<Unit filename="../Operators/CCS.agc" />
+		<Unit filename="../Operators/COM.agc" />
+		<Unit filename="../Operators/CS.agc" />
+		<Unit filename="../Operators/DIM.agc" />
+		<Unit filename="../Operators/DOUBLE.agc" />
+		<Unit filename="../Operators/DV.agc" />
+		<Unit filename="../Operators/INCR.agc" />
+		<Unit filename="../Operators/LXCH-QXCH.agc" />
+		<Unit filename="../Operators/MP.agc" />
+		<Unit filename="../Operators/NOOP.agc" />
+		<Unit filename="../Operators/SQUARE.agc" />
+		<Unit filename="../Operators/SU.agc" />
+		<Unit filename="../Operators/TCAA.agc" />
+		<Unit filename="../Operators/TCF.agc" />
+		<Unit filename="../Operators/TCR-RETURN.agc" />
+		<Unit filename="../Operators/XCH.agc" />
 		<Extensions>
 			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="8" indent="8" eol_mode="2" />
+			<code_completion />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
