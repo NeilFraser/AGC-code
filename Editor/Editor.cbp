@@ -24,7 +24,6 @@
 		<UnitsGlob directory="./" recursive="1" wildcard="" />
 		<Unit filename="../Apps/Minimal.agc" />
 		<Unit filename="../Apps/Random-Die.agc" />
-		<Unit filename="../Apps/TicTacToe-2P.agc" />
 		<Unit filename="../Apps/TicTacToe.agc" />
 		<Unit filename="../Operators/AD.agc" />
 		<Unit filename="../Operators/ADS-CAE-TS.agc" />
