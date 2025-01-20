@@ -9,8 +9,8 @@
 		NOOP		# 2050 <- Jump point.
 		NOOP		# 2051
 
-		CAF ADDR		# Load 5 into 'A' register.
-		TCAA		# Add 6 to 'A' register.
+		CAF ADDR		# Load 2050 into 'A' register.
+		TCAA		# Transfer control to 'A' register address.
 
 ADDR		DEC	2050
 Z		=	05	# "TCAA" actually compiles to "TS Z", so "Z" is needed.
