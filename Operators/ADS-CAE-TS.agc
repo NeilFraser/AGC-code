@@ -14,7 +14,7 @@
 		ADS MEMORY	# Add 6 into the memory location.
 
 		CAE MEMORY	# Load memory the memory location back into 'A' register.
-		NOOP		# 'A' regsiter now contains 11.
+		NOOP		# 'A' register now contains 11.
 
 END		TCF END
 

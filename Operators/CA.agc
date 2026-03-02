@@ -7,7 +7,7 @@
 
 		CAF FIVE		# Load 5 into 'A' register.
 		CA ZERO		# Clear and add 0 into 'A' register.
-		NOOP		# 'A' regsiter now contains 0.
+		NOOP		# 'A' register now contains 0.
 
 END		TCF END
 

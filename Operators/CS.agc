@@ -7,7 +7,7 @@
 
 		CS TWO		# Load -2 into 'A' register (65533).
 		AD FIVE		# Add 5 to 'A' register.
-		NOOP		# 'A' regsiter now contains 3.
+		NOOP		# 'A' register now contains 3.
 
 END		TCF END
 
