@@ -13,7 +13,7 @@
 	# Power up
 	CA		100MS	# Schedule T5 soon.
 	TS		T5
-	TC		START
+	TCF		START
 	NOOP
 
 	# T6 (interrupt #1)
@@ -26,7 +26,7 @@
 	XCH		ARUPT
 	CAF		100MS	# Reschedule T5 soon.
 	TS		T5
-	TC		T5RUPT
+	TCF		T5RUPT
 
 	# T3 (interrupt #3)
 	RESUME
@@ -85,11 +85,11 @@ START	CA ZERO		# A simple loop that counts in memory.
 	TS 1234
 LOOP	EXTEND
 	AUG 1234
-	TC LOOP
+	TCF LOOP
 
 # Constants.
-ZERO	= 7
-NEWJOB	= 67
-T5	= 30
+ZERO	=	7
+NEWJOB	=	67
+T5	=	30
 100MS	OCT	37766
-ARUPT	= 10
+ARUPT	=	10
