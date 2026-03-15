@@ -75,34 +75,54 @@
 		NOOP
 		NOOP
 
-START		# Display a 88.
-		CA	NUM8
-		TS	DIGIT1
-		CA	NUM8
-		TS	DIGIT2
+START		CA	NUM0		# Initializations.
+		TS	STACKPTR	# Stack pointer to zero.
+		TS	RAND		# Current random number to zero.
+		CA	NUM1		# Random number range = 0-1.
+		TS	RANDMAX
+
+		# Set RANDMAX to 9
+		CA	NUM7
+		TS	RANDMAX
+
+		# Display a 00.
 		CA	D14-15
-		TS	DSKYPAIR
+		TCR	PUSH
+		CA	NUM0
+		TCR	PUSH
+		CA	NUM0
+		TCR	PUSH
 		TCR	DISPLAY
+
 		# Wait a second.
 		CA	NUM100
-		TS	SLEEPCS
+		TCR	PUSH
 		TCR	SLEEP
+
 		# Display a 11.
-		CA	NUM1
-		TS	DIGIT1
-		CA	NUM1
-		TS	DIGIT2
 		CA	D14-15
-		TS	DSKYPAIR
+		TCR	PUSH
+		# Fetch random number.
+		CA	RAND
+		TCR	PUSH
+		# Fetch random number.
+		CA	RAND
+		TCR	PUSH
 		TCR	DISPLAY
+
 		# Wait a second.
 		CA	NUM100
-		TS	SLEEPCS
+		TCR	PUSH
 		TCR	SLEEP
 		TCF	START
 
 
 T5RUPT		CA	NEWJOB	# Tickle the night watchman.
+		# Step the random number (down to zero, wrapping up).
+		CCS	RAND
+		TCF	T5RAND	# RAND > 0 (A = RAND-1)
+		CAE	RANDMAX	# RAND = 0, make it RANDMAX again
+T5RAND		TS	RAND	# Save new num to RAND
 		XCH	ARUPT
 		RESUME
 
@@ -112,12 +132,22 @@ WAKEUP		XCH	ARUPT
 
 
 # Function that sleeps for the duration of SLEEPCS.
-# SLEEPCS is in 100ths of a second, thus 100 is 1 second.
-SLEEP		CA	10MS
-		EXTEND
-		SU	SLEEPCS
+# Arguments:
+# 	Delay in 100ths of a second, thus 100 is 1 second.
+SLEEP		EXTEND
+		QXCH	QPOP
+		TCR	POP	# Pop the delay from the stack.
+		TS	L
+		# We want to load 2^14 (40,000 oct).  But doing so gets treated
+		# as a negative number since it uses the 15th bit.
+		# Workaround: load 2^14-1, then increment.
+		CA	10MS
 		INCR	A
+		EXTEND
+		SU	L
 		TS	T4
+		EXTEND
+		QXCH	QPOP
 
 		# Set SLEEPING to any non-zero value as a flag.
 		# 'A' happens to be a non-zero number, so use that.
@@ -131,30 +161,53 @@ SLEEPEND	RETURN
 
 
 # Function that displays a pair of digits on the DSKY.
-# DIGIT1 and DIGIT2 are the two digits.
-DISPLAY 	INDEX	DIGIT1
+# Arguments:
+#	Position of pair on DSKY.
+#	Second digit.
+#	First digit.
+DISPLAY 	EXTEND
+		QXCH	QPOP
+		TCR	POP	# Pop first digit from stack.
+		INDEX	A
 		CA	DSKYDIG
 		EXTEND
 		MP	DSKYC2D	# Stored in L
-		CA	L
-		INDEX	DIGIT2
-		AD	DSKYDIG
-		AD	D14-15  # TODO: USE DKSYPAIR
+		TCR	POP	# Pop second digit from stack.
+		INDEX	A
+		CA	DSKYDIG
+		ADS	L
+		TCR	POP	# Pop DSKY pair position from stack.
+		AD	L
 		EXTEND
 		WRITE	010
+		EXTEND
+		QXCH	QPOP
         	RETURN
 
+# Push the contents of the 'A' register onto the stack.
+PUSH		INCR	STACKPTR
+		INDEX	STACKPTR
+		TS	STACK
+		RETURN
+
+# Pop the last value on the stack into the 'A' register.
+POP		INDEX	STACKPTR
+		CAE	STACK
+		EXTEND
+		DIM	STACKPTR
+		RETURN
 
 # Variables in memory.
-SLEEPING	=	061
-SLEEPCS		=	062
-DIGIT1		=	063
-DIGIT2		=	064
-DSKYPAIR	=	065
+SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
+RAND		=	062	# Random number (0 to RANDMAX inc)
+RANDMAX		=	063	# Maximum possible random number.
+QPOP		=	100	# Temporary spot for Q.
+STACKPTR	=	101	# Stack pointer.
+STACK		=	102	# Start of the stack.
 
 # Constants.
-10MS		OCT	37777	# 2^14, the overflow of T4
-100MS		OCT	37766	# 2^14-10, 100 ms
+10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
+100MS		OCT	37766	# 2^14-10 is 100 ms to T4/T5 overflow.
 
 NUM1	DEC	1
 NUM2	DEC	2

@@ -109,17 +109,17 @@ START
 	WRITE	010	# write to display (io channel oct 10) !weird bin for numbers! check developer.html
 
 	CA	ZEROREG	# Set A to Zero
-	TS	RAND6	# Set Rand6 to Zero(A)
+	TS	RAND6	# Set RAND6 to Zero(A)
 
 
 LOOP	CCS	RAND6
 	TCF	STEP	# RAND6 > 0 (A = RAND6-1)
 	CAF	FIVE	# RAND6 = 0, make it 5 again
-STEP	TS	RAND6	# Safe new num to Rand6
+STEP	TS	RAND6	# Save new num to RAND6
 	TCF	LOOP	# Loop again (to constantly get new num)
 
 
-BUTTON	INDEX	RAND6	# get correct display num for what is in Rand6
+BUTTON	INDEX	RAND6	# get correct display num for what is in RAND6
 	CAF	NUMDATA0
 	EXTEND
 	WRITE	010	# write to display (io channel oct 10) !weird bin for numbers! check developer.html
