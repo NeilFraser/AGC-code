@@ -5,3 +5,4 @@
 *.bin
 *.symtab
 core
+.vscode

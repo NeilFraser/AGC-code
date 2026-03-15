@@ -116,7 +116,7 @@ LOOP	CCS	RAND6
 	TCF	STEP	# RAND6 > 0 (A = RAND6-1)
 	CAF	FIVE	# RAND6 = 0, make it 5 again
 STEP	TS	RAND6	# Safe new num to Rand6
-	TCF	LOOP	# Loop again (to contantly get new num)
+	TCF	LOOP	# Loop again (to constantly get new num)
 
 
 BUTTON	INDEX	RAND6	# get correct display num for what is in Rand6
@@ -124,7 +124,7 @@ BUTTON	INDEX	RAND6	# get correct display num for what is in Rand6
 	EXTEND
 	WRITE	010	# write to display (io channel oct 10) !weird bin for numbers! check developer.html
 	XCH	ARUPT
-	RESUME		# resume last program (in this case no other interupts; so to START)
+	RESUME		# resume last program (in this case no other interrupts; so to START)
 
 
 NUMDATA0	DEC	12291	# display 1

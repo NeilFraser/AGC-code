@@ -248,7 +248,7 @@ CELL-	CA	DISPLAY-	# Draw blank
 # No inputs or outputs.
 DRAW	CA	Q	# Save return pointer, cuz of TCRs
 	TS	QDRAW
-	# Pair 11 PROG to indicate whos turn it is #TODO# COMP ACTY if computers turn
+	# Pair 11 PROG to indicate whose turn it is #TODO# COMP ACTY if computers turn
 	CA	TURN
 	TCR	CELLVAL
 	AD	PAIR11
