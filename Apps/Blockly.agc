@@ -37,7 +37,7 @@
 		XCH		ARUPT
 		CA		NUM0		# Clear SLEEPING flag.
 		TS		SLEEPING
-		TCF		WAKEUP
+		TCF		T4WAKEUP
 
 		# DSKY1 (interrupt #5)
 		RESUME
@@ -127,7 +127,7 @@ T5RAND		TS	RAND	# Save new num to RAND
 		RESUME
 
 
-WAKEUP		XCH	ARUPT
+T4WAKEUP	XCH	ARUPT
 		RESUME
 
 
@@ -143,9 +143,9 @@ SLEEP		EXTEND
 		# Workaround: load 2^14-1, then increment.
 		CA	10MS
 		INCR	A
-		EXTEND
+		EXTEND		# Subtract the desired delay.
 		SU	L
-		TS	T4
+		TS	T4	# Set the interrupt timer
 		EXTEND
 		QXCH	QPOP
 
@@ -184,18 +184,83 @@ DISPLAY 	EXTEND
 		QXCH	QPOP
         	RETURN
 
+
+# The six equality operators start by pushing two values on the stack.
+# Then several chained calls are made depending on which operator is needed.
+# In all cases, if 0 is returned on the A register, then the operator is true.
+# Calls for '==':
+# 	TCR	OP-EQ
+# Calls for '!=':
+# 	TCR	OP-EQ
+# 	TCR	OP-NEG
+# Calls for '<=':
+# 	TCR	OP-EQ
+# 	TCR	OP-LTE
+# Calls for '>=':
+# 	TCR	OP-EQ
+# 	TCR	OP-GTE
+# Calls for '<':
+# 	TCR	OP-EQ
+# 	TCR	OP-GTE
+# 	TCR	OP-NEG
+# Calls for '>':
+# 	TCR	OP-EQ
+# 	TCR	OP-LTE
+# 	TCR	OP-NEG
+
+
+# Base equality operator.
+# Arguments:
+#       First value.
+#       Second value.
+# Returns (on A):
+#	Zero if equal.
+#	Positive if first < second.
+#	Negative if first > second.
+OP-EQ		EXTEND
+		QXCH	QPOP
+		TCR	POP	# Pop the second value.
+		# Subtract the first value on the stack from the second value.
+		EXTEND
+		INDEX	STACKPTR
+		SU	STACK
+		TCR	DROP	# Throw away the first value.
+		EXTEND
+		QXCH	QPOP
+		RETURN
+
+# Suffix functions to OP-EQ.
+# OP-LTE returns 0 if first '<=' second.
+# OP-GTE returns 0 if first '>=' second.
+OP-LTE		COM
+OP-GTE		EXTEND
+		BZMF	OP-0	# Return with 0.
+		TCF	OP-1	# Return with 1.
+
+# Suffix function to OP-EQ, OP-LTE and OP-GTE.  Reverses zero and non-zero.
+OP-NEG		EXTEND
+		BZF	OP-1
+OP-0		CA	NUM0
+		RETURN
+OP-1		CA	NUM1
+		RETURN
+
+
 # Push the contents of the 'A' register onto the stack.
 PUSH		INCR	STACKPTR
 		INDEX	STACKPTR
 		TS	STACK
 		RETURN
 
-# Pop the last value on the stack into the 'A' register.
+
+# POP: Pop the last value on the stack into the 'A' register.
+# DROP: Drop the last value without returning it.
 POP		INDEX	STACKPTR
 		CAE	STACK
-		EXTEND
+DROP		EXTEND
 		DIM	STACKPTR
 		RETURN
+
 
 # Variables in memory.
 SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
