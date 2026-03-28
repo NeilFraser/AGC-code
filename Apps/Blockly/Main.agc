@@ -81,8 +81,7 @@ START		CA	NUM0
 		TS	STACKPTR
 
 # Unit tests.
-$Boolean-test.agc
-$Math-test.agc
+$Test.agc
 
 		# Wait a second.
 		CA	NUM100
@@ -150,6 +149,7 @@ SLEEPEND	RETURN
 
 
 # Push the contents of the 'A' register onto the stack.
+# No registers are affected.
 PUSH		INCR	STACKPTR
 		INDEX	STACKPTR
 		TS	STACK
@@ -176,24 +176,24 @@ STACK		=	064	# Start address of stack (minus one).
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
 100MS		OCT	37766	# 2^14-10 is 100 ms to T4/T5 overflow.
 
-NUM1	DEC	1
-NUM2	DEC	2
-NUM3	DEC	3
-NUM4	DEC	4
-NUM5	DEC	5
-NUM6	DEC	6
-NUM7	DEC	7
-NUM8	DEC	8
-NUM9	DEC	9
-NUM100	DEC	100
+NUM1		DEC	1
+NUM2		DEC	2
+NUM3		DEC	3
+NUM4		DEC	4
+NUM5		DEC	5
+NUM6		DEC	6
+NUM7		DEC	7
+NUM8		DEC	8
+NUM9		DEC	9
+NUM100		DEC	100
 
 # System Address Locations
-A	=	00
-L	=	01
-Q	=	02
-NUM0	=	07
-ARUPT	=	10
-KEY15	=	15	# I/O Channel 15 (DSKY keypad)
-T4	=	27
-T5	=	30
-NEWJOB	=	67
+A		=	00
+L		=	01
+Q		=	02
+NUM0		=	07
+ARUPT		=	10
+KEY15		=	15	# I/O Channel 15 (DSKY keypad)
+T4		=	27
+T5		=	30
+NEWJOB		=	67

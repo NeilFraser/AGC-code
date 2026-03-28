@@ -21,7 +21,7 @@ MA-AD		EXTEND
 #       First value.
 #       Second value.
 # Returns (on A):
-#	First value minus second value.
+#	Second value minus first value.
 MA-SU		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the second value.

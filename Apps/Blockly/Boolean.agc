@@ -25,6 +25,7 @@
 
 
 # Suffix functions to MA-SU.
+# Operates on the 'A' register, no need for the stack.
 # BL-GT returns 1 if first '>' second.
 # BL-LT returns 1 if first '<' second.
 BL-GT		COM
@@ -33,6 +34,7 @@ BL-LT		EXTEND
 		TCF	BL-0	# Return with 0.
 
 # Reverses zero and non-zero.
+# Operates on the 'A' register, no need for the stack.
 BL-NOT		EXTEND
 		BZF	BL-1
 BL-0		CA	NUM0
