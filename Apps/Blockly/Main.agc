@@ -4,7 +4,7 @@
 #               blocks.
 # Assembler:	yaYUL
 # Contact:	Neil Fraser <agc@neil.fraser.name>
-# Contact:	Luca Rosenberg <rosenluc@students.zhaw.ch>
+# Contact:	Luca Rosenberg <luca.rosenberg@gmail.com>
 
 # Interrupts, must have 4 lines per interrupt
 		SETLOC	4000
@@ -40,10 +40,10 @@
 		TCF		T4RUPT
 
 		# DSKY1 (interrupt #5)
-		XCH		ARUPT
-		EXTEND
-		READ		KEY15
-		TCF		KEYRUPT
+		NOOP			# Fall through to DSKY2.
+		NOOP
+		NOOP
+		NOOP
 
 		# DSKY2 (interrupt #6)
 		XCH		ARUPT
@@ -53,15 +53,15 @@
 
 		# Uplink (interrupt #7)
 		RESUME
-		NOOP
-		NOOP
-		NOOP
+KEYRUPT		TS	INPUTING	# Squeeze the remaining key handler in here.
+		XCH	ARUPT
+		RESUME
 
 		# Downlink (interrupt #8)
 		RESUME
-		NOOP
-		NOOP
-		NOOP
+T5RUPT		CA	NEWJOB		# Tickle the night watchman.
+T4RUPT		XCH	ARUPT
+		RESUME
 
 		# Radar (interrupt #9)
 		RESUME
@@ -71,9 +71,9 @@
 
 		# Hand controller (interrupt #10)
 		RESUME
-		NOOP
-		NOOP
-		NOOP
+		#NOOP	# Save three words by allowing START to move up.
+		#NOOP
+		#NOOP
 
 # Initialize the stack pointer to be 0.
 # This is the offset from the starting stack position.
@@ -98,24 +98,18 @@ $Boolean.agc
 $Math.agc
 
 
-# Interrupt handlers that are slightly too long to fit in the jump table.
-KEYRUPT		TS	INPUTING
-T5RUPT		CA	NEWJOB	# Tickle the night watchman.
-T4RUPT		XCH	ARUPT
-		RESUME
-
-
 # Function that waits for a DSKY keypress.
 # Returns (on A):
 #	Keycode of keypress.
 INPUT		CA	NUM1		# Set INPUTTING to -1
 		COM
 		TS	INPUTING
-		# Wait until INPUTTING isn't -1.
+		# Wait until INPUTING isn't -1.
 INPUT-WT	CA	INPUTING
 		INCR	A
 		EXTEND
 		BZF	INPUT-WT
+		CA	INPUTING
 		RETURN
 
 
