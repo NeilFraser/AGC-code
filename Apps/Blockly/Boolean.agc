@@ -1,3 +1,5 @@
+# Boolean functions.
+
 # The six equality operators start by pushing two values on the stack then
 # calling MA-SU followed by various chained calls are made depending on which
 # operator is needed.
@@ -69,7 +71,7 @@ BL-ORX		EXTEND
 #       First value.
 #       Second value.
 # Returns (on A):
-#	Second value if it is non-zero, otherwise first value.
+#	Second value if it is zero, otherwise first value.
 BL-AND		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the second value.

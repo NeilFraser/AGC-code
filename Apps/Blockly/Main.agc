@@ -1,5 +1,5 @@
 # Copyright:	Public domain.
-# Filename:	Blockly.agc
+# Filename:	Main.agc
 # Purpose:	Framework to enable Blockly-based programming using higher-level
 #               blocks.
 # Assembler:	yaYUL
