@@ -12,9 +12,9 @@
 	SETLOC	4000
 
 	# Power up
+	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
+	TS	TIME3
 	TCF	START
-	NOOP
-	NOOP
 	NOOP
 
 	# T6 (interrupt #1)
@@ -31,9 +31,9 @@
 
 	# T3 (interrupt #3)
 	XCH	ARUPT	# Back up A register
+	CAF	T3-100MS	# Schedule another T3RUPT in 100 ms
+	TS	TIME3
 	TCF	T3RUPT
-	NOOP
-	NOOP
 
 	# T4 (interrupt #4)
 	RESUME
@@ -80,11 +80,7 @@
 
 # Time3 interrupt every 100 ms.
 # No inputs or outputs.
-T3RUPT	CAF	T3-100MS	# Schedule another T3RUPT in 100 ms
-	TS	TIME3
-
-	CAE	NEWJOB	# Tickle NEWJOB to keep Night Watchman GOJAMs from happening
-
+T3RUPT	CAE	NEWJOB	# Tickle NEWJOB to keep Night Watchman GOJAMs from happening
 	XCH	ARUPT	# Restore A, and exit the interrupt
 	RESUME
 
@@ -151,9 +147,7 @@ T6DONE	DXCH	ARUPT	# Restore registers
 
 
 # Main program start.  Initializes, then idle loops.
-START	CA	T3-100MS	# T3RUPT in 100 ms to tickle night watchman
-	TS	TIME3
-	CAE	ZEROREG	# Disable all lamps (io channel 0163)
+START	CAE	ZEROREG	# Disable all lamps (io channel 0163)
 	EXTEND
 	WRITE	LAMP163	################################ #TODO# WOR or so
 	CA	TRUE	# Set CPUPYR to 1
