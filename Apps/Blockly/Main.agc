@@ -101,16 +101,19 @@ $Math.agc
 # Function that waits for a DSKY keypress.
 # Returns (on A):
 #	Keycode of keypress.
-INPUT		CA	NUM1		# Set INPUTTING to -1
-		COM
+INPUT		CA	NUM0		# Set INPUTTING to 0
 		TS	INPUTING
-		# Wait until INPUTING isn't -1.
+		# Wait until INPUTING isn't 0.
 INPUT-WT	CA	INPUTING
-		INCR	A
 		EXTEND
 		BZF	INPUT-WT
-		CA	INPUTING
-		RETURN
+		# Special case: '0' key encodes as 16, return as 0.
+		CA	NUM16
+		EXTEND
+		SU	INPUTING
+		BZF	INPUT-ZR	# Return 0 (which is what's in A).
+		CA	INPUTTING
+INPUT-ZR	RETURN
 
 
 # Function that sleeps for the specified duration.
@@ -179,6 +182,7 @@ NUM6		DEC	6
 NUM7		DEC	7
 NUM8		DEC	8
 NUM9		DEC	9
+NUM16		DEC	16
 NUM100		DEC	100
 
 # System Address Locations
