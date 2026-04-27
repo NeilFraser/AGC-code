@@ -12,26 +12,26 @@
 # 	TCR	MA-SU
 # Calls for '<':
 # 	TCR	MA-SU
-# 	TCR	BL-LT
+# 	TCR	BL-GTE
+# 	TCR	BL-NOT
 # Calls for '>':
 # 	TCR	MA-SU
-# 	TCR	BL-GT
+# 	TCR	BL-LTE
+# 	TCR	BL-NOT
 # Calls for '<=':
 # 	TCR	MA-SU
-# 	TCR	BL-GT
-# 	TCR	BL-NOT
+# 	TCR	BL-LTE
 # Calls for '>=':
 # 	TCR	MA-SU
-# 	TCR	BL-LT
-# 	TCR	BL-NOT
+# 	TCR	BL-GTE
 
 
 # Suffix functions to MA-SU.
 # Operates on the 'A' register, no need for the stack.
-# BL-GT returns 1 if first '>' second.
-# BL-LT returns 1 if first '<' second.
-BL-GT		COM
-BL-LT		EXTEND
+# BL-LTE returns 1 if first '<=' second.
+# BL-GTE returns 1 if first '>=' second.
+BL-LTE		COM
+BL-GTE		EXTEND
 		BZMF	BL-1	# Return with 1.
 		TCF	BL-0	# Return with 0.
 
