@@ -49,12 +49,17 @@
 # This function must be called exactly once before generating the first random
 # number. If it is called again with the same SEED, the same random number
 # sequences are generated (for the respective UPRBNDs).
-INITGEN		CA	SEED
+INITGEN		EXTEND
+		QXCH	QPOP
+		TCR	POP
+		#CA	SEED
 		TS	RNDSTATE
-		CA	CMLTIPLR
-		TS	MLTIPLR
+		#CA	CMLTIPLR			# ??? can i get rid of these transfers???
+		#TS	MLTIPLR
 		CA	CMODULUS
 		TS	MODULUS
+		EXTEND
+		QXCH	QPOP
 		RETURN
 
 # ##############################################################################
@@ -77,7 +82,12 @@ INITGEN		CA	SEED
 # RNDSTATE_n = mod(RNDSTATE_{n-1}*MLTIPLR, MODULUS)
 # 2) Map the new random state to a number in the range [0, UPRBND-1]
 # according to: RNDNUM_n = mod(RNDSTATE_n, UPRBND)
-GRNDNUM		CA	RNDSTATE
+GRNDNUM		EXTEND
+		QXCH	QPOP
+		TCR	POP
+		EXTEND
+		QXCH	A		# ??? can i use Q to store the local var???
+		CA	RNDSTATE
 		EXTEND
 # RNDSTATE_{n-1}*MLTIPLR in AL
 		MP	MLTIPLR
@@ -87,12 +97,14 @@ GRNDNUM		CA	RNDSTATE
 		CA	L
 		TS	RNDSTATE
 # RNDSTATE_n in AL
-		CA	ZERO
+		CA	NUM0
 		EXTEND
 # floor(AL/UPRBND) in A and mod(AL, UPRBND) = RNDNUM_n in L
-		DV	UPRBND
-		CA	L
-		TS	RNDNUM
+		DV	Q						# Q holds the upper bound
+		CA	L						# Return on A
+		#TS	RNDNUM
+		EXTEND
+		QXCH	QPOP
 		RETURN
 
 # ##############################################################################
@@ -103,17 +115,17 @@ GRNDNUM		CA	RNDSTATE
 # doesn't overflow.
 # This guarantees a random state/number sequence period length of
 # p = CMODULUS-1 = 16380
-CMLTIPLR	DEC	12957		# Primitive root modulo CMODULUS
+MLTIPLR		DEC	12957		# Primitive root modulo CMODULUS
 CMODULUS	DEC	16381		# Prime number
 
-ZERO		=	7
+#ZERO		=	7
 
 
 
-SEED		=	1000
+#SEED		=	1000
 
-RNDSTATE	=	1001
-MLTIPLR		=	1002
-MODULUS		=	1003
-UPRBND		=	1004
-RNDNUM		=	1005
+RNDSTATE	=	501
+#MLTIPLR		=	1002
+MODULUS		=	503
+#UPRBND		=	1004
+#RNDNUM		=	1005

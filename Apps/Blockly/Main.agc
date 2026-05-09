@@ -83,19 +83,58 @@ START		CA	NUM0
 # Unit tests.
 $Test.agc
 
-		# Wait a second.
-		CA	NUM100
+
+
+MAIN		CA	NUM9601		# Set random seed and flush DSKY
+		TCR	PUSH
+		TCR	INITGEN
+		TCR	FLSHDSP
+
+MAINLOOP	CA	NUM5		# Get random column to print to
+		TCR	PUSH
+		TCR	GRNDNUM
+		TS	COL
+
+		CA	NUM3		# Get random row to print to
+		TCR	PUSH
+		TCR	GRNDNUM
+		TS	ROW
+
+		CA	NUM10		# Get random digit to print
+		TCR	PUSH
+		TCR	GRNDNUM
+
+		TCR	PUSH		# Print to DSKY
+		CA	COL
+		TCR	PUSH
+		CA	ROW
+		TCR	PUSH
+		TCR	PRNTDIG
+
+		CA	NUM100		# Wait a second
 		TCR	PUSH
 		TCR	SLEEP
 
-		TCR	INPUT
+		CA	NUM10		# Erase printed digit
+		TCR	PUSH
+		CA	COL
+		TCR	PUSH
+		CA	ROW
+		TCR	PUSH
+		TCR	PRNTDIG
 
-		TCF	START
+		CA	NUM100		# Wait a second
+		TCR	PUSH
+		TCR	SLEEP
+
+		TCF	MAINLOOP
 
 
 # Code modules.
 $Boolean.agc
 $Math.agc
+$Random-Number-Generator.agc
+$Print.agc
 
 
 # Function that waits for a DSKY keypress.
@@ -113,7 +152,7 @@ INPUT-WT	CA	INPUTING
 		SU	INPUTING
 		EXTEND
 		BZF	INPUT-ZR	# Return 0 (which is what's in A).
-		CA	INPUTTING
+		CA	INPUTING
 INPUT-ZR	RETURN
 
 
@@ -170,6 +209,10 @@ QPOP		=	063	# Temporary spot for Q.
 STACKPTR	=	064	# Stack pointer, starts at 0.
 STACK		=	064	# Start address of stack (minus one).
 
+DIG		=	801
+ROW		=	802
+COL		=	803
+
 # Constants.
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
 100MS		OCT	37766	# 2^14-10 is 100 ms to T4/T5 overflow.
@@ -183,6 +226,7 @@ NUM6		DEC	6
 NUM7		DEC	7
 NUM8		DEC	8
 NUM9		DEC	9
+NUM10		DEC	10
 NUM16		DEC	16
 NUM100		DEC	100
 
@@ -193,6 +237,7 @@ Q		=	02
 NUM0		=	07
 ARUPT		=	10
 KEY15		=	15	# I/O Channel 15 (DSKY keypad)
+SR		=	21
 T4		=	27
 T5		=	30
 NEWJOB		=	67

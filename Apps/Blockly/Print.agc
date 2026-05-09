@@ -76,13 +76,13 @@ FLSHEND		RETURN
 #
 # Returns the zero-based index (0-14) of the position to print a digit to,
 # using: POSIDX = ROW * 5 + COL
-GPOSIDX		CA	ROW
-		EXTEND
-		MP	NUM5
-		CA	L
-		AD	COL
-		TS	POSIDX
-		RETURN
+#GPOSIDX		CA	ROW
+#		EXTEND
+#		MP	NUM5
+#		CA	L
+#		AD	COL
+#		TS	POSIDX
+#		RETURN
 
 # GPAIRIDX ('Get Pair Index') function:
 #
@@ -230,8 +230,18 @@ REND2		EXTEND
 PRNTDIG		EXTEND
 # To call another function from within PRNTDIG, the return address has to be
 # stored first
-		QXCH	PRNTDIGR
-		TCR	GPOSIDX
+		QXCH	QPOP
+		TCR	POP	# row
+
+		EXTEND				# explain this, since i inlined a function here!
+		MP	NUM5
+		CA	L
+		TS	POSIDX
+		TCR	POP	# col
+		ADS	POSIDX
+
+		TCR	POP	# digit
+		TS	DIGIT
 		TCR	GPAIRIDX
 		TCR	GCURDIGS
 		TCR	GNEWDIG
@@ -256,14 +266,10 @@ PRNTDIG		EXTEND
 		EXTEND
 		WRITE	010		# Print to yaDSKY's IO-channel
 SKIPPRNT	EXTEND
-		QXCH	PRNTDIGR
+		QXCH	QPOP
 		RETURN
 
 # ##############################################################################
-
-NUM1		DEC	1
-NUM5		DEC	5
-NUM8		DEC	8
 
 # Bit masks used to extract the left and right digit bit representations from a
 # position pair
@@ -314,24 +320,17 @@ PREFIXES	DEC	16384
 
 # The interfaces between calling and called functions are provided by addresses
 # in erasable memory (i.e. global variables)
-ROW		=	1000
-COL		=	1001
-DIGIT		=	1002
+DIGIT		=	702
 
-POSIDX		=	1003
-PAIRIDX		=	1004
+POSIDX		=	703
+PAIRIDX		=	704
 
-CURDIGS		=	1005
-CURDIG		=	1006
-CURODIG		=	1007
+CURDIGS		=	705
+CURDIG		=	706
+CURODIG		=	707
 
-NEWDIG		=	1010
-
-# Since the AGC doesn't support a stack, the return addresses of calling
-# functions have to be stored to be able to call other functions from within
-# called functions.
-PRNTDIGR	=	1011
+NEWDIG		=	710
 
 # Addresses 01012-01021 store the digits currently being displayed in the eight
 # position pairs
-DSPSTATE	=	1012
+DSPSTATE	=	712
