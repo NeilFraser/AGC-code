@@ -1,5 +1,5 @@
 /**
- * @fileoverview Generating AGC assembly for display blocks.
+ * @fileoverview Generating AGC assembly for AGC-specific blocks.
  */
 'use strict';
 
@@ -16,6 +16,24 @@ ${row}
 ${col}
 \tTCR\tPUSH
 \tTCR\tDISPLAY
+`;
+  return code;
+};
+
+AgcGenerator['agc_sleep'] = function(block) {
+  const time = AgcGenerator.valueToCode(block, 'TIME', null) || AgcGenerator.default0;
+  const code = `
+${time}
+\tTCR\tPUSH
+\tTCR\tSLEEP
+`;
+  return code;
+};
+
+
+AgcGenerator['agc_key_press'] = function(block) {
+  const code = `
+\tTCR\tINPUT
 `;
   return code;
 };

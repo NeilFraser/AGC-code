@@ -10,11 +10,11 @@
   <script src="../third-party/blockly/en.js"></script>
 
   <script src="storage.js"></script>
-  <script src="blocks/display.js"></script>
+  <script src="blocks/agc.js"></script>
   <script src="blocks/logic.js"></script>
   <script src="blocks/math.js"></script>
   <script src="generator/generator.js"></script>
-  <script src="generator/display.js"></script>
+  <script src="generator/agc.js"></script>
   <script src="generator/logic.js"></script>
   <script src="generator/math.js"></script>
   <script src="code.js"></script>
@@ -264,6 +264,14 @@
         <value name="COL">
           <shadow type="agc_math_number">
             <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="agc_key_press"></block>
+      <block type="agc_sleep">
+        <value name="TIME">
+          <shadow type="agc_math_number">
+            <field name="TIME">100</field>
           </shadow>
         </value>
       </block>
