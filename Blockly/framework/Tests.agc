@@ -3,6 +3,7 @@
 # Execute the tests.
 $Boolean-test.agc
 $Math-test.agc
+$Random-test.agc
 $Print-test.agc
 
 # To execute the tests, compile with yaYUL, then 'run' with yaAGC.

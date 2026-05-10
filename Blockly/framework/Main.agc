@@ -94,6 +94,7 @@ END		CA	A
 $Boolean.agc
 $Math.agc
 $Print.agc
+$Random.agc
 
 
 # Function that waits for a DSKY keypress.

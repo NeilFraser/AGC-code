@@ -6,8 +6,8 @@
 #               used in "Random-Number-Generator.agc".
 #               Serves to verify that the described algorithm generates random
 #               numbers with good characteristics.
-# Contact:      Neil Fraser <agc@neil.fraser.name>
 # Contact:      Luca Rosenberg <luca.rosenberg@gmail.com>
+# Contact:      Neil Fraser <agc@neil.fraser.name>
 
 from typing import Tuple, Dict
 from statistics import mean, stdev
@@ -30,18 +30,18 @@ def get_rand_num_and_state(uppr_bound: int) -> Tuple[int, int]:
     _, rand_num = divmod(rand_state, uppr_bound)
 
     return rand_num, rand_state
-    
+
 def get_num_and_transition_counts(uppr_bound: int, num_samples: int) -> Tuple[Dict, Dict]:
     num_counts = {i: 0 for i in range(uppr_bound)}
     transition_counts = {(i, j): 0 for i in range(uppr_bound) for j in range(uppr_bound)}
-    
+
     for i in range(num_samples):
         sample, _ = get_rand_num_and_state(uppr_bound)
         num_counts[sample] += 1
         if i > 0:
             transition_counts[(prev_sample, sample)] += 1
         prev_sample = sample
-    
+
     return num_counts, transition_counts
 
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     NUM_SAMPLES = 10000
 
     num_counts, transition_counts = get_num_and_transition_counts(UPPR_BOUND, NUM_SAMPLES)
-    
+
     counts = num_counts.values()
     transitions = transition_counts.values()
     minmax = lambda x: f"[{min(x)}, {max(x)}]"
