@@ -93,6 +93,7 @@ END		CA	A
 # Code modules.
 $Boolean.agc
 $Math.agc
+$Print.agc
 
 
 # Function that waits for a DSKY keypress.
@@ -180,6 +181,7 @@ NUM6		DEC	6
 NUM7		DEC	7
 NUM8		DEC	8
 NUM9		DEC	9
+NUM10		DEC	10
 NUM16		DEC	16
 NUM100		DEC	100
 
@@ -190,6 +192,7 @@ Q		=	02
 NUM0		=	07
 ARUPT		=	10
 KEY15		=	15	# I/O Channel 15 (DSKY keypad)
+SR		=	21
 T4		=	27
 T5		=	30
 NEWJOB		=	67

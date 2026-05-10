@@ -6,7 +6,7 @@
 Blockly.defineBlocksWithJsonArray([
   // Block for displaying a single digit on the DSKY.
   {
-    "type": "agc_display",
+    "type": "agc_printdig",
     "message0": "display %1 digit %2 row %3 column %4",
     "args0": [
       {
@@ -19,12 +19,12 @@ Blockly.defineBlocksWithJsonArray([
       },
       {
         "type": "input_value",
-        "name": "ROW",
+        "name": "COL",
         "check": "Number"
       },
       {
         "type": "input_value",
-        "name": "COL",
+        "name": "ROW",
         "check": "Number"
       }
     ],
@@ -32,7 +32,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 20,
-    "tooltip": "Display a single digit (0-9, 10-blank) at row (0-2) column (0-4)",
+    "tooltip": "Display a single digit (0-9, 10-blank) at column (0-4), row (0-2)",
     "helpUrl": ""
   },
 
