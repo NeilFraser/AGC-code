@@ -46,7 +46,7 @@ def check(data):
   if not os.path.exists(DATA_PATH):
     # Don't try saving to a new directory.
     print("Status: 500 Directory Not Found\n")
-    print("Glockenspiel data directory doesn't exist.")
+    print("Blockly AGC data directory doesn't exist.")
     return False
   if len(data) >= 1000000:
     # One megabyte is too much.

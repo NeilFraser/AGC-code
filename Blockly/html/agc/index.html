@@ -9,6 +9,9 @@
   <script src="../third-party/blockly/blocks_compressed.js"></script>
   <script src="../third-party/blockly/en.js"></script>
 
+  <!--
+  <script src="blocklyagc_compressed.js"></script>
+  -->
   <script src="storage.js"></script>
   <script src="blocks/agc.js"></script>
   <script src="blocks/logic.js"></script>
@@ -76,15 +79,15 @@
       <block type="agc_logic_ternary"></block>
     </category>
     <category name="Loops" colour="%{BKY_LOOPS_HUE}">
-      <block type="controls_repeat_ext">
+      <block type="controls_repeat_ext" disabled="true">
         <value name="TIMES">
           <shadow type="agc_math_number">
             <field name="NUM">10</field>
           </shadow>
         </value>
       </block>
-      <block type="controls_whileUntil"></block>
-      <block type="controls_for">
+      <block type="controls_whileUntil" disabled="true"></block>
+      <block type="controls_for" disabled="true">
         <value name="FROM">
           <shadow type="agc_math_number">
             <field name="NUM">1</field>
@@ -101,8 +104,8 @@
           </shadow>
         </value>
       </block>
-      <block type="controls_forEach"></block>
-      <block type="controls_flow_statements"></block>
+      <block type="controls_forEach" disabled="true"></block>
+      <block type="controls_flow_statements" disabled="true"></block>
     </category>
     <category name="Math" colour="%{BKY_MATH_HUE}">
       <block type="agc_math_number">
@@ -120,37 +123,37 @@
           </shadow>
         </value>
       </block>
-      <block type="math_single">
+      <block type="math_single" disabled="true">
         <value name="NUM">
           <shadow type="agc_math_number">
             <field name="NUM">9</field>
           </shadow>
         </value>
       </block>
-      <block type="math_trig">
+      <block type="math_trig" disabled="true">
         <value name="NUM">
           <shadow type="agc_math_number">
             <field name="NUM">45</field>
           </shadow>
         </value>
       </block>
-      <block type="math_constant"></block>
-      <block type="math_number_property">
+      <block type="math_constant" disabled="true"></block>
+      <block type="math_number_property" disabled="true">
         <value name="NUMBER_TO_CHECK">
           <shadow type="agc_math_number">
             <field name="NUM">0</field>
           </shadow>
         </value>
       </block>
-      <block type="math_round">
+      <block type="math_round" disabled="true">
         <value name="NUM">
           <shadow type="agc_math_number">
             <field name="NUM">3.1</field>
           </shadow>
         </value>
       </block>
-      <block type="math_on_list"></block>
-      <block type="math_modulo">
+      <block type="math_on_list" disabled="true"></block>
+      <block type="math_modulo" disabled="true">
         <value name="DIVIDEND">
           <shadow type="agc_math_number">
             <field name="NUM">64</field>
@@ -162,7 +165,7 @@
           </shadow>
         </value>
       </block>
-      <block type="math_constrain">
+      <block type="math_constrain" disabled="true">
         <value name="VALUE">
           <shadow type="agc_math_number">
             <field name="NUM">50</field>
@@ -179,7 +182,7 @@
           </shadow>
         </value>
       </block>
-      <block type="math_random_int">
+      <block type="math_random_int" disabled="true">
         <value name="FROM">
           <shadow type="agc_math_number">
             <field name="NUM">1</field>
@@ -191,8 +194,8 @@
           </shadow>
         </value>
       </block>
-      <block type="math_random_float"></block>
-      <block type="math_atan2">
+      <block type="math_random_float" disabled="true"></block>
+      <block type="math_atan2" disabled="true">
         <value name="X">
           <shadow type="agc_math_number">
             <field name="NUM">1</field>
@@ -206,48 +209,48 @@
       </block>
     </category>
     <category name="Lists" colour="%{BKY_LISTS_HUE}">
-      <block type="lists_create_with">
+      <block type="lists_create_with" disabled="true">
         <mutation items="0"></mutation>
       </block>
-      <block type="lists_create_with"></block>
-      <block type="lists_repeat">
+      <block type="lists_create_with" disabled="true"></block>
+      <block type="lists_repeat" disabled="true">
         <value name="NUM">
           <shadow type="agc_math_number">
             <field name="NUM">5</field>
           </shadow>
         </value>
       </block>
-      <block type="lists_length"></block>
-      <block type="lists_isEmpty"></block>
-      <block type="lists_indexOf">
+      <block type="lists_length" disabled="true"></block>
+      <block type="lists_isEmpty" disabled="true"></block>
+      <block type="lists_indexOf" disabled="true">
         <value name="VALUE">
           <block type="variables_get">
             <field name="VAR">list</field>
           </block>
         </value>
       </block>
-      <block type="lists_getIndex">
+      <block type="lists_getIndex" disabled="true">
         <value name="VALUE">
           <block type="variables_get">
             <field name="VAR">list</field>
           </block>
         </value>
       </block>
-      <block type="lists_setIndex">
+      <block type="lists_setIndex" disabled="true">
         <value name="LIST">
           <block type="variables_get">
             <field name="VAR">list</field>
           </block>
         </value>
       </block>
-      <block type="lists_getSublist">
+      <block type="lists_getSublist" disabled="true">
         <value name="LIST">
           <block type="variables_get">
             <field name="VAR">list</field>
           </block>
         </value>
       </block>
-      <block type="lists_sort"></block>
+      <block type="lists_sort" disabled="true"></block>
     </category>
     <category name="AGC" colour="%{BKY_COLOUR_HUE}">
       <block type="agc_display">

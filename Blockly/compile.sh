@@ -1,4 +1,4 @@
-# Script for generating the compiled glockenspiel_compressed.js file.
+# Script for generating the compiled blocklyagc_compressed.js file.
 
 # Download Closure Compiler if not already present.
 if test -f "compiler.jar"; then
@@ -18,9 +18,7 @@ echo "Compiling Blockly AGC..."
 java -jar ./compiler.jar \
     --compilation_level SIMPLE \
     --warning_level VERBOSE \
-    --js=html/closure/base.js
-    --js=html/core/**.js
-    --js=html/blocks/**.js
-    --js_output_file=html/compressed.js
+    --js=html/agc/**.js \
+    --js_output_file=html/agc/blocklyagc_compressed.js
 
 echo "Done"

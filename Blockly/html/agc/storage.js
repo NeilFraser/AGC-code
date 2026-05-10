@@ -148,4 +148,4 @@ BlocklyStorage.alert_ = function(message) {
 
 BlocklyStorage.HTTPREQUEST_ERROR = 'There was a problem with the request.\n';
 BlocklyStorage.LINK_ALERT = 'Share your program with this link:\n\n%1';
-BlocklyStorage.HASH_ERROR = 'Sorry, "%1" doesn\'t correspond with any saved music file.';
+BlocklyStorage.HASH_ERROR = 'Sorry, "%1" doesn\'t correspond with any saved AGC file.';
