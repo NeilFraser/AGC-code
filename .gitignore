@@ -6,3 +6,5 @@
 *.symtab
 core
 .vscode
+!Blockly/framework/Main.agc.bin
+!Blockly/framework/Main.agc.symtab
