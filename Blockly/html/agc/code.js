@@ -341,9 +341,16 @@ Code.runAgc = function(event) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState === XMLHttpRequest.DONE) {
       if (xhr.status === 200) {
-        alert(xhr.responseText);
+        try {
+          const jsonResponse = JSON.parse(xhr.responseText);
+          const uuid = jsonResponse['uuid'];
+          window.open('../third-party/moonjs/agc.html?' + uuid, '_blank',
+              'popup,width=430,height=500');
+        } catch (e) {
+          alert('Error: ' + xhr.status + '\n' + xhr.responseText);
+        }
       } else {
-        alert('Error running code: ' + xhr.status + '\n' + xhr.responseText);
+        alert('Error compiling code: ' + xhr.status + '\n' + xhr.responseText);
       }
     }
   };

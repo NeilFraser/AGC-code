@@ -226,6 +226,8 @@
       'setStatus': function (msg) { console.log('status: ' + msg); },
       'print': function (text) { console.log(text); }
     };
+
+    var PROGRAM_UUID = location.search.substring(1);
     // ]]></script>
   <script src="agc11.js"></script>
   <script type="text/javascript">// <![CDATA[
@@ -856,10 +858,10 @@
     var profile = false;
     var phase0 = 0;
 
-    $.getJSON('profile.json', function (data) {
-      profile = data;
-      console.log('The launch profile is loaded!');
-    });
+    //$.getJSON('profile.json', function (data) {
+    //  profile = data;
+    //  console.log('The launch profile is loaded!');
+    //});
 
     function launch(phase) {
       if (!profile) {
