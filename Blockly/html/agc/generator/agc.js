@@ -4,7 +4,7 @@
 'use strict';
 
 
-AgcGenerator['agc_printdig'] = function(block) {
+AgcGenerator['agc_print_digit'] = function(block) {
   const digit = AgcGenerator.valueToCode(block, 'DIGIT', null) || AgcGenerator.default0;
   const col = AgcGenerator.valueToCode(block, 'COL', null) || AgcGenerator.default0;
   const row = AgcGenerator.valueToCode(block, 'ROW', null) || AgcGenerator.default0;

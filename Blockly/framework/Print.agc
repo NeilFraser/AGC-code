@@ -146,24 +146,24 @@ GCURDIGS	INDEX	PAIRIDX
 		BZF	LDIG1
 # The RDIG1 label is not required an only there for clarity
 RDIG1		CA	CURDIGS
-# MASK bitwise ANDs the contents of RMASK into the accumulator. RMASK is a bit
-# mask that selects the five least significant bits ("0000 0 00000 11111")
-		MASK	RMASK
+# MASK bitwise ANDs the contents of right mask into the accumulator.
+# The mask selects the five least significant bits (31: "0000 0 00000 11111")
+		MASK	NUM31
 # Store the bit representation of the digit currently being displayed in the
 # position to print to
 		TS	CURDIG
 		CA	CURDIGS
 # Get the digit currently being displayed in the second position of the pair,
-# the one that should be conserved. (LMASK: "0000 0 11111 00000")
-		MASK	LMASK
+# the one that should be conserved. (992: "0000 0 11111 00000")
+		MASK	NUM992
 		TS	CURODIG
 		TCF	REND1
 # Analogous to above, but the digit to print to is the left of a pair
 LDIG1		CA	CURDIGS
-		MASK	LMASK
+		MASK	NUM992
 		TS	CURDIG
 		CA	CURDIGS
-		MASK	RMASK
+		MASK	NUM31
 		TS	CURODIG
 REND1		RETURN
 
@@ -198,10 +198,10 @@ GNEWDIG		CA	POSIDX
 # unchanged)
 RDIG2		CA	NUM1
 		TCF	REND2
-# If it is a left position, 32 (SHFTDIGL) is loaded into the accumulator.
+# If it is a left position, 32 (NUM32) is loaded into the accumulator.
 # The digit bit representation is then multiplied-in, shifting it five positions
 # to the left
-LDIG2		CA	SHFTDIGL
+LDIG2		CA	NUM32
 REND2		EXTEND
 		INDEX	DIGIT
 		MP	DIGITS
@@ -273,11 +273,11 @@ SKIPPRNT	EXTEND
 
 # Bit masks used to extract the left and right digit bit representations from a
 # position pair
-LMASK		DEC	992		# "0000 0 11111 00000"
-RMASK		DEC	31		# "0000 0 00000 11111"
+NUM992		DEC	992		# Left mask:  "0000 0 11111 00000"
+NUM31		DEC	31		# Right mask: "0000 0 00000 11111"
 
 # Multiplying by 32 shifts digit bit representation five positions to the left
-SHFTDIGL	DEC	32
+NUM32		DEC	32
 
 # Bit representations of the digits in the right position of a position pair
 # To place them in the left position, shift five bits left, e.g.:

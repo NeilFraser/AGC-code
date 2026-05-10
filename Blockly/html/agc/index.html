@@ -123,6 +123,25 @@
           </shadow>
         </value>
       </block>
+      <block type="agc_math_random_int_0">
+        <value name="TO">
+          <shadow type="agc_math_number">
+            <field name="NUM">6</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="agc_math_random_int" disabled="true">
+        <value name="FROM">
+          <shadow type="agc_math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="TO">
+          <shadow type="agc_math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
       <block type="math_single" disabled="true">
         <value name="NUM">
           <shadow type="agc_math_number">
@@ -177,18 +196,6 @@
           </shadow>
         </value>
         <value name="HIGH">
-          <shadow type="agc_math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_int" disabled="true">
-        <value name="FROM">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
           <shadow type="agc_math_number">
             <field name="NUM">100</field>
           </shadow>
@@ -253,7 +260,7 @@
       <block type="lists_sort" disabled="true"></block>
     </category>
     <category name="AGC" colour="%{BKY_COLOUR_HUE}">
-      <block type="agc_printdig">
+      <block type="agc_print_digit">
         <value name="DIGIT">
           <shadow type="agc_math_number">
             <field name="NUM">0</field>

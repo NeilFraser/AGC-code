@@ -66,11 +66,10 @@ INITGEN		EXTEND
 # GRNDNUM ('Get Random Number') function:
 #
 # Inputs:
-# UPRBND: integer specifying the upper bound (exclusive) of the random integer
-# to be generated
+# UPRBND: integer specifying the upper bound (exclusive).
 #
 # Returns:
-# RNDNUM: uniformly distributed random integer in the range [0, UPRBND-1]
+# RNDNUM: uniformly distributed random integer in the range [LOWBND, UPRBND]
 #
 # The function relies on INITGEN to initialize its random state (RNDSTATE) to
 # a value (SEED) greater than 0 and less than MODULUS.
@@ -85,7 +84,7 @@ GRNDNUM		EXTEND
 		QXCH	QPOP
 		TCR	POP
 		EXTEND
-		QXCH	A		# ??? can i use Q to store the local var???
+		QXCH	A		# Use Q as temporary local var
 		CA	RNDSTATE
 		EXTEND
 # RNDSTATE_{n-1}*MLTIPLR in AL
@@ -99,8 +98,8 @@ GRNDNUM		EXTEND
 		CA	NUM0
 		EXTEND
 # floor(AL/UPRBND) in A and mod(AL, UPRBND) = RNDNUM_n in L
-		DV	Q						# Q holds the upper bound
-		CA	L						# Return on A
+		DV	Q		# Q holds the upper bound
+		CA	L		# Return on A
 		EXTEND
 		QXCH	QPOP
 		RETURN
@@ -117,4 +116,4 @@ MLTIPLR		DEC	12957		# Primitive root modulo CMODULUS
 CMODULUS	DEC	16381		# Prime number
 
 RNDSTATE	=	501
-MODULUS		=	503
+MODULUS		=	502

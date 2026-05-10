@@ -31,3 +31,13 @@ ${argument1}
 `;
   return [code, null];
 };
+
+AgcGenerator['agc_math_random_int_0'] = function(block) {
+  const to = AgcGenerator.valueToCode(block, 'TO', null) || AgcGenerator.default1;
+  const code = `
+${to}
+\tTCR\tPUSH
+\tTCR\tGRNDNUM
+`;
+  return [code, null];
+};

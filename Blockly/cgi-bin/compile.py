@@ -101,9 +101,12 @@ def strip_duplicate_numbers(code: str) -> str:
   for filepath in glob.glob(os.path.join(CODE_PATH, "*.agc")):
     if filepath == BLOCKLY_FILE:
       continue  # Don't read any previously saved Blockly.agc file.
+    if filepath.endswith("-test.agc"):
+      continue  # Skip test files that may have their own NUM definitions.
+
     with open(filepath, "r", encoding="utf-8") as f:
       for line in f:
-        m = re.match(r"^\s*NUM(\d+)\s", line)
+        m = re.match(r"^\s*NUM(-?\d+)\s", line)
         if m:
           num = m.group(1)
           nums.add(num)

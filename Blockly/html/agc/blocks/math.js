@@ -51,4 +51,45 @@ Blockly.defineBlocksWithJsonArray([
     'helpUrl': '%{BKY_MATH_ARITHMETIC_HELPURL}',
     'extensions': ['math_op_tooltip'],
   },
+
+  // Block for random integer between 0 and [X-1].
+  {
+    "type": "agc_math_random_int_0",
+    "message0": "random integer to %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TO",
+        "check": "Number",
+      },
+    ],
+    "inputsInline": true,
+    "output": "Number",
+    "style": "math_blocks",
+    "tooltip": "Return a random integer between the 0 (inclusive) and the specified number (exclusive).",
+    "helpUrl": "%{BKY_MATH_RANDOM_INT_HELPURL}",
+  },
+
+  // Block for random integer between [X] and [Y].
+  {
+    "type": "agc_math_random_int",
+    "message0": "%{BKY_MATH_RANDOM_INT_TITLE}",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "FROM",
+        "check": "Number",
+      },
+      {
+        "type": "input_value",
+        "name": "TO",
+        "check": "Number",
+      },
+    ],
+    "inputsInline": true,
+    "output": "Number",
+    "style": "math_blocks",
+    "tooltip": "%{BKY_MATH_RANDOM_INT_TOOLTIP}",
+    "helpUrl": "%{BKY_MATH_RANDOM_INT_HELPURL}",
+  },
 ]);
