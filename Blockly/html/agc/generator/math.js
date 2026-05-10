@@ -7,7 +7,7 @@
 AgcGenerator['agc_math_number'] = function(block) {
   // Numeric value.
   const number = Number(block.getFieldValue('NUM'));
-  AgcGenerator.provideFunction_('NUM' + number, `NUM${number}\tDEC\t${number}`);
+  AgcGenerator.provideFunction_('NUM' + number, [`NUM${number}\tDEC\t${number}`]);
   const code = `\tCA\tNUM${number}\n`;
   return [code, null];
 };

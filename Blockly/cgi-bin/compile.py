@@ -19,6 +19,7 @@ import cgi_utils
 import glob
 import json
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -94,6 +95,26 @@ def cleanup_old_bins():
       pass  # best-effort; don't abort on cleanup errors
 
 
+def strip_duplicate_numbers(code: str) -> str:
+  # Find all occurrences of lines starting with "NUM" in the framework files.
+  nums = set()
+  for filepath in glob.glob(os.path.join(CODE_PATH, "*.agc")):
+    if filepath == BLOCKLY_FILE:
+      continue  # Don't read any previously saved Blockly.agc file.
+    with open(filepath, "r", encoding="utf-8") as f:
+      for line in f:
+        m = re.match(r"^\s*NUM(\d+)\s", line)
+        if m:
+          num = m.group(1)
+          nums.add(num)
+
+  # Comment out duplicate NUM definitions from the input code.
+  for num in nums:
+    code = re.sub(rf"^(NUM{num}\s.*\n)", r"#\1", code, flags=re.MULTILINE)
+  return code
+
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -116,6 +137,8 @@ def main():
   if reason:
     send_response({"status": "error", "message": reason}, "503 Service Unavailable")
     return
+
+  code = strip_duplicate_numbers(code)
 
   try:
     # ------------------------------------------------------------------
