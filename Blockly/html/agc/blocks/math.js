@@ -12,6 +12,9 @@ Blockly.defineBlocksWithJsonArray([
       'type': 'field_number',
       'name': 'NUM',
       'value': 0,
+      'min': -16383,
+      'max': 16383,  // 2^14 - 1
+      'precision': 1, // No decimals
     }],
     'output': 'Number',
     'helpUrl': '%{BKY_MATH_NUMBER_HELPURL}',
