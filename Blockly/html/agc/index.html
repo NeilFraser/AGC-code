@@ -15,10 +15,12 @@
   <script src="storage.js"></script>
   <script src="blocks/agc.js"></script>
   <script src="blocks/logic.js"></script>
+  <script src="blocks/loops.js"></script>
   <script src="blocks/math.js"></script>
   <script src="generator/generator.js"></script>
   <script src="generator/agc.js"></script>
   <script src="generator/logic.js"></script>
+  <script src="generator/loops.js"></script>
   <script src="generator/math.js"></script>
   <script src="code.js"></script>
 </head>
@@ -86,7 +88,7 @@
           </shadow>
         </value>
       </block>
-      <block type="controls_whileUntil" disabled="true"></block>
+      <block type="agc_controls_whileUntil"></block>
       <block type="controls_for" disabled="true">
         <value name="FROM">
           <shadow type="agc_math_number">
@@ -281,7 +283,7 @@
       <block type="agc_sleep">
         <value name="TIME">
           <shadow type="agc_math_number">
-            <field name="TIME">100</field>
+            <field name="NUM">100</field>
           </shadow>
         </value>
       </block>

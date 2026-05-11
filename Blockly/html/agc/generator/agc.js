@@ -35,5 +35,5 @@ AgcGenerator['agc_key_press'] = function(block) {
   const code = `
 \tTCR\tINPUT
 `;
-  return code;
+  return [code, null];
 };
