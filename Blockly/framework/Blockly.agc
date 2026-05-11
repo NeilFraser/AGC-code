@@ -1,6 +1,2 @@
-	CA	NUM0
-
-	EXTEND
-	BZF	IF4-X
-
-IF4-X
+# Blockly-generated code will go here.
+	NOOP
