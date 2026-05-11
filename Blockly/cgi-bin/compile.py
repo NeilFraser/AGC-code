@@ -174,10 +174,8 @@ def main():
 
     if result.returncode != 0:
       send_response({
-        "status": "error",
         "message": "Assembler failed.",
-        "stdout": result.stdout,
-        "stderr": result.stderr,
+        "error": result.stderr,
       }, "422 Unprocessable Entity")
       return
 

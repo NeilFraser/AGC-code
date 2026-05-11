@@ -145,9 +145,8 @@ Code.tabClick = function(clickedName) {
     Code.workspace.setVisible(false);
   }
   // Deselect all tabs and hide all panes.
-  for (var i = 0; i < Code.TABS_.length; i++) {
-    var name = Code.TABS_[i];
-    var tab = document.getElementById('tab_' + name);
+  for (const name of Code.TABS_) {
+    const tab = document.getElementById('tab_' + name);
     tab.classList.add('taboff');
     tab.classList.remove('tabon');
     document.getElementById('content_' + name).style.visibility = 'hidden';
@@ -337,20 +336,21 @@ Code.runAgc = function(event) {
   const xhr = new XMLHttpRequest();
   xhr.open('POST', '/scripts/blockly-agc/compile.py', true);
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.responseType = 'json';
   xhr.send('code=' + encodeURIComponent(code));
   xhr.onreadystatechange = function() {
     if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        try {
-          const jsonResponse = JSON.parse(xhr.responseText);
-          const uuid = jsonResponse['uuid'];
-          window.open('../third-party/moonjs/agc.html?' + uuid, '_blank',
-              'popup,width=430,height=500');
-        } catch (e) {
-          alert('Error: ' + xhr.status + '\n' + xhr.responseText);
-        }
+      let jsonResponse = xhr.response || {'status': xhr.status};
+      const uuid = jsonResponse?.['uuid'];
+      if (xhr.status === 200 && uuid) {
+        window.open('../third-party/moonjs/agc.html?' + uuid, '_blank',
+            'popup,width=430,height=500');
       } else {
-        alert('Error compiling code: ' + xhr.status + '\n' + xhr.responseText);
+        let msg = 'Error compiling code:\n';
+        for (const name of Object.keys(jsonResponse)) {
+          msg += `${name}: ${jsonResponse[name]}\n`;
+        }
+        alert(msg);
       }
     }
   };
