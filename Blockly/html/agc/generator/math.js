@@ -23,9 +23,9 @@ AgcGenerator['agc_math_arithmetic'] = function(block) {
   const argument0 = AgcGenerator.valueToCode(block, 'A', null) || AgcGenerator.default0;
   const argument1 = AgcGenerator.valueToCode(block, 'B', null) || AgcGenerator.default0;
   const code = `
-${argument0}
-\tTCR\tPUSH
 ${argument1}
+\tTCR\tPUSH
+${argument0}
 \tTCR\tPUSH
 \tTCR\t${operator}
 `;
