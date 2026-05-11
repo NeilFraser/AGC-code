@@ -12,7 +12,7 @@
 		# Power up
 		CA		100MS	# Schedule T5 soon.
 		TS		T5
-		TCR		FLSHDSP	# Clear the DSKY.
+		RELINT
 		TCF		START
 
 		# T6 (interrupt #1)
@@ -79,6 +79,10 @@ T4RUPT		XCH	ARUPT
 # This is the offset from the starting stack position.
 START		CA	NUM0
 		TS	STACKPTR
+		TCR	FLSHDSP	# Clear the DSKY.
+		CA	NUM9601
+		TCR	PUSH
+		TCR	INITGEN
 
 # Unit tests.
 #$Tests.agc
@@ -184,6 +188,7 @@ NUM8		DEC	8
 NUM9		DEC	9
 NUM10		DEC	10
 NUM16		DEC	16
+NUM9601		DEC	9601
 
 # System Address Locations
 A		=	00

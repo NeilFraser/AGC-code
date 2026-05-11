@@ -90,7 +90,12 @@ AgcGenerator.finish = function(code) {
   delete AgcGenerator.definitions_;
   delete AgcGenerator.functionNames_;
   AgcGenerator.variableDB_.reset();
-  return definitions.join('\n\n') + '\n\n\n' + code;
+  return `
+\tTC SKIPDEFS
+${definitions.join('\n\n')}
+SKIPDEFS
+${code}
+`;
 };
 
 /**
