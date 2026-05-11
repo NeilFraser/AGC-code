@@ -17,7 +17,8 @@ const AgcGenerator = new Blockly.Generator('AGC');
  * accidentally clobbering a built-in object or function.
  */
 AgcGenerator.addReservedWords('');
-
+// Assembly code has no structural indentation.
+AgcGenerator.INDENT = '';
 
 AgcGenerator.default0 = '\tCA\tNUM0\n';
 AgcGenerator.default1 = '\tCA\tNUM1\n';

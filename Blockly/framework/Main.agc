@@ -79,7 +79,9 @@ T4RUPT		XCH	ARUPT
 # This is the offset from the starting stack position.
 START		CA	NUM0
 		TS	STACKPTR
-		TCR	FLSHDSP	# Clear the DSKY.
+		# Clear the DSKY.
+		TCR	FLSHDSP
+		# Initialize the random number generator with seed
 		CA	NUM9601
 		TCR	PUSH
 		TCR	INITGEN
@@ -188,7 +190,7 @@ NUM8		DEC	8
 NUM9		DEC	9
 NUM10		DEC	10
 NUM16		DEC	16
-NUM9601		DEC	9601
+NUM9601		DEC	9601	# Random number seed.
 
 # System Address Locations
 A		=	00
