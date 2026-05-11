@@ -7,7 +7,7 @@ Blockly.defineBlocksWithJsonArray([
   // Block for displaying a single digit on the DSKY.
   {
     "type": "agc_print_digit",
-    "message0": "display %1 digit %2 row %3 column %4",
+    "message0": "display %1 digit %2 column %3 row %4",
     "args0": [
       {
         "type": "input_dummy"

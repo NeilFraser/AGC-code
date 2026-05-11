@@ -12,8 +12,8 @@
 		# Power up
 		CA		100MS	# Schedule T5 soon.
 		TS		T5
+		TCR		FLSHDSP	# Clear the DSKY.
 		TCF		START
-		NOOP
 
 		# T6 (interrupt #1)
 		RESUME
@@ -35,8 +35,8 @@
 
 		# T4 (interrupt #4)  Used by SLEEP function.
 		XCH		ARUPT
-		CA		NUM0	# Clear Q (being used as a flag).
-		TS		Q
+		CA		NUM0	# Clear SLEEPING flag.
+		TS		SLEEPING
 		TCF		T4RUPT
 
 		# DSKY1 (interrupt #5)
@@ -53,7 +53,7 @@
 
 		# Uplink (interrupt #7)
 		RESUME
-KEYRUPT		TS	QPOP		# Squeeze the remaining key handler in here.
+KEYRUPT		TS	INPUTING	# Squeeze the remaining key handler in here.
 		XCH	ARUPT
 		RESUME
 
@@ -77,7 +77,7 @@ T4RUPT		XCH	ARUPT
 
 # Initialize the stack pointer to be 0.
 # This is the offset from the starting stack position.
-START	CA	NUM0
+START		CA	NUM0
 		TS	STACKPTR
 
 # Unit tests.
@@ -100,28 +100,25 @@ $Random.agc
 # Function that waits for a DSKY keypress.
 # Returns (on A):
 #	Keycode of keypress.
-# Since POP isn't used, QPOP is available as a flag.
-INPUT		CA	NUM0		# Set QPOP to 0
-		TS	QPOP
-		# Busy loop until QPOP isn't 0.
-INPUT-WT	CA	QPOP
+INPUT		CA	NUM0		# Set INPUTTING to 0
+		TS	INPUTING
+		# Wait until INPUTING isn't 0.
+INPUT-WT	CA	INPUTING
 		EXTEND
 		BZF	INPUT-WT
-		# A key has been pressed.  1-9 is returned as is.
 		# Special case: '0' key encodes as 16, return as 0.
 		CA	NUM16
 		EXTEND
-		SU	QPOP
+		SU	INPUTING
 		EXTEND
 		BZF	INPUT-ZR	# Return 0 (which is what's in A).
-		CA	QPOP
+		CA	INPUTING
 INPUT-ZR	RETURN
 
 
 # Function that sleeps for the specified duration.
 # Stack argument:
 # 	Delay in 100ths of a second, thus 100 is 1 second.
-# Uses L register.
 SLEEP		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the delay from the stack.
@@ -134,17 +131,18 @@ SLEEP		EXTEND
 		EXTEND		# Subtract the desired delay.
 		SU	L
 		TS	T4	# Set the interrupt timer
-
-		# Use Q as a flag.  It is currently non-zero (due to the earlier
-		# TCR), so busy loop until T4 clears it.
-
-SLEEPBZF	CA	Q
 		EXTEND
-		BZF	SLEEPEND	# Busy loop until Q flag is zero.
-		TCF	SLEEPBZF
-SLEEPEND	EXTEND
 		QXCH	QPOP
-		RETURN
+
+		# Set SLEEPING to any non-zero value as a flag.
+		# 'A' happens to be a non-zero number, so use that.
+		TS	SLEEPING
+
+SLEEPBZF	CA	SLEEPING
+		EXTEND
+		BZF	SLEEPEND	# Loop until SLEEPING flag is zero.
+		TCF	SLEEPBZF
+SLEEPEND	RETURN
 
 
 # Push the contents of the 'A' register onto the stack.
@@ -165,9 +163,11 @@ DROP		EXTEND
 
 
 # Variables in memory.
-QPOP		=	061	# Temporary spot for Q during POP calls.
-STACKPTR	=	062	# Stack pointer, starts at 0.
-STACK		=	062	# Start address of stack (minus one).
+SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
+INPUTING	=	062	# Waiting for a DSKY key press.
+QPOP		=	063	# Temporary spot for Q.
+STACKPTR	=	064	# Stack pointer, starts at 0.
+STACK		=	064	# Start address of stack (minus one).
 
 # Constants.
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
