@@ -69,7 +69,7 @@ INITGEN		EXTEND
 # UPRBND: integer specifying the upper bound (exclusive).
 #
 # Returns:
-# RNDNUM: uniformly distributed random integer in the range [LOWBND, UPRBND]
+# RNDNUM: uniformly distributed random integer in the range [0, UPRBND-1]
 #
 # The function relies on INITGEN to initialize its random state (RNDSTATE) to
 # a value (SEED) greater than 0 and less than MODULUS.
