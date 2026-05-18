@@ -8,7 +8,7 @@ AgcGenerator['agc_controls_if'] = function(block) {
   // If condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =
-      AgcGenerator.valueToCode(block, 'IF0', null) ||
+      AgcGenerator.valueToCode(block, 'IF0') ||
       AgcGenerator.default0;
   let branchCodeTrue = AgcGenerator.statementToCode(block, 'DO0');
   let code = `
@@ -25,7 +25,7 @@ AgcGenerator['agc_controls_ifelse'] = function(block) {
   // If/else condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =
-      AgcGenerator.valueToCode(block, 'IF0', null) ||
+      AgcGenerator.valueToCode(block, 'IF0') ||
       AgcGenerator.default0;
   let branchCodeTrue = AgcGenerator.statementToCode(block, 'DO0');
   let branchCodeFalse = AgcGenerator.statementToCode(block, 'ELSE');
@@ -46,7 +46,7 @@ AgcGenerator['agc_logic_boolean'] = function(block) {
   // Boolean values true and false.
   const boolean = block.getFieldValue('BOOL');
   const code = `\tCA\tNUM${boolean}\n`;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_logic_compare'] = function(block) {
@@ -60,8 +60,8 @@ AgcGenerator['agc_logic_compare'] = function(block) {
     'GTE': '\tTCR\tBL-GTE'
   };
   const operator = OPERATORS[block.getFieldValue('OP')];
-  const argument0 = AgcGenerator.valueToCode(block, 'A', null) || AgcGenerator.default0;
-  const argument1 = AgcGenerator.valueToCode(block, 'B', null) || AgcGenerator.default0;
+  const argument0 = AgcGenerator.valueToCode(block, 'A') || AgcGenerator.default0;
+  const argument1 = AgcGenerator.valueToCode(block, 'B') || AgcGenerator.default0;
   const code = `
   ${argument0}
   \tTCR\tPUSH
@@ -70,14 +70,14 @@ AgcGenerator['agc_logic_compare'] = function(block) {
   \tTCR\tMA-SU
   ${operator}
   `;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_logic_operation'] = function(block) {
   // Operations 'and', 'or'.
   const operator = block.getFieldValue('OP');  // AND or OR
-  let argument0 = AgcGenerator.valueToCode(block, 'A', null);
-  let argument1 = AgcGenerator.valueToCode(block, 'B', null);
+  let argument0 = AgcGenerator.valueToCode(block, 'A');
+  let argument1 = AgcGenerator.valueToCode(block, 'B');
   if (!argument0 && !argument1) {
     // If there are no arguments, then the return value is false.
     argument0 = AgcGenerator.default0;
@@ -99,24 +99,24 @@ AgcGenerator['agc_logic_operation'] = function(block) {
   \tTCR\tPUSH
   \tTCR\tBL-${operator}
   `;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_logic_negate'] = function(block) {
   // Negation.
-  const argument0 = AgcGenerator.valueToCode(block, 'BOOL', null) || AgcGenerator.default1;
+  const argument0 = AgcGenerator.valueToCode(block, 'BOOL') || AgcGenerator.default1;
   const code = `
 ${argument0}
 \tTCR\tBL-NOT
 `;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_logic_ternary'] = function(block) {
   // Ternary operator.
-  const argument0 = AgcGenerator.valueToCode(block, 'ELSE', null) || AgcGenerator.default0;
-  const argument1 = AgcGenerator.valueToCode(block, 'THEN', null) || AgcGenerator.default0;
-  const argument2 = AgcGenerator.valueToCode(block, 'IF', null) || AgcGenerator.default0;
+  const argument0 = AgcGenerator.valueToCode(block, 'ELSE') || AgcGenerator.default0;
+  const argument1 = AgcGenerator.valueToCode(block, 'THEN') || AgcGenerator.default0;
+  const argument2 = AgcGenerator.valueToCode(block, 'IF') || AgcGenerator.default0;
   const code = `
   ${argument0}
   \tTCR\tPUSH
@@ -126,5 +126,5 @@ AgcGenerator['agc_logic_ternary'] = function(block) {
   \tTCR\tPUSH
   \tTCR\tBL-COND
   `;
-  return [code, null];
+  return code;
 };
