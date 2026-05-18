@@ -8,6 +8,7 @@
   <script src="../third-party/blockly/blockly_compressed.js"></script>
   <script src="../third-party/blockly/blocks_compressed.js"></script>
   <script src="../third-party/blockly/en.js"></script>
+  <script src="monkey.js"></script>
 
   <!--
   <script src="blocklyagc_compressed.js"></script>
@@ -17,11 +18,13 @@
   <script src="blocks/logic.js"></script>
   <script src="blocks/loops.js"></script>
   <script src="blocks/math.js"></script>
+  <script src="blocks/variables.js"></script>
   <script src="generator/generator.js"></script>
   <script src="generator/agc.js"></script>
   <script src="generator/logic.js"></script>
   <script src="generator/loops.js"></script>
   <script src="generator/math.js"></script>
+  <script src="generator/variables.js"></script>
   <script src="code.js"></script>
 </head>
 <body>
@@ -42,10 +45,6 @@
             <td id="tab_agc" class="taboff tab_collapse">AGC</td>
             <td class="tabmin tab_collapse">&nbsp;</td>
             <td id="tab_xml" class="taboff tab_collapse">XML</td>
-            <td class="tabmin">&nbsp;</td>
-            <td id="tab_code" class="taboff">
-              <select id="code_menu"></select>
-            </td>
             <td class="tabmax">
               <button id="trashButton" class="notext" title="Discard all blocks.">
                 <img src='../third-party/blockly/media/1x1.gif' class="trash icon21">

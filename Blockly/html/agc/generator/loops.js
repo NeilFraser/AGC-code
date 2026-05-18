@@ -8,7 +8,7 @@ AgcGenerator['agc_controls_whileUntil'] = function(block) {
   // Generator for 'do while/until' loop.
   const labelLoop = 'LOOP' + AgcGenerator.getUniqueLabel();
   const conditionCode =
-      AgcGenerator.valueToCode(block, 'BOOL', null) ||
+      AgcGenerator.valueToCode(block, 'BOOL') ||
       AgcGenerator.default0;
   let branchCodeTrue = AgcGenerator.statementToCode(block, 'DO');
   let code = '';

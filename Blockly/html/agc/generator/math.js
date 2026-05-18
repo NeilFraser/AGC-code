@@ -9,7 +9,7 @@ AgcGenerator['agc_math_number'] = function(block) {
   const number = Number(block.getFieldValue('NUM'));
   AgcGenerator.provideFunction_('NUM' + number, [`NUM${number}\tDEC\t${number}`]);
   const code = `\tCA\tNUM${number}\n`;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_math_arithmetic'] = function(block) {
@@ -20,8 +20,8 @@ AgcGenerator['agc_math_arithmetic'] = function(block) {
     'MULTIPLY': 'MA-MP'
   };
   const operator = OPERATORS[block.getFieldValue('OP')];
-  const argument0 = AgcGenerator.valueToCode(block, 'A', null) || AgcGenerator.default0;
-  const argument1 = AgcGenerator.valueToCode(block, 'B', null) || AgcGenerator.default0;
+  const argument0 = AgcGenerator.valueToCode(block, 'A') || AgcGenerator.default0;
+  const argument1 = AgcGenerator.valueToCode(block, 'B') || AgcGenerator.default0;
   const code = `
 ${argument1}
 \tTCR\tPUSH
@@ -29,15 +29,15 @@ ${argument0}
 \tTCR\tPUSH
 \tTCR\t${operator}
 `;
-  return [code, null];
+  return code;
 };
 
 AgcGenerator['agc_math_random_int_0'] = function(block) {
-  const to = AgcGenerator.valueToCode(block, 'TO', null) || AgcGenerator.default1;
+  const to = AgcGenerator.valueToCode(block, 'TO') || AgcGenerator.default1;
   const code = `
 ${to}
 \tTCR\tPUSH
 \tTCR\tGRNDNUM
 `;
-  return [code, null];
+  return code;
 };

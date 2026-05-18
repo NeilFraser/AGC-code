@@ -5,9 +5,9 @@
 
 
 AgcGenerator['agc_print_digit'] = function(block) {
-  const digit = AgcGenerator.valueToCode(block, 'DIGIT', null) || AgcGenerator.default0;
-  const col = AgcGenerator.valueToCode(block, 'COL', null) || AgcGenerator.default0;
-  const row = AgcGenerator.valueToCode(block, 'ROW', null) || AgcGenerator.default0;
+  const digit = AgcGenerator.valueToCode(block, 'DIGIT') || AgcGenerator.default0;
+  const col = AgcGenerator.valueToCode(block, 'COL') || AgcGenerator.default0;
+  const row = AgcGenerator.valueToCode(block, 'ROW') || AgcGenerator.default0;
   const code = `
 ${digit}
 \tTCR\tPUSH
@@ -21,7 +21,7 @@ ${row}
 };
 
 AgcGenerator['agc_sleep'] = function(block) {
-  const time = AgcGenerator.valueToCode(block, 'TIME', null) || AgcGenerator.default0;
+  const time = AgcGenerator.valueToCode(block, 'TIME') || AgcGenerator.default0;
   const code = `
 ${time}
 \tTCR\tPUSH
@@ -35,5 +35,5 @@ AgcGenerator['agc_key_press'] = function(block) {
   const code = `
 \tTCR\tINPUT
 `;
-  return [code, null];
+  return code;
 };
