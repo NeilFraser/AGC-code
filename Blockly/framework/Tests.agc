@@ -3,7 +3,8 @@
 # Execute the tests.
 $Boolean-test.agc
 $Math-test.agc
-$Rand-test.agc
+$Random-test.agc
+$Print-test.agc
 
 # To execute the tests, compile with yaYUL, then 'run' with yaAGC.
 # If the screen fills up with alarms, then a test failed.

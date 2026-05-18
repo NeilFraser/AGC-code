@@ -7,8 +7,8 @@
 #		row- and column-indices, and all other 7-segment diplays remain
 #		unchanged.
 # Assembler:	yaYUL
-# Contact:	Neil Fraser <agc@neil.fraser.name>
 # Contact:	Luca Rosenberg <luca.rosenberg@gmail.com>
+# Contact:	Neil Fraser <agc@neil.fraser.name>
 
 
 

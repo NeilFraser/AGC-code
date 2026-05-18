@@ -12,8 +12,8 @@
 		# Power up
 		CA		100MS	# Schedule T5 soon.
 		TS		T5
+		RELINT
 		TCF		START
-		NOOP
 
 		# T6 (interrupt #1)
 		RESUME
@@ -21,7 +21,7 @@
 		NOOP
 		NOOP
 
-		# T5 (interrupt #2)
+		# T5 (interrupt #2)  Used to prevent NORUPT and Night Watchman.
 		XCH		ARUPT
 		CA		100MS	# Reschedule T5 soon.
 		TS		T5
@@ -33,7 +33,7 @@
 		NOOP
 		NOOP
 
-		# T4 (interrupt #4)
+		# T4 (interrupt #4)  Used by SLEEP function.
 		XCH		ARUPT
 		CA		NUM0	# Clear SLEEPING flag.
 		TS		SLEEPING
@@ -79,62 +79,28 @@ T4RUPT		XCH	ARUPT
 # This is the offset from the starting stack position.
 START		CA	NUM0
 		TS	STACKPTR
-
-# Unit tests.
-$Test.agc
-
-
-
-MAIN		CA	NUM9601		# Set random seed and flush DSKY
+		# Clear the DSKY.
+		TCR	FLSHDSP
+		# Initialize the random number generator with seed
+		CA	NUM9601
 		TCR	PUSH
 		TCR	INITGEN
-		TCR	FLSHDSP
 
-MAINLOOP	CA	NUM5		# Get random column to print to
-		TCR	PUSH
-		TCR	GRNDNUM
-		TS	COL
+# Unit tests.
+#$Tests.agc
 
-		CA	NUM3		# Get random row to print to
-		TCR	PUSH
-		TCR	GRNDNUM
-		TS	ROW
+# Blockly program.
+$Blockly.agc
 
-		CA	NUM10		# Get random digit to print
-		TCR	PUSH
-		TCR	GRNDNUM
-
-		TCR	PUSH		# Print to DSKY
-		CA	COL
-		TCR	PUSH
-		CA	ROW
-		TCR	PUSH
-		TCR	PRNTDIG
-
-		CA	NUM100		# Wait a second
-		TCR	PUSH
-		TCR	SLEEP
-
-		CA	NUM10		# Erase printed digit
-		TCR	PUSH
-		CA	COL
-		TCR	PUSH
-		CA	ROW
-		TCR	PUSH
-		TCR	PRNTDIG
-
-		CA	NUM100		# Wait a second
-		TCR	PUSH
-		TCR	SLEEP
-
-		TCF	MAINLOOP
-
+# Halt execution.
+END		CA	A
+		TCF	END
 
 # Code modules.
 $Boolean.agc
 $Math.agc
-$Random-Number-Generator.agc
 $Print.agc
+$Random.agc
 
 
 # Function that waits for a DSKY keypress.
@@ -209,10 +175,6 @@ QPOP		=	063	# Temporary spot for Q.
 STACKPTR	=	064	# Stack pointer, starts at 0.
 STACK		=	064	# Start address of stack (minus one).
 
-DIG		=	801
-ROW		=	802
-COL		=	803
-
 # Constants.
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
 100MS		OCT	37766	# 2^14-10 is 100 ms to T4/T5 overflow.
@@ -228,7 +190,7 @@ NUM8		DEC	8
 NUM9		DEC	9
 NUM10		DEC	10
 NUM16		DEC	16
-NUM100		DEC	100
+NUM9601		DEC	9601	# Random number seed.
 
 # System Address Locations
 A		=	00

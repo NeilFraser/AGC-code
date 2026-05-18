@@ -1,5 +1,5 @@
 # Copyright:	Public domain.
-# Filename:	Random-Number-Generator.agc
+# Filename:	Random.agc
 # Purpose:	Implementation of a multiplicative linear
 #		congruential generator (MLCG), a pseudo-
 #		random number generator (PRNG).
@@ -11,8 +11,8 @@
 #		of Different Sizes and Good Lattice Structure"
 #		by L'Ecuyer.
 # Assembler:	yaYUL
-# Contact:	Neil Fraser <agc@neil.fraser.name>
 # Contact:	Luca Rosenberg <luca.rosenberg@gmail.com>
+# Contact:	Neil Fraser <agc@neil.fraser.name>
 
 
 
@@ -52,7 +52,6 @@
 INITGEN		EXTEND
 		QXCH	QPOP
 		TCR	POP
-		#CA	SEED
 		TS	RNDSTATE
 		#CA	CMLTIPLR			# ??? can i get rid of these transfers???
 		#TS	MLTIPLR
@@ -67,8 +66,7 @@ INITGEN		EXTEND
 # GRNDNUM ('Get Random Number') function:
 #
 # Inputs:
-# UPRBND: integer specifying the upper bound (exclusive) of the random integer
-# to be generated
+# UPRBND: integer specifying the upper bound (exclusive).
 #
 # Returns:
 # RNDNUM: uniformly distributed random integer in the range [0, UPRBND-1]
@@ -86,7 +84,7 @@ GRNDNUM		EXTEND
 		QXCH	QPOP
 		TCR	POP
 		EXTEND
-		QXCH	A		# ??? can i use Q to store the local var???
+		QXCH	A		# Use Q as temporary local var
 		CA	RNDSTATE
 		EXTEND
 # RNDSTATE_{n-1}*MLTIPLR in AL
@@ -100,9 +98,8 @@ GRNDNUM		EXTEND
 		CA	NUM0
 		EXTEND
 # floor(AL/UPRBND) in A and mod(AL, UPRBND) = RNDNUM_n in L
-		DV	Q						# Q holds the upper bound
-		CA	L						# Return on A
-		#TS	RNDNUM
+		DV	Q		# Q holds the upper bound
+		CA	L		# Return on A
 		EXTEND
 		QXCH	QPOP
 		RETURN
@@ -118,14 +115,5 @@ GRNDNUM		EXTEND
 MLTIPLR		DEC	12957		# Primitive root modulo CMODULUS
 CMODULUS	DEC	16381		# Prime number
 
-#ZERO		=	7
-
-
-
-#SEED		=	1000
-
 RNDSTATE	=	501
-#MLTIPLR		=	1002
-MODULUS		=	503
-#UPRBND		=	1004
-#RNDNUM		=	1005
+MODULUS		=	502

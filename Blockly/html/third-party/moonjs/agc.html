@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Online Apollo Guidance Computer Simulator</title>
+  <style>
+    @font-face {
+      font-family: seven;
+      src: url('./digital-7-mono-italic.ttf')
+    }
+
+    .bigdigit {
+      font-family: seven;
+      font-size: 40px;
+      color: #00FF00;
+      background-color: #555555;
+      width: 120px;
+      height: 40px;
+      margin: 0px;
+      position: absolute;
+    }
+
+    .smalldigit {
+      font-family: seven;
+      font-size: 40px;
+      color: #00FF00;
+      background-color: #555555;
+      width: 40px;
+      height: 40px;
+      margin: 0px;
+      position: absolute;
+    }
+
+    .imu {
+      font-family: seven;
+      font-size: 25px;
+      color: #00FFFF;
+      background-color: #555555;
+      width: 75px;
+      height: 25px;
+      margin: 0px;
+      position: absolute;
+    }
+
+    .imulabel {
+      position: absolute;
+      font-family: monospace;
+      font-size: 16px;
+      color: #0000FF;
+    }
+
+    .clock {
+      font-family: seven;
+      font-size: 25px;
+      color: #00FFFF;
+      background-color: #555555;
+      width: 100px;
+      height: 25px;
+      margin: 0px;
+      position: absolute;
+    }
+
+    .light {
+      width: 60px;
+      height: 30px;
+      line-height: 30px;
+      border: solid black 1px;
+      text-align: center;
+      vertical-align: middle;
+      font-family: sans-serif;
+      font-size: 11px;
+      margin: 5px;
+      position: absolute;
+      background-color: #888888;
+    }
+
+    .smalllight {
+      width: 40px;
+      height: 25px;
+      line-height: 25px;
+      background-color: #00FF00;
+      text-align: center;
+      vertical-align: middle;
+      font-family: sans-serif;
+      font-size: 10px;
+      margin: 0px;
+      position: absolute;
+      background-color: #00FF00;
+    }
+
+    .key {
+      width: 50px;
+      height: 50px;
+      line-height: 40px;
+      font-family: sans-serif;
+      font-size: 20px;
+      position: absolute;
+      background-color: #555555;
+      color: white;
+    }
+
+    #pro {
+      width: 50px;
+      height: 50px;
+      line-height: 40px;
+      font-family: sans-serif;
+      font-size: 12px;
+      position: absolute;
+      background-color: #555555;
+      color: white;
+    }
+
+    .tinykey {
+      width: 25px;
+      height: 25px;
+      line-height: 15px;
+      font-family: sans-serif;
+      font-size: 10px;
+      position: relative;
+      background-color: #555555;
+      color: white;
+    }
+
+    li {
+      margin: 10px;
+    }
+
+    #sidedisplay {
+      display: none;
+    }
+  </style>
+  <script type='text/javascript' src='jquery-3.7.1.min.js'></script>
+</head>
+
+<body>
+  <div
+    style="position: absolute; width: 415px; height: 485px; border: solid black 2px; background-color: #dddddd;">
+    <div style="position: absolute; left: 20px; top: 10px; width: 140px; height: 280px; border: solid black 2px;">
+      <div id="uplink_acty" class="light" style="left: 0px; top: 0px; line-height: 15px;">UPLINK<br />ACTY
+      </div>
+      <div id="no_att" class="light" style="left: 0px; top: 40px;">NO ATT</div>
+      <div id="stby" class="light" style="left: 0px; top: 80px;">STBY</div>
+      <div id="key_rel" class="light" style="left: 0px; top: 120px;">KEY REL</div>
+      <div id="opr_err" class="light" style="left: 0px; top: 160px;">OPR ERR</div>
+      <div class="light" style="left: 0px; top: 200px;">&nbsp;</div>
+      <div class="light" style="left: 0px; top: 240px;">&nbsp;</div>
+      <div id="temp" class="light" style="left: 70px; top: 0px;">TEMP</div>
+      <div id="gimball_lock" class="light" style="left: 70px; top: 40px; line-height: 15px;">
+        GIMBALL<br />LOCK</div>
+      <div id="prog" class="light" style="left: 70px; top: 80px;">PROG</div>
+      <div id="restart" class="light" style="left: 70px; top: 120px;">RESTART</div>
+      <div id="tracker" class="light" style="left: 70px; top: 160px;">TRACKER</div>
+      <div id="alt" class="light" style="left: 70px; top: 200px;">ALT</div>
+      <div id="vel" class="light" style="left: 70px; top: 240px;">VEL</div>
+    </div>
+    <div
+      style="position: absolute; width: 130px; height: 265px; right: 20px; top: 10px; border: solid black 2px; background-color: black;">
+      <div id="comp_acty" class="light" style="left: 5px; top: 5px; line-height: 15px; width: 40px;">
+        COMP<br />ACTY</div>
+      <div id="prog_label" class="smalllight" style="right: 5px; top: 5px;">PROG</div>
+      <div id="prog00" class="smalldigit" style="right: 5px; top: 30px;">00</div>
+      <div id="verb_label" class="smalllight" style="left: 5px; top: 75px;">VERB</div>
+      <div id="verb00" class="smalldigit" style="left: 5px; top: 100px;">00</div>
+      <div id="noun_label" class="smalllight" style="right: 5px; top: 75px;">NOUN</div>
+      <div id="noun00" class="smalldigit" style="right: 5px; top: 100px;">00</div>
+      <div id="R1" class="bigdigit" style="left: 5px; top: 140px;">+00000</div>
+      <div id="R2" class="bigdigit" style="left: 5px; top: 180px;">+00000</div>
+      <div id="R3" class="bigdigit" style="left: 5px; top: 220px;">+00000</div>
+    </div>
+    <div style="position: absolute; left: 10px; top: 300px; width: 390px; height: 170px; border: solid black 2px;">
+      <button class="key" style="left: 5px; top: 30px; font-size: 12px;" name="17">VERB</button> <button class="key"
+        style="left: 5px; top: 85px; font-size: 12px;" name="31">NOUN</button> <button class="key"
+        style="left: 60px; top: 5px;" name="26">+</button> <button class="key" style="left: 60px; top: 60px;"
+        name="27">-</button> <button class="key" style="left: 60px; top: 115px;" name="16">0</button> <button
+        class="key" style="left: 115px; top: 5px;" name="7">7</button> <button class="key"
+        style="left: 115px; top: 60px;" name="4">4</button> <button class="key" style="left: 115px; top: 115px;"
+        name="1">1</button> <button class="key" style="left: 170px; top: 5px;" name="8">8</button> <button class="key"
+        style="left: 170px; top: 60px;" name="5">5</button> <button class="key" style="left: 170px; top: 115px;"
+        name="2">2</button> <button class="key" style="left: 225px; top: 5px;" name="9">9</button> <button class="key"
+        style="left: 225px; top: 60px;" name="6">6</button> <button class="key" style="left: 225px; top: 115px;"
+        name="3">3</button> <button class="key" style="left: 280px; top: 5px; font-size: 12px;" name="30">CLR</button>
+      <button id="pro" style="left: 280px; top: 60px;">PRO</button> <button class="key"
+        style="left: 280px; top: 115px; font-size: 12px; line-height: 20px;" name="25">KEY<br />REL</button> <button
+        class="key" style="left: 335px; top: 30px; font-size: 12px;" name="28">ENTR</button> <button class="key"
+        style="left: 335px; top: 85px; font-size: 12px;" name="18">RSET</button>
+    </div>
+  </div>
+
+  <div id="sidedisplay"
+    style="position: absolute; left: 550px; top: 0; width: 300px; height: 485px; border: solid black 2px; background-color: #dddddd;">
+    <span class="imulabel" style="left: 10px; top: 5px;">ST</span>
+    <div id="st" class="clock" style="left: 50px; top: 5px;">00:00:00</div>
+    <span class="imulabel" style="left: 10px; top: 35px;">MET</span>
+    <div id="met" class="clock" style="left: 50px; top: 35px;">00:00:00</div>
+    <button id="enable_ISS" style="position: absolute; right: 5px; top: 5px; width: 100px;">Enable
+      IMU</button> <button id="launch"
+      style="position: absolute; right: 5px; top: 35px; width: 100px;">Launch</button> <button id="shutdown"
+      style="position: absolute; right: 5px; top: 65px; width: 100px;">Shut down</button>
+    <span class="imulabel" style="left: 10px; top: 80px;">OGA</span>
+    <div id="imux" class="imu" style="left: 65px; top: 80px;">00</div>
+    <span class="imulabel" style="left: 10px; top: 110px;">IGA</span>
+    <div id="imuy" class="imu" style="left: 65px; top: 110px;">00</div>
+    <span class="imulabel" style="left: 10px; top: 140px;">MGA</span>
+    <div id="imuz" class="imu" style="left: 65px; top: 140px;">00</div>
+    <span class="imulabel" style="left: 10px; top: 170px;">ROLL</span>
+    <div id="roll" class="imu" style="left: 65px; top: 170px;">00</div>
+    <span class="imulabel" style="left: 10px; top: 200px;">PITCH</span>
+    <div id="pitch" class="imu" style="left: 65px; top: 200px;">00</div>
+    <span class="imulabel" style="left: 10px; top: 230px;">YAW</span>
+    <div id="yaw" class="imu" style="left: 65px; top: 230px;">00</div>
+    <div id="SIC" class="light" style="right: 5px; top: 100px;">S-IC</div>
+    <div id="SII" class="light" style="right: 5px; top: 140px;">S-II</div>
+    <div id="SIVB" class="light" style="right: 5px; top: 180px;">S-IVB</div>
+    <!--
+          <span class="imulabel" style="left:10px; top:170px;">X</span><div id="vx" class="imu" style="left:50px; top:170px;">00</div>
+          <span class="imulabel" style="left:10px; top:200px;">Y</span><div id="vy" class="imu" style="left:50px; top:200px;">00</div>
+          <span class="imulabel" style="left:10px; top:230px;">Z</span><div id="vz" class="imu" style="left:50px; top:230px;">00</div>
+      --> <canvas id="fdai" style="position: absolute; left: 50px; top: 270px; border: black solid;" width="200"
+      height="200"></canvas>
+  </div>
+  <script type="text/javascript">// <![CDATA[
+    var Module = {
+      'canvas': document.createElement('canvas') || {},
+      'setStatus': function (msg) { console.log('status: ' + msg); },
+      'print': function (text) { console.log(text); }
+    };
+
+    var PROGRAM_UUID = location.search.substring(1);
+    // ]]></script>
+  <script src="agc11.js"></script>
+  <script type="text/javascript">// <![CDATA[
+    "use strict";
+
+    $.get("/cgi-bin/logger.php", { "s": "moonjs", "v": "11", "r": Math.random() });
+
+    // the main interface functions to the emscripten compiled code
+    var advance = Module.cwrap('advance', 'number', []);                        // int advance()
+    var sendPort = Module.cwrap('sendPort', 'number', ['number', 'number', 'number']);    // int sendPort(port, val, mask)
+    var scanPort = Module.cwrap('scanPort', 'number', ['number']);              // int scanPort(mask)
+    var readPort = Module.cwrap('scanPort', 'number', []);                      // int readPort()
+    var peek = Module.cwrap('peek', 'number', ['number']);
+    var poke = Module.cwrap('poke', 'number', ['number', 'number']);
+
+    var cpu_time = 0;   // in seconds
+
+    var abs = Math.abs;
+    var floor = Math.floor;
+    var round = Math.round;
+    var sqrt = Math.sqrt;
+    var sin = Math.sin;
+    var cos = Math.cos;
+    var atan2 = Math.atan2;
+    var asin = Math.asin;
+    var PI = Math.PI;
+    var DEG_TO_RAD = (PI / 180);
+    var RAD_TO_DEG = (180 / PI);
+
+    // A module encapsulating most DSKY related states and functions
+    var dsky = (function () {
+      var digits = '000000+00000+00000+00000'.split('');  // digits hold the current state of DSKY in an array of characters (strings of length==1)
+      var sign1p = 0;     // sign[1|2][p|n] holds the sign bits for the three 5-digit displays R1, R2 and R3
+      var sign1m = 0;
+      var sign2p = 0;
+      var sign2m = 0;
+      var sign3p = 0;
+      var sign3m = 0;
+      var status8 = 0;    // status bits of AGC output channel 010
+      var status9 = 0;    // status bits of AGC output channel 011
+      var status11 = 0;
+      var phase = 0;      // a timer used for blinking Verb and Nouns
+      var phase0 = -1;
+      var flag = 0;       // update flag; bit 0: digits, bit 1: status8, bit 2: status 9
+
+      function getDigit(c) {
+        var d = 'E';
+        switch (c) {
+          case 0: d = 'H'; break;
+          case 21: d = '0'; break;
+          case 3: d = '1'; break;
+          case 25: d = '2'; break;
+          case 27: d = '3'; break;
+          case 15: d = '4'; break;
+          case 30: d = '5'; break;
+          case 28: d = '6'; break;
+          case 19: d = '7'; break;
+          case 29: d = '8'; break;
+          case 31: d = '9'; break;
+        }
+        return d;
+      }
+
+      // process a DSKY output (channels 8, 9 and 11)
+      function process(chan, val) {
+        if (chan === 8) {
+          if (!val) return flag;
+          // see http://www.ibiblio.org/apollo/developer.html for what aa, bb, d1 and d2 mean
+          var aa = (val >> 11);
+          var bb = (val >> 10) & 1;
+          var d1 = getDigit((val >> 5) & 0x1f);
+          var d2 = getDigit(val & 0x1f);
+
+          switch (aa) {
+            case 12:    // spacial case for the indicator lights
+              status8 = val;
+              break;
+            case 11:
+              digits[0] = d1;
+              digits[1] = d2;
+              break;
+            case 10:
+              digits[2] = d1;
+              digits[3] = d2;
+              break;
+            case 9:
+              digits[4] = d1;
+              digits[5] = d2;
+              break;
+            case 8:
+              digits[7] = d2;
+              break;
+            case 7:
+              digits[8] = d1;
+              digits[9] = d2;
+              sign1p = bb;
+              break;
+            case 6:
+              digits[10] = d1;
+              digits[11] = d2;
+              sign1m = bb;
+              break;
+            case 5:
+              digits[13] = d1;
+              digits[14] = d2;
+              sign2p = bb;
+              break;
+            case 4:
+              digits[15] = d1;
+              digits[16] = d2;
+              sign2m = bb;
+              break;
+            case 3:
+              digits[17] = d1;
+              digits[19] = d2;
+              break;
+            case 2:
+              digits[20] = d1;
+              digits[21] = d2;
+              sign3p = bb;
+              break;
+            case 1:
+              digits[22] = d1;
+              digits[23] = d2;
+              sign3m = bb;
+              break;
+          }
+
+          flag |= (aa == 12 ? 2 : 1);   // flag determines which area of the screen needs refreshing
+
+          // assigns the correct sign symbol
+          digits[6] = (sign1p && !sign1m ? '+' : (!sign1p && !sign1m ? 'H' : '-')); // H means space and will be replaced in updateDsky
+          digits[12] = (sign2p && !sign2m ? '+' : (!sign2p && !sign2m ? 'H' : '-'));
+          digits[18] = (sign3p && !sign3m ? '+' : (!sign3p && !sign3m ? 'H' : '-'));
+        } else if (chan === 9) {
+          status9 = val;
+          flag |= 4;
+        } else if (chan === 11) {
+          status11 = val & 0x0200;
+          flag |= 8;
+        }
+        return flag;
+      }
+
+      function update() {
+        var s = digits.join('');
+        var on = (phase >> 1) & 3; // to simulate blinking (phase increases by 1 every 100 ms)
+
+        if (flag & 1) {   // bit 0 of flag is set, update digits
+          $('#R1').html(s.slice(6, 12).replace(/H/g, '&nbsp;')); // replaced H with space since spaces confuses String.join
+          $('#R2').html(s.slice(12, 18).replace(/H/g, '&nbsp;'));
+          $('#R3').html(s.slice(18, 24).replace(/H/g, '&nbsp;'));
+          $('#prog00').html(s.slice(0, 2).replace(/H/g, '&nbsp;'));
+          //console.log( (Math.round(cpu_time*10)/10) + ': ' + $('#R1').html() + ', ' + $('#R2').html() + ', ' + $('#R3').html());
+        }
+
+        if ((flag & 1) || (status9 & 0x0020)) {   // VERB and NOUN are updated if flag bit 0 is set or DSKY is in the blinking mode
+          if (!(status9 & 0x0020) || on) {
+            $('#verb00').html(s.slice(2, 4).replace(/H/g, '&nbsp;'));
+            $('#noun00').html(s.slice(4, 6).replace(/H/g, '&nbsp;'));
+          } else {
+            $('#verb00').html('&nbsp;&nbsp;');
+            $('#noun00').html('&nbsp;&nbsp;');
+          }
+        }
+
+        if (flag & 2) {   // also see http://klabs.org/history/history_docs/mit_docs/1709.pdf section 1.9.3
+          $('#vel').css('background-color', status8 & 0x0004 ? '#ffc200' : '#888888');
+          $('#no_att').css('background-color', status8 & 0x0008 ? '#ffffff' : '#888888');
+          $('#alt').css('background-color', status8 & 0x0010 ? '#ffc200' : '#888888');
+          $('#gimbal_lock').css('background-color', status8 & 0x0020 ? '#ffc200' : '#888888');
+          $('#tracker').css('background-color', status8 & 0x0080 ? '#ffc200' : '#888888');
+          $('#prog').css('background-color', status8 & 0x0100 ? '#ffc200' : '#888888');
+        }
+
+        if (flag & 4) {
+          $('#comp_acty').css('background-color', status9 & 0x0002 ? '#ffc200' : '#888888');
+          $('#uplink_acty').css('background-color', status9 & 0x0004 ? '#ffffff' : '#888888');
+          $('#temp').css('background-color', status9 & 0x0008 ? '#ffc200' : '#888888');
+        }
+
+        if ((flag & 4) || (status9 & 0x0050)) {   // these two indicators blink
+          $('#key_rel').css('background-color', on && (status9 & 0x0010) ? '#ffffff' : '#888888');
+          $('#opr_err').css('background-color', on && (status9 & 0x0040) ? '#ffffff' : '#888888');
+        }
+
+        if (flag & 8) {
+          $('#stby').css('background-color', status11 & 0x0200 ? '#ffffff' : '#888888');
+        }
+
+        flag = 0;   // are screens that needed to be updated are actually updated!
+      }
+
+      function tick() {
+        var s, t, hh, mm, ss;
+
+        if (phase % 10 === 0) {
+          t = round(phase / 10);
+          hh = floor(t / 3600);
+          mm = floor(t / 60) % 60;
+          ss = t % 60;
+          s = (hh < 10 ? '0' + hh : hh) + ':' + (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss);
+          $('#st').html(s);
+
+          if (phase0 >= 0) {
+            t = round((phase - phase0) / 10);
+            hh = floor(t / 3600);
+            mm = floor(t / 60) % 60;
+            ss = t % 60;
+            s = (hh < 10 ? '0' + hh : hh) + ':' + (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss);
+            $('#met').html(s);
+          }
+        }
+        return phase++;
+      }
+
+      function met() {
+        return round((phase - phase0) / 10);
+      }
+
+      return {
+        process: process,
+        update: update,
+        tick: tick,
+        liftoff: function () { phase0 = phase; },
+        met: met
+      }
+    })();   // dsky
+
+
+    var imu = (function () {  // based on LM_Simulator by Stephan Hotto <stephan.hotto@web.de>
+      var CA_ANGLE = 0.043948 * DEG_TO_RAD;
+      var FA_ANGLE = 0.617981 / 3600.0 * DEG_TO_RAD;
+      var ANGLE_INCR = 360.0 / 32768 * DEG_TO_RAD;
+      var PIPA_INCR = 0.0585; // m/s per each PIPA pulse
+
+      var PINC = 0;
+      var PCDU = 1;
+      var MINC = 2;
+      var MCDU = 3;
+
+
+      var error;
+      var imu_angle;
+      var euler;
+      var pimu;
+      var omega;
+      var pipa;
+      var velocity;
+      var gimbalLock;
+
+      var sum = 0;
+
+      var canvas = document.getElementById('fdai');
+      var ctx = canvas.getContext('2d');
+      var radius = 75;
+
+      zero();
+
+      function adjust(x, a, b) {
+        return x - (b - a) * floor((x - a) / (b - a));
+      }
+
+      //************************************************************************************************
+      //**** Function: Gyro Coarse Align (will be called in case of Channel 0174; 0175; 0176 output) ***
+      //************************************************************************************************
+      function gyro_coarse_align(chan, val) {
+        var sign = val & 0x4000 ? -1 : +1;
+        var cdu_pulses = sign * (val & 0x3FFF);
+
+        // ---- Coarse Align Enable ----
+        if (1) {    // {$bo(12,4) == 1}
+          if (chan === 124) {  // 0174
+            modify_gimbal_angle([cdu_pulses * CA_ANGLE, 0, 0]);
+          }
+          else if (chan === 125) {  // 0175
+            modify_gimbal_angle([0, cdu_pulses * CA_ANGLE, 0]);
+          }
+          else if (chan === 126) {  // 0176
+            modify_gimbal_angle([0, 0, cdu_pulses * CA_ANGLE]);
+          }
+
+          move_fdai_marker();
+        } else {
+          // ---- Error Needles ----
+          error[chan - 124] += cdu_pulses;
+        }
+      }
+
+      //*******************************************************************************************
+      //*** Function: Gyro Fine Align (will be called in case of Channel 0177 output)           ***
+      //*******************************************************************************************
+      function gyro_fine_align(chan, val) {
+        var gyro_sign_minus = val & 0x4000;
+        var gyro_selection_a = val & 0x2000;
+        var gyro_selection_b = val & 0x1000;
+        var gyro_enable = val & 0x0800;
+        var sign = gyro_sign_minus ? -1 : +1;
+        var gyro_pulses = sign * (val & 0x07FF);
+
+        if (!gyro_selection_a && gyro_selection_b) {
+          modify_gimbal_angle([gyro_pulses * FA_ANGLE, 0, 0]);
+        }
+        if (gyro_selection_a && !gyro_selection_b) {
+          modify_gimbal_angle([0, gyro_pulses * FA_ANGLE, 0]);
+        }
+        if (gyro_selection_a && gyro_selection_b) {
+          modify_gimbal_angle([0, 0, gyro_pulses * FA_ANGLE]);
+        }
+
+        move_fdai_marker();
+      }
+
+
+      //************************************************************************************************
+      //*** Function: Modify a specific IMU Delta Gimbal-Angle par1=X; par2=Y; par3=Z               ****
+      //************************************************************************************************
+      function modify_gimbal_angle(delta) {
+        if (gimbalLock) return;
+        var ang_delta = 0;
+
+        for (var axis = 0; axis < 3; axis++) {
+          if (delta[axis]) {
+            // ---- Calculate New Angle ----
+            imu_angle[axis] = adjust(imu_angle[axis] + delta[axis], 0, 2 * PI);
+
+            // ---- Calculate Delta between the new Angle and already feeded IMU Angle ----
+            var dx = adjust(imu_angle[axis] - pimu[axis], -PI, PI);
+            sum += abs(dx);
+
+            // ---- Feed yaAGC with the new Angular Delta ----
+            var sign = dx > 0 ? +1 : -1;
+            var n = floor(abs(dx) / ANGLE_INCR);
+            pimu[axis] = adjust(pimu[axis] + sign * ANGLE_INCR * n, 0, 2 * PI);
+
+            var cdu = peek(26 + axis);                        // read CDU counter (26 = 0x32 = CDUX)
+            cdu = cdu & 0x4000 ? -(cdu ^ 0x7FFF) : cdu;     // converts from ones-complement to twos-complement
+            cdu += sign * n;                                // adds the number of pulses
+            poke(26 + axis, cdu < 0 ? (-cdu) ^ 0x7FFF : cdu);   // converts back to ones-complement and writes the counter
+
+            //for(;n>0; n--){
+            //    sendPort(0x9A+axis, sign>0 ? PCDU : MCDU, 0xFFFF);  // 0x9A = 0232 = 0200 + 032
+            //}
+          }
+        }
+        /*
+        if(imu_angle[2] > 85.1*DEG_TO_RAD && imu_angle[2] < 274.9*DEG_TO_RAD){
+            gimbalLock = true;
+        }
+        */
+      }
+
+      function move_fdai_marker() {
+        var s;
+
+        s = (imu_angle[0] * RAD_TO_DEG).toFixed(2);
+        s = '000'.substr(0, 6 - s.length) + s;
+        $('#imux').html(s);
+
+        s = (imu_angle[1] * RAD_TO_DEG).toFixed(2);
+        s = '000'.substr(0, 6 - s.length) + s;
+        $('#imuy').html(s);
+
+        s = (imu_angle[2] * RAD_TO_DEG).toFixed(2);
+        s = '000'.substr(0, 6 - s.length) + s;
+        $('#imuz').html(s);
+
+        s = (euler[0] * RAD_TO_DEG).toFixed(1);
+        $('#roll').html(s);
+
+        s = (euler[1] * RAD_TO_DEG).toFixed(1);
+        $('#pitch').html(s);
+
+        s = (euler[2] * RAD_TO_DEG).toFixed(1);
+        $('#yaw').html(s);
+        /*
+        s = (abs(velocity[2])*3.28084).toFixed(0);
+        s = '00000'.substr(0, 5-s.length) + s;
+        $('#vx').html(s);
+
+        s = round(abs(velocity[1])*3.28084).toFixed(0);
+        s = '00000'.substr(0, 5-s.length) + s;
+        $('#vy').html(s);
+
+        s = round(abs(velocity[0])*3.28084).toFixed(0);
+        s = '00000'.substr(0, 5-s.length) + s;
+        $('#vz').html(s);
+        */
+        if (abs(sum) > 0.01) {
+          calcEuler();
+          paint8ball();
+          sum = 0;
+        }
+      }
+
+      // calculates the Euler angles based on the imu reading
+      function calcEuler() {
+        var sinOG = sin(imu_angle[0]);
+        var sinIG = sin(imu_angle[1]);
+        var sinMG = sin(imu_angle[2]);
+        var cosOG = cos(imu_angle[0]);
+        var cosIG = cos(imu_angle[1]);
+        var cosMG = cos(imu_angle[2]);
+
+        // Extract Attitude Euler angles out of the rotation matrix Stable Member into Navigation Base ----
+        // var t11 = cosIG*cosMG;
+        var t12 = sinMG;
+        // var t13 = -sinIG$cosMG;
+        // var t21 = -cosIG*sinMG*cosOG + sinIG*sinOG;
+        var t22 = cosMG * cosOG;
+        var t23 = sinIG * sinMG * cosOG + cosIG * sinOG;
+        var t31 = cosIG * sinMG * sinOG + sinIG * cosOG;
+        var t32 = -cosMG * sinOG;
+        var t33 = -sinIG * sinMG * sinOG + cosIG * cosOG;
+
+        euler[0] = asin(t32);
+        euler[1] = atan2(t31, t33);
+        euler[2] = atan2(t12, t22);
+
+
+        for (var axis = 0; axis < 3; axis++) {
+          if (euler[axis] < -2 * PI) {
+            euler[axis] += 2 * PI;
+          } else if (euler[axis] >= 2 * PI) {
+            euler[axis] -= 2 * PI;
+          }
+        }
+      }
+
+      // Paints the 8-ball based on the euler angles calculated by calcEuler
+      function paint8ball() {
+        var roll = euler[0];
+        var pitch = euler[1];
+        var yaw = euler[2];
+
+        ctx.fillStyle = '#888888';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.setTransform(1, 0, 0, 1, canvas.width / 2, canvas.height / 2);
+
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        for (var i = 0; i < 36; i++) {
+          var angle = (i * 10) * DEG_TO_RAD;
+          var l = (i % 3 ? 10 : 15);
+          ctx.beginPath();
+          ctx.moveTo((radius + 2) * cos(angle), (radius + 2) * sin(angle));
+          ctx.lineTo((radius + l) * cos(angle), (radius + l) * sin(angle));
+          ctx.stroke();
+        }
+
+        var s = 1.0;
+        ctx.rotate(-roll);
+
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.lineWidth = 1;
+        ctx.arc(0, 0, radius, 0, 2 * PI, +1);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.fillStyle = '#000000';
+
+        if (cos(pitch) < 0) {
+          pitch += PI;
+          ctx.arc(0, 0, radius, 0, PI, true);
+        } else {
+          ctx.arc(0, 0, radius, 0, PI, false);
+        }
+        s = sin(pitch);
+        if (abs(s) < 0.001) {
+          ctx.moveTo(-radius, 0);
+          ctx.lineTo(radius, 0);
+        } else {
+          ctx.scale(1, s);
+          ctx.arc(0, 0, radius, PI, 0, true);
+        }
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = '#aaa';
+        if (cos(yaw) < 0) {
+          yaw += PI;
+        }
+        yaw = adjust(yaw, -PI, PI);
+        s = -sin(yaw);
+        if (abs(s) < 0.01) {
+          ctx.lineWidth = 1;
+          ctx.moveTo(0, -radius);
+          ctx.lineTo(0, radius);
+        }
+        else {
+          ctx.lineWidth = 4;
+          ctx.scale(s, 1);
+          ctx.arc(0, 0, radius, -PI / 2, PI / 2, true);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#F00';
+        ctx.lineWidth = 2;
+        ctx.arc(0, 0, 10, 0, 2 * PI, false);
+        ctx.stroke();
+      }
+
+      //******************************************************************************************
+      //*** Function:  IMU Cage Zero                                                           ***
+      //******************************************************************************************
+      function zero() {
+        error = [0, 0, 0];
+        imu_angle = [0, 0, 0];
+        euler = [0, 0, 0];
+        pimu = [0, 0, 0];
+        omega = [0, 0, 0];
+        velocity = [0, 0, 0];
+        pipa = [0, 0, 0];
+        gimbalLock = false;
+        sum = 1.0;
+        move_fdai_marker();
+      }
+
+      //***********************************************************************************************
+      //*** Function: Transform angular deltas in Body Axes into Stable Member angular deltas       ***
+      //***********************************************************************************************
+      function rotate(delta) {
+        // based on Transform_BodyAxes_StableMember {dp dq dr}
+
+        var MPI = sin(imu_angle[2]);
+        var MQI = cos(imu_angle[2]) * cos(imu_angle[0]);
+        var MQM = sin(imu_angle[0]);
+        var MRI = -cos(imu_angle[2]) * sin(imu_angle[0]);
+        var MRM = cos(imu_angle[0]);
+        var nenner = MRM * MQI - MRI * MQM;
+
+        //---- Calculate Angular Change ----
+        var do_b = adjust(delta[0] - (delta[1] * MRM * MPI - delta[2] * MQM * MPI) / nenner, -PI, PI);
+        var di_b = adjust((delta[1] * MRM - delta[2] * MQM) / nenner, -PI, PI);
+        var dm_b = adjust((delta[2] * MQI - delta[1] * MRI) / nenner, -PI, PI);
+
+        //--- Rad to Deg and call of Gimbal Angle Modification ----
+        modify_gimbal_angle([do_b, di_b, dm_b]);
+      }
+
+
+      //************************************************************************************************
+      //*** Function: Modify PIPA Values to match simulated Speed                                   ****
+      //************************************************************************************************
+      function accelerate(delta) {
+        // based on proc modify_pipaXYZ
+
+        var sinOG = sin(imu_angle[0]);
+        var sinIG = sin(imu_angle[1]);
+        var sinMG = sin(imu_angle[2]);
+        var cosOG = cos(imu_angle[0]);
+        var cosIG = cos(imu_angle[1]);
+        var cosMG = cos(imu_angle[2]);
+
+        var dv = [
+          cosMG * cosIG * delta[0] + (-cosOG * sinMG * cosIG + sinOG * sinIG) * delta[1] + (sinOG * sinMG * cosIG + cosOG * sinIG) * delta[2],
+          sinMG * delta[0] + cosOG * cosMG * delta[1] - sinOG * cosMG * delta[2],
+          -cosMG * sinIG * delta[0] + (cosOG * sinMG * sinIG + sinOG * cosIG) * delta[1] + (-sinOG * sinMG * sinIG + cosOG * cosIG) * delta[2]
+        ];
+
+        for (var axis = 0; axis < 3; axis++) {
+          velocity[axis] += dv[axis];
+          var counts = floor((velocity[axis] - pipa[axis] * PIPA_INCR) / PIPA_INCR);
+
+          pipa[axis] += counts;
+          /*
+          for(; counts > 0; counts--){
+              sendPort(0x9F+axis, PINC, 0xFFFF);          // 0x9F = 0237 = 0200 + 037
+          }
+          for(; counts < 0; counts++){
+              sendPort(0x9F+axis, MINC, 0xFFFF);
+          }
+          */
+          var p = peek(31 + axis);                      // read PIPA counter (31 = 0x37 = PIPAX)
+          p = p & 0x4000 ? -(p ^ 0x7FFF) : p;         // converts from ones-complement to twos-complement
+          p += counts;                                // adds the number of pulses
+          poke(31 + axis, p < 0 ? (-p) ^ 0x7FFF : p);
+        }
+      }
+
+      return {
+        gyro_coarse_align: gyro_coarse_align,
+        gyro_fine_align: gyro_fine_align,
+        update: move_fdai_marker,
+        zero: zero,
+        rotate: rotate,
+        accelerate: accelerate,
+        angle: function (axis) { return imu_angle[axis]; },
+        vel: function (axis) { return velocity[axis]; },
+        speed: function () { return sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]); }
+      }
+    })(); // imu
+
+
+    $('.key').click(function (event) {
+      sendPort(13, parseInt(event.target.name), 0x7FFF);  // sends the key to the input channel 13 = 015
+    });
+
+    $('#pro').click(function (event) {
+      //sendPort(282, 0x2000);  // 282 = 0432   note that octal literals are not supported in the strict mode
+      sendPort(26, 0, 0x2000);  // 26 = 032
+
+      setTimeout(function () {  // simulates a keyup event
+        //sendPort(282, 0x2000);
+        sendPort(26, 0x2000, 0x2000);
+      }, 200);
+    });
+
+    $('#enable_ISS').click(function (event) {
+      sendPort(24, 0, 0x2000);
+    });
+
+    var liftoff = false;
+    var cutoff = false;
+    var pitch_prog = false;
+    var paused = false;
+    var profile = false;
+    var phase0 = 0;
+
+    //$.getJSON('profile.json', function (data) {
+    //  profile = data;
+    //  console.log('The launch profile is loaded!');
+    //});
+
+    function launch(phase) {
+      if (!profile) {
+        window.alert('The launch profile is not loaded!');
+        return;
+      }
+      var t = dsky.met();
+      if (cutoff || t >= profile.length) {
+        cutoff = true;
+        liftoff = false;
+        return;
+      }
+      imu.accelerate([
+        1.08 * profile[t][2],
+        0,
+        0
+      ]);
+      imu.rotate([
+        -profile[t][3] / 10 * DEG_TO_RAD,
+        -profile[t][1] / 10 * DEG_TO_RAD,
+        0
+      ]);
+      if (!(phase % 10)) {
+        imu.update();
+      }
+      if (profile[t][4]) {
+        var c = round(profile[t][4]);
+        $('#SIC').css('background-color', c == 0 ? '#ffc200' : '#888888');
+        $('#SII').css('background-color', c == 1 ? '#ffc200' : '#888888');
+        $('#SIVB').css('background-color', c == 2 ? '#ffc200' : '#888888');
+      }
+    }
+
+    /*
+    function launch(phase){
+        if(pitch_prog){
+            imu.rotate([0, 0.002, 0]);
+        }
+        var pitch = imu.angle(1);
+        var speed = imu.speed() * Math.cos(pitch);
+        var Re = 6.4e+6;
+        var a = (speed*speed/Re)/9.8;
+
+        imu.accelerate([
+            1.08 * (3.0 + Math.sin(pitch)*(1-a)),
+            0,
+            1.08 * Math.cos(pitch)*(1-a)
+        ]);
+        if(!(phase % 10)){
+            imu.update();
+        }
+    }
+    */
+
+    $('#launch').click(function (event) {
+      if (cutoff || liftoff) return;
+      if ($('#prog00').html() != '02') {
+        window.alert('Launch is only possible in Major Mode (Prog) 02. See the "Launch checklist".');
+        return;
+      }
+      sendPort(24, 0x0000, 0x0010);
+      liftoff = true;
+      dsky.liftoff();
+      $('#SIC').css('background-color', '#ffc200');
+      $.get("/cgi-bin/logger.php", { "s": "launch", "v": "11", "r": Math.random() });
+    });
+
+    $('#shutdown').click(function () {
+      if (!liftoff) return;
+      cutoff = true;
+      liftoff = false;
+      $('#SIC').css('background-color', '#888888');
+      $('#SII').css('background-color', '#888888');
+      $('#SIVB').css('background-color', '#888888');
+    });
+
+    $('#pause').click(function (event) {
+      paused = !paused;
+      $(event.target).html(paused ? 'Resume' : 'Pause');
+    });
+
+
+    /*
+        This is the main program loop.
+        It runs every 100 ms and in turn executes the agc engine.
+    */
+    setInterval(function () {
+      var i, d, chan, val;
+      var mask = 0x00000F01;
+
+      if (paused) return;
+      //var now = Date.now();
+
+      var phase = dsky.tick();
+      cpu_time += 0.1;
+
+      for (i = 0; i < 10; i++) {
+        advance();                  // runs agc engine for 10 ms
+        d = scanPort(mask);         // scan for ports 8-11
+        while (d) {
+          chan = d >> 16;         // data returned by scanPort is packed as (chan<<16)+val
+          val = d & 0xffff;
+          switch (chan) {
+            case 8:
+            case 9:
+            case 11:
+              dsky.process(chan, val);
+              break;
+            case 10:
+              if (val & 0x0010) {
+                imu.zero();
+              }
+              break;
+            case 124:           // 0174
+            case 125:           // 0175
+            case 126:           // 0176
+              imu.gyro_coarse_align(chan, val);
+              break;
+            case 127:           // 0177
+              imu.gyro_fine_align(chan, val);
+              break;
+          }
+          d = scanPort(mask);
+        }
+      }
+
+      dsky.update();
+      //imu.update();
+      if (liftoff) {
+        launch(phase);
+      }
+
+      //var then = Date.now();
+      //console.log(then - now);
+    }, 100);
+
+    imu.update();
+    // ]]></script>
+</body>
+
+</html>

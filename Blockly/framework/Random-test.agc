@@ -1,11 +1,5 @@
 # Unit tests for the random number generator
 
-# Initialize the random number ganerator with seed
-
-		CA	NUM9601
-		TCR	PUSH
-		TCR	INITGEN
-
 
 # TEST: with upper bound (exclusive) one, the generated number is always zero
 
@@ -85,12 +79,10 @@ END3		NOOP
 		TCF	TSRD-END
 
 
-
-NUM10000	DEC 10000
-NUM9601		DEC	9601
+NUM100		DEC	100
+NUM10000	DEC	10000
 PREVNUM	=	600
 LOOPIDX	=	601
-
 
 
 TSRD-END NOOP
