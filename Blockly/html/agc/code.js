@@ -34,15 +34,6 @@ Code.getStringParamFromUrl = function(name, defaultValue) {
 };
 
 /**
- * Changes the output language by clicking the tab matching
- * the selected language in the codeMenu.
- */
-Code.changeCodingLanguage = function() {
-  var codeMenu = document.getElementById('code_menu');
-  Code.tabClick(codeMenu.options[codeMenu.selectedIndex].value);
-}
-
-/**
  * Monitor the block or JS editor.  If a change is made that changes the code,
  * clear the key from the URL.
  */
@@ -161,21 +152,8 @@ Code.tabClick = function(clickedName) {
   document.getElementById('content_' + clickedName).style.visibility =
       'visible';
   Code.renderContent();
-  // The code menu tab is on if the blocks tab is off.
-  var codeMenuTab = document.getElementById('tab_code');
   if (clickedName === 'blocks') {
     Code.workspace.setVisible(true);
-    codeMenuTab.className = 'taboff';
-  } else {
-    codeMenuTab.className = 'tabon';
-  }
-  // Sync the menu's value with the clicked tab value if needed.
-  var codeMenu = document.getElementById('code_menu');
-  for (var i = 0; i < codeMenu.options.length; i++) {
-    if (codeMenu.options[i].value === clickedName) {
-      codeMenu.selectedIndex = i;
-      break;
-    }
   }
   Blockly.svgResize(Code.workspace);
 };
@@ -231,7 +209,7 @@ Code.checkAllGeneratorFunctionsDefined = function(generator) {
   if (!valid) {
     var msg = 'The generator code for the following blocks not specified for ' +
         generator.name_ + ':\n - ' + missingBlockGenerators.join('\n - ');
-    Blockly.dialog.alert(msg);  // Assuming synchronous. No callback.
+    alert(msg);  // Assuming synchronous. No callback.
   }
   return valid;
 };
@@ -309,13 +287,6 @@ Code.init = function() {
     Code.bindClick('tab_' + name,
         function(name_) {return function() {Code.tabClick(name_);};}(name));
   }
-  Code.bindClick('tab_code', function(e) {
-    if (e.target !== document.getElementById('tab_code')) {
-      // Prevent clicks on child codeMenu from triggering a tab click.
-      return;
-    }
-    Code.changeCodingLanguage();
-  });
 
   onresize();
   Blockly.svgResize(Code.workspace);

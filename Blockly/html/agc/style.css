@@ -93,9 +93,6 @@ td.tabmax {
   padding-right: 10px;
   text-align: right;
 }
-#tab_code {
-  display: none;
-}
 
 table {
   border-collapse: collapse;
@@ -152,13 +149,4 @@ button {
 }
 .run {
   background-position: -42px 0px;
-}
-
-@media (max-width: 710px) {
-  .tab_collapse {
-    display: none;
-  }
-  #tab_code {
-    display: table-cell;
-  }
 }
