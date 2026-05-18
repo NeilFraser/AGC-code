@@ -1,9 +1,10 @@
 Contents of third-party directory:
 
 * blockly
-Source: https://github.com/google/blockly/tree/master
-Date: 14 October 2019
+Source: https://github.com/RaspberryPiFoundation/blockly/tree/b13184054d4e0a0d47561362069e4364cdaed87a
+Date: 30 November 2021
 Modifications: None.
+This should be compatible with the version used by Blockly Games.
 
 * moonjs
 Source: https://svtsim.com/moonjs/agc.html
