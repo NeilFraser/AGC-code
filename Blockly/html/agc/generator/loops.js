@@ -4,7 +4,7 @@
  */
 'use strict';
 
-AgcGenerator['agc_controls_whileUntil'] = function(block) {
+AgcGenerator['controls_whileUntil'] = function(block) {
   // Generator for 'do while/until' loop.
   const labelLoop = 'LOOP' + AgcGenerator.getUniqueLabel();
   const conditionCode =

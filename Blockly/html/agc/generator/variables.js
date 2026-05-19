@@ -15,8 +15,7 @@ AgcGenerator['variables_get'] = function(block) {
 
 AgcGenerator['variables_set'] = function(block) {
   // Variable setter.
-  const argument0 = AgcGenerator.valueToCode(
-                        block, 'VALUE') ||
+  const argument0 = AgcGenerator.valueToCode(block, 'VALUE') ||
       AgcGenerator.default0;
   const varName = AgcGenerator.nameDB_.getName(
       block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);

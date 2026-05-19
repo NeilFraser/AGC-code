@@ -6,7 +6,6 @@
   <title>Blockly AGC</title>
   <link rel="stylesheet" href="style.css">
   <script src="../third-party/blockly/blockly_compressed.js"></script>
-  <script src="../third-party/blockly/blocks_compressed.js"></script>
   <script src="../third-party/blockly/en.js"></script>
   <script src="monkey.js"></script>
 
@@ -18,12 +17,14 @@
   <script src="blocks/logic.js"></script>
   <script src="blocks/loops.js"></script>
   <script src="blocks/math.js"></script>
+  <script src="blocks/procedures.js"></script>
   <script src="blocks/variables.js"></script>
   <script src="generator/generator.js"></script>
   <script src="generator/agc.js"></script>
   <script src="generator/logic.js"></script>
   <script src="generator/loops.js"></script>
   <script src="generator/math.js"></script>
+  <script src="generator/procedures.js"></script>
   <script src="generator/variables.js"></script>
   <script src="code.js"></script>
 </head>
@@ -71,209 +72,55 @@
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
-      <block type="agc_controls_if"></block>
-      <block type="agc_controls_ifelse"></block>
-      <block type="agc_logic_compare"></block>
-      <block type="agc_logic_operation"></block>
-      <block type="agc_logic_negate"></block>
-      <block type="agc_logic_boolean"></block>
-      <block type="agc_logic_ternary"></block>
+      <block type="controls_if"></block>
+      <block type="controls_ifelse"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_ternary"></block>
     </category>
     <category name="Loops" colour="%{BKY_LOOPS_HUE}">
-      <block type="controls_repeat_ext" disabled="true">
-        <value name="TIMES">
-          <shadow type="agc_math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="agc_controls_whileUntil"></block>
-      <block type="controls_for" disabled="true">
-        <value name="FROM">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="agc_math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-        <value name="BY">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="controls_forEach" disabled="true"></block>
-      <block type="controls_flow_statements" disabled="true"></block>
+      <block type="controls_whileUntil"></block>
     </category>
     <category name="Math" colour="%{BKY_MATH_HUE}">
-      <block type="agc_math_number">
+      <block type="math_number">
         <field name="NUM">123</field>
       </block>
-      <block type="agc_math_arithmetic">
+      <block type="math_arithmetic">
         <value name="A">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">1</field>
           </shadow>
         </value>
         <value name="B">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">1</field>
           </shadow>
         </value>
       </block>
-      <block type="agc_math_random_int_0">
+      <block type="math_random_int_0">
         <value name="TO">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">6</field>
           </shadow>
         </value>
       </block>
-      <block type="agc_math_random_int" disabled="true">
-        <value name="FROM">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="TO">
-          <shadow type="agc_math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_single" disabled="true">
-        <value name="NUM">
-          <shadow type="agc_math_number">
-            <field name="NUM">9</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_trig" disabled="true">
-        <value name="NUM">
-          <shadow type="agc_math_number">
-            <field name="NUM">45</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constant" disabled="true"></block>
-      <block type="math_number_property" disabled="true">
-        <value name="NUMBER_TO_CHECK">
-          <shadow type="agc_math_number">
-            <field name="NUM">0</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_round" disabled="true">
-        <value name="NUM">
-          <shadow type="agc_math_number">
-            <field name="NUM">3.1</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_on_list" disabled="true"></block>
-      <block type="math_modulo" disabled="true">
-        <value name="DIVIDEND">
-          <shadow type="agc_math_number">
-            <field name="NUM">64</field>
-          </shadow>
-        </value>
-        <value name="DIVISOR">
-          <shadow type="agc_math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_constrain" disabled="true">
-        <value name="VALUE">
-          <shadow type="agc_math_number">
-            <field name="NUM">50</field>
-          </shadow>
-        </value>
-        <value name="LOW">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="HIGH">
-          <shadow type="agc_math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="math_random_float" disabled="true"></block>
-      <block type="math_atan2" disabled="true">
-        <value name="X">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-        <value name="Y">
-          <shadow type="agc_math_number">
-            <field name="NUM">1</field>
-          </shadow>
-        </value>
-      </block>
-    </category>
-    <category name="Lists" colour="%{BKY_LISTS_HUE}">
-      <block type="lists_create_with" disabled="true">
-        <mutation items="0"></mutation>
-      </block>
-      <block type="lists_create_with" disabled="true"></block>
-      <block type="lists_repeat" disabled="true">
-        <value name="NUM">
-          <shadow type="agc_math_number">
-            <field name="NUM">5</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="lists_length" disabled="true"></block>
-      <block type="lists_isEmpty" disabled="true"></block>
-      <block type="lists_indexOf" disabled="true">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getIndex" disabled="true">
-        <value name="VALUE">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_setIndex" disabled="true">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_getSublist" disabled="true">
-        <value name="LIST">
-          <block type="variables_get">
-            <field name="VAR">list</field>
-          </block>
-        </value>
-      </block>
-      <block type="lists_sort" disabled="true"></block>
     </category>
     <category name="AGC" colour="%{BKY_COLOUR_HUE}">
       <block type="agc_print_digit">
         <value name="DIGIT">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">0</field>
           </shadow>
         </value>
         <value name="COL">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">0</field>
           </shadow>
         </value>
         <value name="ROW">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">0</field>
           </shadow>
         </value>
@@ -281,7 +128,7 @@
       <block type="agc_key_press"></block>
       <block type="agc_sleep">
         <value name="TIME">
-          <shadow type="agc_math_number">
+          <shadow type="math_number">
             <field name="NUM">100</field>
           </shadow>
         </value>

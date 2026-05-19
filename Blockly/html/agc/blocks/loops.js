@@ -6,7 +6,7 @@
 Blockly.defineBlocksWithJsonArray([
   // Block for 'do while/until' loop.
   {
-    'type': 'agc_controls_whileUntil',
+    'type': 'controls_whileUntil',
     'message0': '%1 %2',
     'args0': [
       {
@@ -37,3 +37,11 @@ Blockly.defineBlocksWithJsonArray([
     'extensions': ['controls_whileUntil_tooltip'],
   },
 ]);
+
+
+Blockly.Extensions.register('controls_whileUntil_tooltip',
+    Blockly.Extensions.buildTooltipForDropdown(
+        'MODE', {
+  'WHILE': '%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_WHILE}',
+  'UNTIL': '%{BKY_CONTROLS_WHILEUNTIL_TOOLTIP_UNTIL}',
+}));
