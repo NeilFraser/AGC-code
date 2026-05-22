@@ -4,7 +4,7 @@
  */
 'use strict';
 
-AgcGenerator['controls_if'] = function(block) {
+AgcGenerator['logic_if'] = function(block) {
   // If condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =
@@ -21,7 +21,7 @@ ${labelIf}-X
   return code;
 };
 
-AgcGenerator['controls_ifelse'] = function(block) {
+AgcGenerator['logic_ifelse'] = function(block) {
   // If/else condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =

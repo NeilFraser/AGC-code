@@ -5,7 +5,7 @@
 
 Blockly.defineBlocksWithJsonArray([
   {
-    'type': 'controls_if',
+    'type': 'logic_if',
     'message0': '%{BKY_CONTROLS_IF_MSG_IF} %1',
     'args0': [
       {
@@ -28,7 +28,7 @@ Blockly.defineBlocksWithJsonArray([
     'helpUrl': '%{BKY_CONTROLS_IF_HELPURL}',
   },
   {
-    'type': 'controls_ifelse',
+    'type': 'logic_ifelse',
     'message0': '%{BKY_CONTROLS_IF_MSG_IF} %1',
     'args0': [
       {

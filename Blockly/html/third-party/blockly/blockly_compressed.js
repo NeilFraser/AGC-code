@@ -1899,6 +1899,3 @@ var module$contents$Blockly$serialization$workspaces_load=function(a,b,c){c=void
 b);b.setResizesEnabled&&b.setResizesEnabled(!0);(0,module$exports$Blockly$utils$dom.stopTextWidthCache)();(0,module$exports$Blockly$Events$utils.fire)(new ((0,module$exports$Blockly$Events$utils.get)(module$exports$Blockly$Events$utils.FINISHED_LOADING))(b));(0,module$exports$Blockly$Events$utils.setGroup)(d);(0,module$exports$Blockly$Events$utils.setRecordUndo)(c)}};Blockly.serialization.workspaces.load=module$contents$Blockly$serialization$workspaces_load;Blockly.requires={};
 return Blockly;
 }));
-
-
-//# sourceMappingURL=blockly_compressed.js.map
