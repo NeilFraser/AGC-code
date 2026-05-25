@@ -98,6 +98,7 @@ END		CA	A
 
 # Code modules.
 $Boolean.agc
+$List.agc
 $Math.agc
 $Print.agc
 $Random.agc

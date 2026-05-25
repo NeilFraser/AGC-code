@@ -2,6 +2,7 @@
 
 # Execute the tests.
 $Boolean-test.agc
+$List-test.agc
 $Math-test.agc
 $Random-test.agc
 $Print-test.agc
