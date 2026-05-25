@@ -4,7 +4,7 @@
  */
 'use strict';
 
-AgcGenerator['agc_math_number'] = function(block) {
+AgcGenerator['math_number'] = function(block) {
   // Numeric value.
   const number = Number(block.getFieldValue('NUM'));
   AgcGenerator.provideFunction_('NUM' + number, [`NUM${number}\tDEC\t${number}`]);
@@ -12,7 +12,7 @@ AgcGenerator['agc_math_number'] = function(block) {
   return code;
 };
 
-AgcGenerator['agc_math_arithmetic'] = function(block) {
+AgcGenerator['math_arithmetic'] = function(block) {
   // Basic arithmetic operators.
   const OPERATORS = {
     'ADD': 'MA-AD',
@@ -32,12 +32,25 @@ ${argument0}
   return code;
 };
 
-AgcGenerator['agc_math_random_int_0'] = function(block) {
+AgcGenerator['math_random_int_0'] = function(block) {
   const to = AgcGenerator.valueToCode(block, 'TO') || AgcGenerator.default1;
   const code = `
 ${to}
 \tTCR\tPUSH
 \tTCR\tGRNDNUM
+`;
+  return code;
+};
+
+AgcGenerator['math_change'] = function(block) {
+  // Add to a variable in place.
+  const argument0 = AgcGenerator.valueToCode(block, 'DELTA') || AgcGenerator.default0;
+  const varName = AgcGenerator.nameDB_.getName(block.getFieldValue('VAR'),
+      Blockly.VARIABLE_CATEGORY_NAME);
+
+  const code = `
+${argument0}
+\tADS\t${varName}
 `;
   return code;
 };

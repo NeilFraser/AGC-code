@@ -11,21 +11,20 @@
 const AgcGenerator = new Blockly.Generator('AGC');
 
 /**
- * List of illegal variable names.
- * This is not intended to be a security feature.  Blockly is 100% client-side,
- * so bypassing this list is trivial.  This is intended to prevent users from
- * accidentally clobbering a built-in object or function.
+ * Reserved words are to prevent user-created variables and functions from
+ * colliding with language features or framework names.
+ * For the AGC, we simply prefix all user-created names with '@'.
  */
 AgcGenerator.addReservedWords('');
 
 // Assembly code has no structural indentation.
 AgcGenerator.INDENT = '';
 
+// Blocks with missing connections usually default to either a '0' or '1' block.
 AgcGenerator.default0 = '\tCA\tNUM0\n';
 AgcGenerator.default1 = '\tCA\tNUM1\n';
 
-AgcGenerator.uniqueLabel_ = 0;
-
+// Create a unique number which can be used as a distinct label.
 AgcGenerator.getUniqueLabel = function() {
   return AgcGenerator.uniqueLabel_++;
 };
@@ -53,6 +52,9 @@ AgcGenerator.init = function(workspace) {
   this.nameDB_.setVariableMap(workspace.getVariableMap());
   this.nameDB_.populateVariables(workspace);
   this.nameDB_.populateProcedures(workspace);
+
+  // Reset the label generation counter.
+  this.uniqueLabel_ = 0;
 
   const defvars = [];
   // Add developer variables (not created or named by the user).
@@ -134,7 +136,7 @@ AgcGenerator.scrub_ = function(block, code, opt_thisOnly) {
     let comment = block.getCommentText();
     if (comment) {
       comment = Blockly.utils.string.wrap(comment, this.COMMENT_WRAP - 3);
-      commentCode += this.prefixLines(comment + '\n', '// ');
+      commentCode += this.prefixLines(comment + '\n', '# ');
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.
@@ -144,7 +146,7 @@ AgcGenerator.scrub_ = function(block, code, opt_thisOnly) {
         if (childBlock) {
           comment = this.allNestedComments(childBlock);
           if (comment) {
-            commentCode += this.prefixLines(comment, '// ');
+            commentCode += this.prefixLines(comment, '# ');
           }
         }
       }

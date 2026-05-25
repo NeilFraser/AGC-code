@@ -54,7 +54,7 @@ Blockly.defineBlocksWithJsonArray([
  * @package
  * @readonly
  */
-Blockly.Constants.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
+Blockly.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
   /**
    * Add menu option to create getter/setter block for this setter/getter.
    * @param {!Array} options List of menu options to add to.
@@ -111,7 +111,7 @@ Blockly.Constants.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN = {
   * @param {!Blockly.Block} block The block with the variable to rename.
   * @return {!function()} A function that renames the variable.
   */
-Blockly.Constants.Variables.RENAME_OPTION_CALLBACK_FACTORY = function(block) {
+Blockly.Variables.RENAME_OPTION_CALLBACK_FACTORY = function(block) {
   return function() {
     const workspace = block.workspace;
     const variable = block.getField('VAR').getVariable();
@@ -125,7 +125,7 @@ Blockly.Constants.Variables.RENAME_OPTION_CALLBACK_FACTORY = function(block) {
  * @param {!Blockly.Block} block The block with the variable to delete.
  * @return {!function()} A function that deletes the variable.
  */
-Blockly.Constants.Variables.DELETE_OPTION_CALLBACK_FACTORY = function(block) {
+Blockly.Variables.DELETE_OPTION_CALLBACK_FACTORY = function(block) {
   return function() {
     const workspace = block.workspace;
     const variable = block.getField('VAR').getVariable();
@@ -135,4 +135,4 @@ Blockly.Constants.Variables.DELETE_OPTION_CALLBACK_FACTORY = function(block) {
 };
 
 Blockly.Extensions.registerMixin('contextMenu_variableSetterGetter',
-    Blockly.Constants.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN);
+    Blockly.Variables.CUSTOM_CONTEXT_MENU_VARIABLE_GETTER_SETTER_MIXIN);

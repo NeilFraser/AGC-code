@@ -4,7 +4,7 @@
  */
 'use strict';
 
-AgcGenerator['agc_controls_if'] = function(block) {
+AgcGenerator['logic_if'] = function(block) {
   // If condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =
@@ -21,7 +21,7 @@ ${labelIf}-X
   return code;
 };
 
-AgcGenerator['agc_controls_ifelse'] = function(block) {
+AgcGenerator['logic_ifelse'] = function(block) {
   // If/else condition.
   const labelIf = 'IF' + AgcGenerator.getUniqueLabel();
   const conditionCode =
@@ -42,14 +42,14 @@ ${labelIf}-X
   return code;
 };
 
-AgcGenerator['agc_logic_boolean'] = function(block) {
+AgcGenerator['logic_boolean'] = function(block) {
   // Boolean values true and false.
   const boolean = block.getFieldValue('BOOL');
   const code = `\tCA\tNUM${boolean}\n`;
   return code;
 };
 
-AgcGenerator['agc_logic_compare'] = function(block) {
+AgcGenerator['logic_compare'] = function(block) {
   // Comparison operator.
   const OPERATORS = {
     'EQ': '\tTCR\tBL-NOT',
@@ -73,7 +73,7 @@ AgcGenerator['agc_logic_compare'] = function(block) {
   return code;
 };
 
-AgcGenerator['agc_logic_operation'] = function(block) {
+AgcGenerator['logic_operation'] = function(block) {
   // Operations 'and', 'or'.
   const operator = block.getFieldValue('OP');  // AND or OR
   let argument0 = AgcGenerator.valueToCode(block, 'A');
@@ -98,11 +98,11 @@ AgcGenerator['agc_logic_operation'] = function(block) {
   ${argument1}
   \tTCR\tPUSH
   \tTCR\tBL-${operator}
-  `;
+`;
   return code;
 };
 
-AgcGenerator['agc_logic_negate'] = function(block) {
+AgcGenerator['logic_negate'] = function(block) {
   // Negation.
   const argument0 = AgcGenerator.valueToCode(block, 'BOOL') || AgcGenerator.default1;
   const code = `
@@ -112,7 +112,7 @@ ${argument0}
   return code;
 };
 
-AgcGenerator['agc_logic_ternary'] = function(block) {
+AgcGenerator['logic_ternary'] = function(block) {
   // Ternary operator.
   const argument0 = AgcGenerator.valueToCode(block, 'ELSE') || AgcGenerator.default0;
   const argument1 = AgcGenerator.valueToCode(block, 'THEN') || AgcGenerator.default0;
