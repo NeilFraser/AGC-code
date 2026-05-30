@@ -37,3 +37,20 @@ AgcGenerator['agc_key_press'] = function(block) {
 `;
   return code;
 };
+
+
+AgcGenerator['agc_power'] = function(block) {
+  const action = block.getFieldValue('ACTION');
+  if (action === 'RESTART') {
+    return `
+\tTCF\tAGCSTART
+`;
+  }
+  if (action === 'END') {
+    return `
+AGCEND\tCAE\tQ
+\tTCF\tAGCEND
+`;
+  }
+  throw Error('Unknown power option');
+};

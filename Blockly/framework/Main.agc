@@ -10,7 +10,7 @@
 		SETLOC	4000
 
 		# Power up
-		CA		100MS	# Schedule T5 soon.
+AGCSTART	CA		100MS	# Schedule T5 soon.
 		TS		T5
 		RELINT
 		TCF		START
