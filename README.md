@@ -7,7 +7,7 @@ This repository is a source of information on writing code for a bare metal AGC.
    * Random-Die.agc - A minimal program that rolls a D6 die, and shows the result on the DSKY.  This program demonstrates outputing a single digit to the DSKY and reading a button.
    * TicTacToe.agc - Tic-tac-toe game for either one or two human players.
 * Blockly - Graphical programming UI for the AGC.
-   A running copy may be found at https://neil.fraser.name/software/blockly-agc/agc/
+   A running copy may be found at https://neil.fraser.name/software/blockly-agc/
 * Operators - Minimal demo programs for many of the AGC's opcodes.  These are only designed to be stepped through in a debugger.  Running them will result in GOJAM reboots.
 
 All code is public domain.

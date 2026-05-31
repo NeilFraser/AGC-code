@@ -1,0 +1,26 @@
+body {
+  background-color: #fff;
+  font-family: sans-serif;
+}
+
+h1,h2,h3 {
+  font-weight: normal;
+}
+
+#logo {
+  float: right;
+  width: 200px;
+}
+
+#editorLink {
+  display: inline-block;
+  margin: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: large;
+  border: 1px solid #dd4b39;
+  background-color: #dd4b39;
+  color: #fff;
+
+  text-decoration: none;
+}
