@@ -69,4 +69,24 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Stop execution for a set time (in centiseconds)",
     "helpUrl": ""
   },
+
+  // Block for stopping execution or rebooting.
+  {
+    "type": "agc_power",
+    'message0': '%1',
+    'args0': [
+      {
+        'type': 'field_dropdown',
+        'name': 'ACTION',
+        'options': [
+          ['restart', 'RESTART'],
+          ['end', 'END'],
+        ],
+      },
+    ],
+    "previousStatement": null,
+    "colour": 20,
+    "tooltip": "Reboot or halt the AGC.",
+    "helpUrl": ""
+  },
 ]);

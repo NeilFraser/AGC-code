@@ -10,7 +10,7 @@
 		SETLOC	4000
 
 		# Power up
-		CA		100MS	# Schedule T5 soon.
+AGCSTART	CA		100MS	# Schedule T5 soon.
 		TS		T5
 		RELINT
 		TCF		START
@@ -93,11 +93,12 @@ START		CA	NUM0
 $Blockly.agc
 
 # Halt execution.
-END		CA	A
-		TCF	END
+AGCEND		CA	A
+		TCF	AGCEND
 
 # Code modules.
 $Boolean.agc
+$List.agc
 $Math.agc
 $Print.agc
 $Random.agc

@@ -72,16 +72,18 @@ AgcGenerator.init = function(workspace) {
   }
 
   // Declare all of the variables.
-  if (defvars.length) {
-    // Octal 4000 is just beyond the end of AGC's erasable memory.
-    // Declare variables starting from the end of memory and working downwards.
-    let memoryAddress = 0o4000;
-    this.definitions_['variables'] = '';
-    for (const varName of defvars) {
-      memoryAddress--;
-      this.definitions_['variables'] += varName + '\t=\t' + memoryAddress.toString(8) + '\n';
-    }
+  // Octal 4000 is just beyond the end of AGC's erasable memory.
+  // Declare variables starting from the end of memory and working downwards.
+  let memoryAddress = 0o4000;
+  this.definitions_['variables'] = '';
+  for (const varName of defvars) {
+    memoryAddress--;
+    this.definitions_['variables'] += varName + '\t=\t' + memoryAddress.toString(8) + '\n';
   }
+  // Final variable is the list.
+  memoryAddress--;
+  this.definitions_['variables'] += 'LIST\t=\t' + memoryAddress.toString(8) + '\n';
+
   this.isInitialized = true;
 };
 
