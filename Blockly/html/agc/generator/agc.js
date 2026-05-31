@@ -48,7 +48,6 @@ AgcGenerator['agc_power'] = function(block) {
   }
   if (action === 'END') {
     return `
-AGCEND\tCAE\tQ
 \tTCF\tAGCEND
 `;
   }
