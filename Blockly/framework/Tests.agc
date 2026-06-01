@@ -22,7 +22,7 @@ $Print-test.agc
 #       First value.
 #       Second value.
 TS-EQUAL	EXTEND
-		QXCH	L	# Temporarily save the Q value into L
+		QXCH	TS-TEMP	# Temporarily save the Q value.
 		# The arguments for TS-EQUAL are the same as for MA-SU.
 	 	# So there's no need to touch the stack.
 		TCR	MA-SU
@@ -30,9 +30,11 @@ TS-EQUAL	EXTEND
 		EXTEND
 		BZF	TS-FAIL
 		EXTEND
-		QXCH	L
+		QXCH	TS-TEMP
 		RETURN
 
 TS-FAIL		TCR	TS-FAIL	# Test failed.  Trigger TC Trap.
 
 TS-END		NOOP
+
+TS-TEMP		=	1400

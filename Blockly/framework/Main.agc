@@ -77,10 +77,12 @@ T4RUPT		XCH	ARUPT
 
 # Initialize the stack pointer to be 0.
 # This is the offset from the starting stack position.
-START		CAF	MAIN-EB	# Switch to main memory bank.
+START		CAF	STACK-EB	# Switch to stack memory bank.
 		TS	EB
 		CA	NUM0
 		TS	STACKPTR
+		CAF	MAIN-EB		# Switch to main memory bank.
+		TS	EB
 		# Clear the DSKY.
 		TCR	FLSHDSP
 		# Initialize the random number generator with seed
@@ -155,19 +157,41 @@ SLEEPEND	RETURN
 
 
 # Push the contents of the 'A' register onto the stack.
-# No registers are affected.
-PUSH		INCR	STACKPTR
+PUSH		TS	STACKTMP
+		CAF	STACK-EB	# Switch to stack memory bank.
+		TS	EB
+		CAE	STACKTMP
+		INCR	STACKPTR
 		INDEX	STACKPTR
 		TS	STACK
+		CAF	MAIN-EB		# Switch back to main memory bank.
+		TS	EB
 		RETURN
 
 
 # POP: Pop the last value on the stack into the 'A' register.
-# DROP: Drop the last value without returning it.
-POP		INDEX	STACKPTR
+POP		CAF	STACK-EB	# Switch to stack memory bank.
+		TS	EB
+		INDEX	STACKPTR
 		CAE	STACK
-DROP		EXTEND
+		TS	STACKTMP
+		EXTEND
 		DIM	STACKPTR
+		CAF	MAIN-EB		# Switch back to main memory bank.
+		TS	EB
+		CAE	STACKTMP
+		RETURN
+
+
+# PEEK: Read the last value on the stack into the 'A' register.
+PEEK		CAF	STACK-EB	# Switch to stack memory bank.
+		TS	EB
+		INDEX	STACKPTR
+		CAE	STACK
+		TS	STACKTMP
+		CAF	MAIN-EB		# Switch back to main memory bank.
+		TS	EB
+		CAE	STACKTMP
 		RETURN
 
 
@@ -175,8 +199,10 @@ DROP		EXTEND
 SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
 INPUTING	=	062	# Waiting for a DSKY key press.
 QPOP		=	063	# Temporary spot for Q.
-STACKPTR	=	064	# Stack pointer, starts at 0.
-STACK		=	064	# Start address of stack (minus one).
+STACKTMP	=	064	# Temp value for stack operations.
+
+STACKPTR	=	1400	# Stack pointer, starts at 0.
+STACK		=	1400	# Start address of stack (minus one).
 
 # Constants.
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
@@ -195,7 +221,8 @@ NUM10		DEC	10
 NUM16		DEC	16
 NUM9601		DEC	9601	# Random number seed.
 
-MAIN-EB		OCT	1400	# Default user erasable memory bank.
+MAIN-EB		OCT	1400	# E3 is the default user erasable memory bank.
+STACK-EB	OCT	2000	# E4 erasable memory bank used by stack.
 
 # System Address Locations
 A		=	00

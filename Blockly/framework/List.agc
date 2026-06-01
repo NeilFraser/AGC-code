@@ -44,5 +44,5 @@ LS-GET		EXTEND
 		RETURN
 
 
-LIST-EB		OCT	2000	# E4 erasable memory bank used by list.
+LIST-EB		OCT	2400	# E5 erasable memory bank used by list.
 LIST		=	1400	# Address at start of bank.

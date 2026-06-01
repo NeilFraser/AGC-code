@@ -57,8 +57,7 @@ ${toCode}
 \tINCR\tA
 \tTCR\tPUSH
 ${labelLoop}\t# Count up loop.
-\tINDEX\tSTACKPTR
-\tCAE\tSTACK
+\tTCR\tPEEK
 \tEXTEND
 \tSU\t${variable}
 \tEXTEND
@@ -67,7 +66,7 @@ ${branchCode}
 \tINCR\t${variable}
 \tTC\t${labelLoop}
 ${labelLoop}-X
-\tTCR\tDROP
+\tTCR\tPOP
 `;
   } else {
     code = `
@@ -76,8 +75,7 @@ ${fromCode}
 ${toCode}
 \tTCR\tPUSH
 ${labelLoop}\t# Count down loop.
-\tINDEX\tSTACKPTR
-\tCAE\tSTACK
+\tTCR\tPEEK
 \tEXTEND
 \tSU\t${variable}
 \tEXTEND
@@ -90,7 +88,7 @@ ${branchCode}
 \tADS\t${variable}
 \tTC\t${labelLoop}
 ${labelLoop}-X
-\tTCR\tDROP
+\tTCR\tPOP
 `;
   }
   return code;

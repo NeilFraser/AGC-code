@@ -51,13 +51,16 @@ BL-1		CA	NUM1
 #       Second value.
 # Returns (on A):
 #	Second value if it is non-zero, otherwise first value.
+# Uses L register.
 BL-OR		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the second value.
 		EXTEND
 		BZF	BL-OR2
 		# Second value was non-zero.  Return it.
-		TCR	DROP	# Throw away the first value.
+		TS	L
+		TCR	POP	# Throw away the first value.
+		CA	L
 		TCF	BL-ORX
 		# Second value was a zero.  Return the first value.
 BL-OR2		TCR	POP
@@ -72,6 +75,7 @@ BL-ORX		EXTEND
 #       Second value.
 # Returns (on A):
 #	Second value if it is zero, otherwise first value.
+# Uses L register.
 BL-AND		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the second value.
@@ -81,7 +85,9 @@ BL-AND		EXTEND
 		TCR	POP
 		TCF	BL-ANDX
 		# Second value was a zero.  Return it.
-BL-AND0		TCR	DROP	# Throw away the first value.
+BL-AND0		TS	L
+		TCR	POP	# Throw away the first value.
+		CA	L
 BL-ANDX		EXTEND
 		QXCH	QPOP
 		RETURN
@@ -94,6 +100,7 @@ BL-ANDX		EXTEND
 #	Conditional value (a).
 # Returns (on A):
 #	If-false value if conditional value is zero, otherwise if-true value.
+# Uses L register.
 BL-COND		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the conditional value.
@@ -101,10 +108,12 @@ BL-COND		EXTEND
 		BZF	BL-COND0
 		# Conditional value was non-zero.  Return if-true value.
 		TCR	POP	# Pop the if-true value.
-		TCR	DROP	# Throw away the if-false value.
+		TS	L
+		TCR	POP	# Throw away the if-false value.
+		CA	L
 		TCF	BL-CONDX
 		# Conditional value was a zero.  Return if-false value.
-BL-COND0	TCR	DROP	# Throw away the if-true value.
+BL-COND0	TCR	POP	# Throw away the if-true value.
 		TCR	POP	# Pop the if-false value.
 BL-CONDX	EXTEND
 		QXCH	QPOP
