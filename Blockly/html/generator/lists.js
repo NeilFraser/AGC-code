@@ -9,9 +9,8 @@ AgcGenerator['list_get'] = function(block) {
       AgcGenerator.default0;
   const code = `
 ${argument0}
-\tCOM
-\tINDEX\tA
-\tCA\tLIST
+\tTCR\tPUSH
+\tTCR\tLS-GET
 `;
   return code;
 };

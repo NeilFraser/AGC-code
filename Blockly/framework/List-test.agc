@@ -15,19 +15,16 @@
 
 	CA	NUM4		# Test that list[0] == 4
 	TCR	PUSH
-	CA	LIST
+	CA	NUM0
+	TCR	PUSH
+	TCR	LS-GET
 	TCR	PUSH
 	TCR	TS-EQUAL
 
 	CA	NUM2		# Test that list[1] == 2
 	TCR	PUSH
 	CA	NUM1
-	COM
-	INDEX	A
-	CA	LIST
+	TCR	PUSH
+	TCR	LS-GET
 	TCR	PUSH
 	TCR	TS-EQUAL
-
-# Blockly will normally define list.
-# But for tests, it otherwise wouldn't be defined.
-LIST	=	3777

@@ -77,7 +77,9 @@ T4RUPT		XCH	ARUPT
 
 # Initialize the stack pointer to be 0.
 # This is the offset from the starting stack position.
-START		CA	NUM0
+START		CAF	MAIN-EB	# Switch to main memory bank.
+		TS	EB
+		CA	NUM0
 		TS	STACKPTR
 		# Clear the DSKY.
 		TCR	FLSHDSP
@@ -193,10 +195,13 @@ NUM10		DEC	10
 NUM16		DEC	16
 NUM9601		DEC	9601	# Random number seed.
 
+MAIN-EB		OCT	1400	# Default user erasable memory bank.
+
 # System Address Locations
 A		=	00
 L		=	01
 Q		=	02
+EB		=	03	# The register that switches banks.
 NUM0		=	07
 ARUPT		=	10
 KEY15		=	15	# I/O Channel 15 (DSKY keypad)
