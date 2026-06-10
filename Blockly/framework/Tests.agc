@@ -1,6 +1,7 @@
 # Unit test framework.
 
 # Execute the tests.
+$Stack-test.agc
 $Boolean-test.agc
 $List-test.agc
 $Math-test.agc

@@ -77,12 +77,7 @@ T4RUPT		XCH	ARUPT
 
 # Initialize the stack pointer to be 0.
 # This is the offset from the starting stack position.
-START		CAF	STACK-EB	# Switch to stack memory bank.
-		TS	EB
-		CA	NUM0
-		TS	STACKPTR
-		CAF	MAIN-EB		# Switch to main memory bank.
-		TS	EB
+START		TCR	STACKINI
 		# Clear the DSKY.
 		TCR	FLSHDSP
 		# Initialize the random number generator with seed
@@ -100,7 +95,10 @@ $Blockly.agc
 AGCEND		CA	A
 		TCF	AGCEND
 
+# Place all the framework code into bank 00.
+		SETLOC	10000
 # Code modules.
+$Stack.agc
 $Boolean.agc
 $List.agc
 $Math.agc
@@ -156,53 +154,11 @@ SLEEPBZF	CA	SLEEPING
 SLEEPEND	RETURN
 
 
-# Push the contents of the 'A' register onto the stack.
-PUSH		TS	STACKTMP
-		CAF	STACK-EB	# Switch to stack memory bank.
-		TS	EB
-		CAE	STACKTMP
-		INCR	STACKPTR
-		INDEX	STACKPTR
-		TS	STACK
-		CAF	MAIN-EB		# Switch back to main memory bank.
-		TS	EB
-		RETURN
-
-
-# POP: Pop the last value on the stack into the 'A' register.
-POP		CAF	STACK-EB	# Switch to stack memory bank.
-		TS	EB
-		INDEX	STACKPTR
-		CAE	STACK
-		TS	STACKTMP
-		EXTEND
-		DIM	STACKPTR
-		CAF	MAIN-EB		# Switch back to main memory bank.
-		TS	EB
-		CAE	STACKTMP
-		RETURN
-
-
-# PEEK: Read the last value on the stack into the 'A' register.
-PEEK		CAF	STACK-EB	# Switch to stack memory bank.
-		TS	EB
-		INDEX	STACKPTR
-		CAE	STACK
-		TS	STACKTMP
-		CAF	MAIN-EB		# Switch back to main memory bank.
-		TS	EB
-		CAE	STACKTMP
-		RETURN
-
 
 # Variables in memory.
 SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
 INPUTING	=	062	# Waiting for a DSKY key press.
-QPOP		=	063	# Temporary spot for Q.
-STACKTMP	=	064	# Temp value for stack operations.
 
-STACKPTR	=	1400	# Stack pointer, starts at 0.
-STACK		=	1400	# Start address of stack (minus one).
 
 # Constants.
 10MS		OCT	37777	# 2^14-1 is 10 ms to T4/T5 overflow.
@@ -222,7 +178,6 @@ NUM16		DEC	16
 NUM9601		DEC	9601	# Random number seed.
 
 MAIN-EB		OCT	1400	# E3 is the default user erasable memory bank.
-STACK-EB	OCT	2000	# E4 erasable memory bank used by stack.
 
 # System Address Locations
 A		=	00
