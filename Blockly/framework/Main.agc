@@ -48,20 +48,20 @@ AGCSTART	CA		100MS	# Schedule T5 soon.
 		# DSKY2 (interrupt #6)
 		XCH		ARUPT
 		EXTEND
-		READ		KEY15
+		QXCH		QRUPT
 		TCF		KEYRUPT
 
 		# Uplink (interrupt #7)
 		RESUME
-KEYRUPT		TS	INPUTING	# Squeeze the remaining key handler in here.
-		XCH	ARUPT
+T5RUPT		CA	NEWJOB		# Tickle the night watchman.
+T4RUPT		XCH	ARUPT
 		RESUME
 
 		# Downlink (interrupt #8)
 		RESUME
-T5RUPT		CA	NEWJOB		# Tickle the night watchman.
-T4RUPT		XCH	ARUPT
-		RESUME
+		NOOP
+		NOOP
+		NOOP
 
 		# Radar (interrupt #9)
 		RESUME
@@ -80,10 +80,8 @@ T4RUPT		XCH	ARUPT
 START		TCR	STACKINI
 		# Clear the DSKY.
 		TCR	FLSHDSP
-		# Initialize the random number generator with seed
-		CA	NUM9601
-		TCR	PUSH
-		TCR	INITGEN
+		# Initialize the random number generator.
+		TCR	RNDINIT
 
 # Unit tests.
 #$Tests.agc
@@ -95,6 +93,7 @@ $Blockly.agc
 AGCEND		CA	A
 		TCF	AGCEND
 
+
 # Place all the framework code into bank 00.
 		SETLOC	10000
 # Code modules.
@@ -104,6 +103,19 @@ $List.agc
 $Math.agc
 $Print.agc
 $Random.agc
+
+
+# Key press handler.
+KEYRUPT		LXCH	LRUPT
+		EXTEND
+		READ	KEY15
+		TS	INPUTING
+		TCR	RNDSEED
+		EXTEND
+		QXCH	QRUPT
+		LXCH	LRUPT
+		XCH	ARUPT
+		RESUME
 
 
 # Function that waits for a DSKY keypress.
@@ -156,8 +168,9 @@ SLEEPEND	RETURN
 
 
 # Variables in memory.
-SLEEPING	=	061	# Flag indicating if we are busy-sleeping.
-INPUTING	=	062	# Waiting for a DSKY key press.
+TEMP-VAR	=	061	# General purpose highly temporary variable.
+SLEEPING	=	062	# Flag indicating if we are busy-sleeping.
+INPUTING	=	063	# Waiting for a DSKY key press.
 
 
 # Constants.
@@ -175,7 +188,6 @@ NUM8		DEC	8
 NUM9		DEC	9
 NUM10		DEC	10
 NUM16		DEC	16
-NUM9601		DEC	9601	# Random number seed.
 
 MAIN-EB		OCT	1400	# E3 is the default user erasable memory bank.
 
@@ -186,8 +198,12 @@ Q		=	02
 EB		=	03	# The register that switches banks.
 NUM0		=	07
 ARUPT		=	10
+LRUPT		=	11
+QRUPT		=	12
 KEY15		=	15	# I/O Channel 15 (DSKY keypad)
 SR		=	21
+T2		=	24
+T1		=	25
 T4		=	27
 T5		=	30
 NEWJOB		=	67

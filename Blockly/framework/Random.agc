@@ -36,30 +36,46 @@
 
 
 
-# INITGEN ('Initialize Generator') function:
+# RNDINIT ('Initialize Generator') function:
 #
-# Inputs:
-# SEED: random integer greater than 0 and less than MODULUS
+# Inputs: None
 #
 # Returns: None
 #
-# Initializes the PRNG by setting its initial random state to SEED and loading
-# the algorithm coefficient pair into the corresponding addresses in erasable
-# memory.
-# This function must be called exactly once before generating the first random
-# number. If it is called again with the same SEED, the same random number
-# sequences are generated (for the respective UPRBNDs).
-INITGEN		EXTEND
-		QXCH	QPOP
-		TCR	POP
-		TS	RNDSTATE
-		#CA	CMLTIPLR			# ??? can i get rid of these transfers???
-		#TS	MLTIPLR
-		CA	CMODULUS
+# Initializes the PRNG by setting its initial random state and
+# loading the algorithm coefficient pair into the corresponding addresses in
+# erasable memory.
+# This function must be called before generating the first random number.
+# Executed on boot-up.
+RNDINIT		CA	CMODULUS
 		TS	MODULUS
-		EXTEND
-		QXCH	QPOP
+		CA	NUM9601
+		TS	RNDSTATE
 		RETURN
+
+
+# RNDSEED ('Seed Generator') function:
+#
+# Inputs: None
+#
+# Returns: None
+#
+# Initializes the PRNG by setting its initial random state to the clock.
+# The seed must be an integer greater than 0 and less than MODULUS.
+# If this constrain isn't met, don't change the seed.
+# Executed on DSKY keypress.
+RNDSEED		CA	T1		# Read the low (fast) half of the clock.
+		EXTEND
+		BZMF	RNDSEEDX	# Skip seed if zero or minus.
+		EXTEND
+		SU	MODULUS
+		EXTEND
+		BZMF	RNDSEEDY	# Only seed if less than MODULUS.
+RNDSEEDX	RETURN
+RNDSEEDY	AD	CMODULUS
+		TS	RNDSTATE
+		RETURN
+
 
 # ##############################################################################
 
@@ -114,6 +130,7 @@ GRNDNUM		EXTEND
 # p = CMODULUS-1 = 16380
 MLTIPLR		DEC	12957		# Primitive root modulo CMODULUS
 CMODULUS	DEC	16381		# Prime number
+NUM9601		DEC	9601		# Random number seed.
 
-RNDSTATE	=	501
-MODULUS		=	502
+RNDSTATE	=	66
+MODULUS		=	67

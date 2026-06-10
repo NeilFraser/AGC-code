@@ -47,8 +47,8 @@ PEEK		CAF	STACK-EB	# Switch to stack memory bank.
 		RETURN
 
 
-QPOP		=	063	# Temporary spot for Q.
-STACKTMP	=	064	# Temp value for stack operations.
+QPOP		=	064	# Temporary spot for Q.
+STACKTMP	=	065	# Temp value for stack operations.
 
 STACKPTR	=	1400	# Stack pointer, starts at 0.
 STACK		=	1400	# Start address of stack (minus one).
