@@ -89,4 +89,46 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Reboot or halt the AGC.",
     "helpUrl": ""
   },
+
+  // Block for stopping execution or rebooting.
+  {
+    "type": "agc_lamps",
+    'message0': 'turn %1 lamp %2',
+    'args0': [
+      {
+        'type': 'field_dropdown',
+        'name': 'STATE',
+        'options': [
+          ['on', '1'],
+          ['off', '0'],
+        ],
+      },
+      {
+        'type': 'field_dropdown',
+        'name': 'LAMP',
+        'options': [
+          ['UPLINK ACTY', '-3'],
+          ['NO ATT', '4'],
+          ['STBY', '-9'],
+          ['KEY REL', '-5'],
+          ['OPR ERR', '-7'],
+          ['Blank 1', '1'],
+          ['Blank 2', '2'],
+          ['TEMP', '-4'],
+          ['GIMBAL LOCK', '6'],
+          ['PROG', '9'],
+          ['RESTART', '-8'],
+          ['TRACKER', '8'],
+          ['ALT', '5'],
+          ['VEL', '3'],
+          ['COMP ACTY', '-2'],
+        ],
+      },
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 20,
+    "tooltip": "Control the DSKY lamps.",
+    "helpUrl": ""
+  },
 ]);

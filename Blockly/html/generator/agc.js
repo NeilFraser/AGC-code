@@ -53,3 +53,16 @@ AgcGenerator['agc_power'] = function(block) {
   }
   throw Error('Unknown power option');
 };
+
+AgcGenerator['agc_lamps'] = function(block) {
+  const state = block.getFieldValue('STATE');
+  const lamp = block.getFieldValue('LAMP');
+  const code = `
+\tCA\t${state}
+\tTCR\tPUSH
+\tCA\t${lamp}
+\tTCR\tPUSH
+\tTCR\tLAMP
+`;
+  return code;
+};

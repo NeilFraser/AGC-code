@@ -106,14 +106,14 @@ $Random.agc
 
 
 # Key press handler.
-KEYRUPT		LXCH	LRUPT
-		EXTEND
+# Store the keystroke in the buffer.
+# Randomize the RNG.
+KEYRUPT		EXTEND
 		READ	KEY15
 		TS	INPUTING
 		TCR	RNDSEED
 		EXTEND
 		QXCH	QRUPT
-		LXCH	LRUPT
 		XCH	ARUPT
 		RESUME
 
