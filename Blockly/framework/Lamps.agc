@@ -4,13 +4,13 @@
 # Stack arguments:
 #       Address of lamp (-9 to 9).
 #       On (1) or off (0).
-# Uses L register.
 LAMP		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Lamp address.
 		EXTEND
 		BZMF	LAMP-NEG
 		# I/O 10: 3 VEL, 4 NO ATT, 5 ALT, 6 GIMBAL LOCK, 8 TRACKER, 9 PROG
+		AD	NUM24576
 		TS	TEMP-VAR
 		TCR	POP	# State
 		EXTEND
@@ -27,10 +27,10 @@ LAMP10X		CA	TEMP-VAR
 
 LAMP-NEG	# Negative lamp addresses go to I/O 163 or 11.
 		COM
-		# Boolean: lamp '>=' 8
+		# Boolean: lamp '>=' 2^8
 		TS	TEMP-VAR
-		CA	NUM8
-		TS	L
+		CA	NUM128
+		TS	Q
 		CA	TEMP-VAR
 		EXTEND
 		SU	Q
@@ -67,3 +67,5 @@ LAMP11X		CA L
 LAMPEND		EXTEND
 		QXCH	QPOP
 		RETURN
+
+NUM24576	DEC	24576

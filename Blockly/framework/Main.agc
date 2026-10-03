@@ -189,6 +189,7 @@ NUM8		DEC	8
 NUM9		DEC	9
 NUM10		DEC	10
 NUM16		DEC	16
+NUM128		DEC	128
 
 MAIN-EB		OCT	1400	# E3 is the default user erasable memory bank.
 
