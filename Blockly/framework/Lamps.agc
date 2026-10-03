@@ -5,51 +5,65 @@
 #       Address of lamp (-9 to 9).
 #       On (1) or off (0).
 # Uses L register.
-LAMP	EXTEND
+LAMP		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Lamp address.
-		# Set A to the IO number, L to the lamp address.
-		TS L
 		EXTEND
-		BZMF LAMP-NEG
-		CA 010	# 3 VEL, 4 NO ATT, 5 ALT, 6 GIMBAL LOCK, 8 TRACKER, 9 PROG
-		TCF LAMPSET
+		BZMF	LAMP-NEG
+		# I/O 10: 3 VEL, 4 NO ATT, 5 ALT, 6 GIMBAL LOCK, 8 TRACKER, 9 PROG
+		TS	L
+		TCR	POP	# State
+		EXTEND
+		BZF	LAMP11X
+		CA	L
+		EXTEND
+		WOR	010
+		TCF	LAMPEND
+LAMP11X		CA	L
+		COM
+		EXTEND
+		WAND	010
+		TCF	LAMPEND
 
-# Negative lamp addresses go to IO 163 or 11.
-LAMP-NEG	COM
-		TCR PUSH
-		CA NUM8
-		TCR PUSH
+LAMP-NEG	# Negative lamp addresses go to I/O 163 or 11.
+		COM
+		TS	L
+		TCR	PUSH
+		CA	NUM8
+		TCR	PUSH
 		# Boolean: lamp '>=' 8
 		TCR	MA-SU
 		TCR	BL-GTE
 		EXTEND
-		BZF LAMP-11
-		CA 0163	# -8 RESTART, -9 STBY
-		TCF LAMPSET
-
-LAMP-11
-		CA 011	# -2 COMP ACTY, -3 COMP ACTY, -4 TEMP, -5 KEY REL, -7 OPR ERR
-		TCF LAMPSET
-
-
-# A = io, L = lamp nr
-# Sets the DSKY lamp using state & nr
-LAMPSET	TS TEMP-VAR
+		BZF	LAMP-11
+		# I/O 163: -8 RESTART, -9 STBY
 		TCR	POP	# state
 		EXTEND
-		BZF LAMPOFF
-		CA L
+		BZF	LAMP163X
+		CA	L
 		EXTEND
-		WOR	TEMP-VAR
-		TCF LAMPEND
-
-LAMPOFF	CA L
+		WOR	0163
+		TCF	LAMPEND
+LAMP163X	CA L
 		COM
 		EXTEND
-		WAND	TEMP-VAR
+		WAND	0163
+		TCF	LAMPEND
+
+LAMP-11		# I/O 11: -2 COMP ACTY, -3 COMP ACTY, -4 TEMP, -5 KEY REL, -7 OPR ERR
+		TCR	POP	# state
+		EXTEND
+		BZF	LAMP11X
+		CA	L
+		EXTEND
+		WOR	011
+		TCF	LAMPEND
+LAMP11X		CA L
+		COM
+		EXTEND
+		WAND	011
+		#TCF	LAMPEND
 
 LAMPEND	EXTEND
 		QXCH	QPOP
 		RETURN
-
