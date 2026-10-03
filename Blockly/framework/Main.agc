@@ -101,6 +101,7 @@ $Stack.agc
 $Boolean.agc
 $List.agc
 $Math.agc
+$Lamps.agc
 $Print.agc
 $Random.agc
 
