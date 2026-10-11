@@ -3,7 +3,7 @@
 # Turn off all lamps.
 # Also initializes the status variable for channel 010.
 LAMPINIT	# Set I/O channel 011 to zero.
-		CAE	NUM0
+		CA	NUM0
 		EXTEND
 		WRITE	011
 		# Set I/O channel 0163 to zero.
@@ -40,14 +40,14 @@ LAMP		EXTEND
 		TCF	LAMPEND	# Lamp already on.
 
 LAMP10Y		# Turn on the lamp.
-		TS	TEMP-VAR
+		CA	TEMP-VAR
 		ADS	LAMP1100
 		TCF	LAMP10W
 LAMP10X		# Turn off the lamp.
 		CA	TEMP-VAR
 		COM
 		MASK	LAMP1100
-		TS	LAMP1100
+		TS	LAMP1100	# Fall through.
 LAMP10W		# Write the new value to chanel 010.
 		EXTEND
 		WRITE	010
@@ -63,34 +63,38 @@ LAMP-NEG	# Negative lamp addresses go to I/O 163 or 11.
 		EXTEND
 		SU	Q
 		EXTEND
-		BZMF	LAMP-163
-		# I/O 11: -2 COMP ACTY, -3 COMP ACTY, -4 TEMP, -5 KEY REL, -7 OPR ERR
-		TCR	POP	# state
-		EXTEND
-		BZF	LAMP11X
-		CA	TEMP-VAR
-		EXTEND
-		WOR	011
-		TCF	LAMPEND
-LAMP11X		CA	TEMP-VAR
-		COM
-		EXTEND
-		WAND	011
-		TCF	LAMPEND
-
-LAMP-163	# I/O 163: -8 RESTART, -9 STBY
+		BZMF	LAMP11
+		# I/O 163: -8 RESTART, -9 STBY
 		TCR	POP	# state
 		EXTEND
 		BZF	LAMP163X
-		CA	L
+		# Turn on the lamp.
+		CA	TEMP-VAR
 		EXTEND
 		WOR	0163
 		TCF	LAMPEND
-LAMP163X		CA L
+LAMP163X	# Turn off the lamp.
+		CA	TEMP-VAR
 		COM
 		EXTEND
 		WAND	0163
 		#TCF	LAMPEND
+
+LAMP11		# I/O 11: -2 COMP ACTY, -3 COMP ACTY, -4 TEMP, -5 KEY REL, -7 OPR ERR
+		TCR	POP	# state
+		EXTEND
+		BZF	LAMP11X
+		# Turn on the lamp.
+		CA	TEMP-VAR
+		EXTEND
+		WOR	011
+		TCF	LAMPEND
+LAMP11X		# Turn off the lamp.
+		CA	TEMP-VAR
+		COM
+		EXTEND
+		WAND	011
+		TCF	LAMPEND
 
 LAMPEND		EXTEND
 		QXCH	QPOP
