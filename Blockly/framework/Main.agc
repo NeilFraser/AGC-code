@@ -80,6 +80,8 @@ T4RUPT		XCH	ARUPT
 START		TCR	STACKINI
 		# Clear the DSKY.
 		TCR	FLSHDSP
+		# Turn off the lamps.
+		TCR	LAMPINIT
 		# Initialize the random number generator.
 		TCR	RNDINIT
 
