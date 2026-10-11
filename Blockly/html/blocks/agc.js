@@ -109,16 +109,14 @@ Blockly.defineBlocksWithJsonArray([
         'options': [
           ['UPLINK ACTY', String(-(2**2))],
           ['NO ATT', String(2**3)],
-          ['STBY', String(-(2**8))],
+          //['STBY', String(-(2**8))],
           ['KEY REL', String(-(2**4))],
           ['OPR ERR', String(-(2**6))],
-          ['Blank 1', '1'],
-          ['Blank 2', '2'],
 
           ['TEMP', String(-(2**3))],
           ['GIMBAL LOCK', String(2**5)],
           ['PROG', String(2**8)],
-          ['RESTART', String(-(2**7))],
+          //['RESTART', String(-(2**7))],
           ['TRACKER', String(2**7)],
           ['ALT', String(2**4)],
           ['VEL', String(2**2)],
