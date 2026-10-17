@@ -1,5 +1,5 @@
 # Copyright:	Public domain.
-# Filename:	Print.agc
+# Filename:	PrintDigit.agc
 # Purpose:	Implementation of a print function that prints a user-specified
 #		digit (0 to 9, and blank) to a user-specified 7-segment display
 #		in one of the three bottom rows of the yaDSKY.

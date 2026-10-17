@@ -36,6 +36,33 @@ Blockly.defineBlocksWithJsonArray([
     "helpUrl": ""
   },
 
+  // Block for displaying a number on the DSKY.
+  {
+    "type": "agc_print_number",
+    "message0": "display %1 row %2 number %3",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_value",
+        "name": "ROW",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "NUMBER",
+        "check": "Number"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 20,
+    "tooltip": "Display a number on row (0-2)",
+    "helpUrl": ""
+  },
+
   // Block for DSKY key press.
   {
     "type": "agc_key_press",

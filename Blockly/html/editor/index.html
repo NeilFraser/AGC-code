@@ -76,7 +76,7 @@
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
     <category name="AGC" colour="%{BKY_COLOUR_HUE}">
       <block type="agc_print_digit">
-        <value name="DIGIT">
+        <value name="ROW">
           <shadow type="math_number">
             <field name="NUM">0</field>
           </shadow>
@@ -86,9 +86,21 @@
             <field name="NUM">0</field>
           </shadow>
         </value>
+        <value name="DIGIT">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="agc_print_number">
         <value name="ROW">
           <shadow type="math_number">
             <field name="NUM">0</field>
+          </shadow>
+        </value>
+        <value name="NUMBER">
+          <shadow type="math_number">
+            <field name="NUM">123</field>
           </shadow>
         </value>
       </block>

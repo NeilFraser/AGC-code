@@ -20,6 +20,20 @@ ${row}
   return code;
 };
 
+AgcGenerator['agc_print_number'] = function(block) {
+  const number = AgcGenerator.valueToCode(block, 'NUMBER') || AgcGenerator.default0;
+  const row = AgcGenerator.valueToCode(block, 'ROW') || AgcGenerator.default0;
+  const code = `
+${number}
+\tTCR\tPUSH
+${row}
+\tTCR\tPUSH
+\tTCR\tPRNTNUM
+`;
+  return code;
+};
+
+
 AgcGenerator['agc_sleep'] = function(block) {
   const time = AgcGenerator.valueToCode(block, 'TIME') || AgcGenerator.default0;
   const code = `

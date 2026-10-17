@@ -1,4 +1,4 @@
-# Unit tests for the Print function.
+# Unit tests for the Print digit function.
 
 # Prints the following test pattern on the DSKY:
 #   0 3 6 9 1
