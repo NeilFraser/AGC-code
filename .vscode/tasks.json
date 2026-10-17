@@ -116,7 +116,7 @@
             "hide": false,
             "label": "AGC Run",
             "type": "shell",
-            "command": "program='${fileBasenameNoExtension}'; if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then program=Main; fi; exec '${workspaceFolder}/BareMetal/yaAGC' --quiet --nodebug \"$program.bin\"",
+            "command": "program='${fileBasenameNoExtension}'; if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then program=Main; fi; exec '${workspaceFolder}/BareMetal/yaAGC' --show-alarms --nodebug \"$program.bin\"",
             "group": "build",
             "options": {
                 "cwd": "${fileDirname}/Bin"

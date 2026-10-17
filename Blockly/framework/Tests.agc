@@ -7,8 +7,19 @@ $List-test.agc
 $Math-test.agc
 $Random-test.agc
 $Lamps-test.agc
+
+TS-LOOP	NOOP
 $PrintDigit-test.agc
+
+		CA	NUM100
+		TCR	PUSH
+		TCR	SLEEP
+
 $PrintNumber-test.agc
+		CA	NUM100
+		TCR	PUSH
+		TCR	SLEEP
+		TCF	TS-LOOP
 
 # To execute the tests, compile with yaYUL, then 'run' with yaAGC.
 # If the screen fills up with alarms, then a test failed.
@@ -17,7 +28,7 @@ $PrintNumber-test.agc
 # Use 'info stack' to find the line of the failed test.  It will be the first
 # entry in the list that's in a *-test.agc file.
 
-		TCF	TS-END	# Skip execution past the private functions.
+
 
 # This assertion function verifies that two values are equal.
 # If they aren't, trigger a TC Trap.
@@ -38,6 +49,5 @@ TS-EQUAL	EXTEND
 
 TS-FAIL		TCR	TS-FAIL	# Test failed.  Trigger TC Trap.
 
-TS-END		NOOP
 
 TS-TEMP		=	1400

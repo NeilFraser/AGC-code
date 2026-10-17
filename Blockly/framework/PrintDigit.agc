@@ -320,17 +320,18 @@ PREFIXES	DEC	16384
 
 # The interfaces between calling and called functions are provided by addresses
 # in erasable memory (i.e. global variables)
-DIGIT		=	702
+DIGIT		=	71
 
-POSIDX		=	703
-PAIRIDX		=	704
+POSIDX		=	72
+PAIRIDX		=	73
 
-CURDIGS		=	705
-CURDIG		=	706
-CURODIG		=	707
+CURDIGS		=	74
+CURDIG		=	75
+CURODIG		=	76
 
-NEWDIG		=	710
+NEWDIG		=	77
 
 # Addresses 01012-01021 store the digits currently being displayed in the eight
 # position pairs
-DSPSTATE	=	712
+DSPSTATE	=	100
+# DSPSTATE INDEX: 101, 102, 103, 104, 105, 106, 107

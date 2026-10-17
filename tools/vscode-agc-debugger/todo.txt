@@ -1,0 +1,5 @@
+Symbol "NUM100" (0) is duplicated.
+Symbol "NUM10000" (0) is duplicated.
+-> compiler happy, but program broken
+
+fix step-over & step-into
