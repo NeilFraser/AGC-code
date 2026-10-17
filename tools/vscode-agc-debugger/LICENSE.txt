@@ -1,0 +1,4 @@
+I just want it to not complain about this missing license ... to kill -9.
+Licensed under the "Works on My Machine" public agreement.
+
+// TODO: Add propper LICENSE.txt. (Estimated completion date: 2045)
