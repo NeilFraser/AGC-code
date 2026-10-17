@@ -104,7 +104,8 @@ $Boolean.agc
 $List.agc
 $Math.agc
 $Lamps.agc
-$Print.agc
+$PrintDigit.agc
+$PrintNumber.agc
 $Random.agc
 
 

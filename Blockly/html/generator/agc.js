@@ -20,6 +20,20 @@ ${row}
   return code;
 };
 
+AgcGenerator['agc_print_number'] = function(block) {
+  const number = AgcGenerator.valueToCode(block, 'NUMBER') || AgcGenerator.default0;
+  const row = AgcGenerator.valueToCode(block, 'ROW') || AgcGenerator.default0;
+  const code = `
+${number}
+\tTCR\tPUSH
+${row}
+\tTCR\tPUSH
+\tTCR\tPRNTNUM
+`;
+  return code;
+};
+
+
 AgcGenerator['agc_sleep'] = function(block) {
   const time = AgcGenerator.valueToCode(block, 'TIME') || AgcGenerator.default0;
   const code = `
@@ -56,11 +70,13 @@ AgcGenerator['agc_power'] = function(block) {
 
 AgcGenerator['agc_lamps'] = function(block) {
   const state = block.getFieldValue('STATE');
-  const lamp = block.getFieldValue('LAMP');
+  const lamp = Math.abs(block.getFieldValue('LAMP'));
+  AgcGenerator.provideFunction_('NUM' + lamp, [`NUM${lamp}\tDEC\t${lamp}`]);
+  const com = block.getFieldValue('LAMP') < 0 ? '\n\tCOM' : '';
   const code = `
-\tCA\t${state}
+\tCA\tNUM${state}
 \tTCR\tPUSH
-\tCA\t${lamp}
+\tCA\tNUM${lamp}${com}
 \tTCR\tPUSH
 \tTCR\tLAMP
 `;

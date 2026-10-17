@@ -7,14 +7,14 @@ Blockly.defineBlocksWithJsonArray([
   // Block for displaying a single digit on the DSKY.
   {
     "type": "agc_print_digit",
-    "message0": "display %1 digit %2 column %3 row %4",
+    "message0": "display %1 row %2 column %3 digit %4",
     "args0": [
       {
         "type": "input_dummy"
       },
       {
         "type": "input_value",
-        "name": "DIGIT",
+        "name": "ROW",
         "check": "Number"
       },
       {
@@ -24,7 +24,7 @@ Blockly.defineBlocksWithJsonArray([
       },
       {
         "type": "input_value",
-        "name": "ROW",
+        "name": "DIGIT",
         "check": "Number"
       }
     ],
@@ -32,7 +32,34 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 20,
-    "tooltip": "Display a single digit (0-9, 10-blank) at column (0-4), row (0-2)",
+    "tooltip": "Display a single digit (0-9, 10-blank) at row (0-2), column (0-4)",
+    "helpUrl": ""
+  },
+
+  // Block for displaying a number on the DSKY.
+  {
+    "type": "agc_print_number",
+    "message0": "display %1 row %2 number %3",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_value",
+        "name": "ROW",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "NUMBER",
+        "check": "Number"
+      }
+    ],
+    "inputsInline": true,
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 20,
+    "tooltip": "Display a number on row (0-2)",
     "helpUrl": ""
   },
 
@@ -109,16 +136,14 @@ Blockly.defineBlocksWithJsonArray([
         'options': [
           ['UPLINK ACTY', String(-(2**2))],
           ['NO ATT', String(2**3)],
-          ['STBY', String(-(2**8))],
+          //['STBY', String(-(2**8))],
           ['KEY REL', String(-(2**4))],
           ['OPR ERR', String(-(2**6))],
-          ['Blank 1', '1'],
-          ['Blank 2', '2'],
 
           ['TEMP', String(-(2**3))],
           ['GIMBAL LOCK', String(2**5)],
           ['PROG', String(2**8)],
-          ['RESTART', String(-(2**7))],
+          //['RESTART', String(-(2**7))],
           ['TRACKER', String(2**7)],
           ['ALT', String(2**4)],
           ['VEL', String(2**2)],

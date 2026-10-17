@@ -48,9 +48,13 @@ AgcGenerator['math_change'] = function(block) {
   const varName = AgcGenerator.nameDB_.getName(block.getFieldValue('VAR'),
       Blockly.VARIABLE_CATEGORY_NAME);
 
-  const code = `
+  if (argument0.trim() === 'CA\tNUM1') {
+    // If the change is literal 1, we can just use the INCR instruction.
+    return `\tINCR\t${varName}`;
+  }
+  // Otherwise, we need to add the delta to the variable.
+  return `
 ${argument0}
 \tADS\t${varName}
 `;
-  return code;
 };
