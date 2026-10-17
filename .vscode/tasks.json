@@ -1,0 +1,199 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "AGC Build",
+            "detail": "Compile & Run with DSKY",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "AGC Compile",
+                "Run & DSKY"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "AGC Compile",
+            //"detail": "Compile / Problems",
+            "group": "build",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "AGC Compiler",
+                "AGC Move Compiled"
+            ]
+        },
+        {
+            "label": "Run & DSKY",
+            "detail": "Run yaAGC & DSKY",
+            "group": "build",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "AGC Run",
+                "AGC DSKY & kill"
+            ]
+        },
+        {
+            "label": "Debug & DSKY",
+            "detail": "Run Debug & DSKY",
+            "group": "build",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "AGC Debug Console",
+                "AGC DSKY & kill"
+            ]
+        },
+        {
+            "hide": true,
+            "label": "AGC Debug Console",
+            "detail": "Start yaAGC's interactive debugger",
+            "type": "shell",
+            "command": "program='${fileBasenameNoExtension}'; if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then program=Main; fi; exec '${workspaceFolder}/BareMetal/yaAGC' --quiet --inhibit-alarms --symbols='${fileDirname}/Bin/'\"$program\"'.symtab' --directory='${fileDirname}' --port=19697 '${fileDirname}/Bin/'\"$program\"'.bin'",
+            "options": {
+                "cwd": "${fileDirname}/Bin"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "hide": true,
+            "label": "AGC Kill",
+            "detail": "Terminate AGC Process",
+            // Ensure process is killed before starting a new one, else DSKY will not connect
+            "type": "shell",
+            "command": [
+                "lsof -ti:19697 | xargs kill;",
+                "echo AGC Terminated"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "echo": false,
+                "showReuseMessage": false,
+                "clear": false,
+                "revealProblems": "onProblem"
+            }
+        },
+        {
+            "hide": true,
+            "label": "AGC Compiler",
+            "type": "shell",
+            "command": "source='${fileBasename}'; if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then source=Main.agc; fi; exec '${workspaceFolder}/BareMetal/yaYUL' \"$source\"",
+            "group": "build",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": true,
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": {
+                "owner": "agc",
+                "fileLocation": [
+                    "relative",
+                    "${fileDirname}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):\\s+(Warning|Fatal Error):\\s+(.*)$",
+                    "file": 1,
+                    "location": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
+        },
+        {
+            "hide": false,
+            "label": "AGC Run",
+            "type": "shell",
+            "command": "program='${fileBasenameNoExtension}'; if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then program=Main; fi; exec '${workspaceFolder}/BareMetal/yaAGC' --quiet --nodebug \"$program.bin\"",
+            "group": "build",
+            "options": {
+                "cwd": "${fileDirname}/Bin"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": true,
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": {
+                "owner": "agc-runtime",
+                "pattern": {
+                    "regexp": "^(.*Host not found.*)$",
+                    "message": 1
+                }
+            }
+        },
+        {
+            "hide": false,
+            "label": "AGC DSKY",
+            "type": "process",
+            "command": "${workspaceFolder}/BareMetal/yaDSKY2",
+            "args": [
+                "--port=19697"
+            ],
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/BareMetal/Resources"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": true,
+                "revealProblems": "onProblem"
+            }
+        },
+        {
+            "hide": true,
+            "label": "AGC DSKY & kill",
+            "detail": "Terminate AGC Process",
+            // Kill all AGC processes when DSKY is closed
+            "type": "shell",
+            "command": [
+                "lsof -ti:19697 | xargs kill;",
+                "echo AGC Terminated"
+            ],
+            "dependsOn": "AGC DSKY",
+            "dependsOrder": "sequence",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "echo": false,
+                "showReuseMessage": false,
+                "clear": true,
+                "revealProblems": "onProblem"
+            }
+        },
+        {
+            "hide": true,
+            "label": "AGC Move Compiled",
+            "type": "shell",
+            "command": [
+                "source='${fileBasename}'; program='${fileBasenameNoExtension}';",
+                "if [ '${fileDirname}' = '${workspaceFolder}/Blockly/framework' ]; then source=Main.agc; program=Main; fi;",
+                "mkdir -p '${fileDirname}/Bin' &&",
+                "mv '${fileDirname}/'\"$source.bin\" '${fileDirname}/Bin/'\"$program.bin\" &&",
+                "mv '${fileDirname}/'\"$source.symtab\" '${fileDirname}/Bin/'\"$program.symtab\" &&",
+                "echo Compiled files moved to ${relativeFileDirname}/Bin"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "never",
+                "echo": false,
+                "clear": false,
+                "showReuseMessage": false
+            }
+        }
+    ]
+}

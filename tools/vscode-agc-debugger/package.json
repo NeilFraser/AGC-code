@@ -1,0 +1,52 @@
+{
+  "name": "vscode-agc-debugger",
+  "displayName": "Virtual AGC Debugger",
+  "description": "Debug Apollo Guidance Computer programs with yaAGC.",
+  "version": "0.1.3",
+  "publisher": "local-agc-tools",
+  "repository": {},
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Debuggers"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onDebugResolve:agc"
+  ],
+  "contributes": {
+    "breakpoints": [
+      {
+        "language": "agc"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "agc",
+        "label": "Virtual AGC",
+        "languages": [
+          "agc"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [],
+            "properties": {
+              "port": {
+                "type": "number",
+                "description": "yaAGC peripheral port (default: 19697)."
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "name": "Debug AGC program",
+            "type": "agc",
+            "request": "launch"
+          }
+        ]
+      }
+    ]
+  }
+}
