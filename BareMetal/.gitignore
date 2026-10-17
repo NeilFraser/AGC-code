@@ -1,0 +1,6 @@
+*
+!.gitignore
+
+!Resources/
+!Resources/*.png
+!Resources/*.jpg
