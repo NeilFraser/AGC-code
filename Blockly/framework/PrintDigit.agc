@@ -331,7 +331,7 @@ CURODIG		=	76
 
 NEWDIG		=	77
 
-# Addresses 01012-01021 store the digits currently being displayed in the eight
+# Addresses 0101-0107 store the digits currently being displayed in the eight
 # position pairs
 DSPSTATE	=	100
 # DSPSTATE INDEX: 101, 102, 103, 104, 105, 106, 107

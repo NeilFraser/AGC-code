@@ -1,6 +1,13 @@
+# Functions for printing numbers to the DSKY.
 
+# The following code is based on code originally written in Blockly:
 # https://neil.fraser.name/software/blockly-agc/editor/#q2iea2
 
+# Print a number.
+# Stack arguments:
+#       Row to print on (0-2).
+#       Number to print.
+# Uses L register.
 PN		EXTEND
 		QXCH	PN-QPOP
 
@@ -25,8 +32,7 @@ PN-LP0	CA	PN-NUM
 		CA	NUM10000
 		COM
 		ADS	PN-NUM
-		CA	NUM1
-		ADS	PN-I
+		INCR	PN-I
 		TC	PN-LP0
 
 PN-LP0-X	CA	PN-I
@@ -39,8 +45,7 @@ PN-LP0-X	CA	PN-I
 		CA	PN-ROW
 		TCR	PUSH
 		TCR	PRNTDIG
-		CA	NUM1
-		TS	PN-HAS
+		INCR	PN-HAS
 		TCF	PN-IF0-X
 
 PN-IF0-E	CA	NUM10
@@ -66,15 +71,11 @@ PN-LP1	CA	PN-NUM
 		CA	NUM1000
 		COM
 		ADS	PN-NUM
-		CA	NUM1
-		ADS	PN-I
+		INCR	PN-I
 		TC	PN-LP1
 
 PN-LP1-X	CA	PN-I
-		TCR	PUSH
-		CA	PN-HAS
-		TCR	PUSH
-		TCR	BL-OR
+		AD	PN-HAS
 		EXTEND
 		BZF	PN-IF1-E
 		CA	PN-I
@@ -84,8 +85,7 @@ PN-LP1-X	CA	PN-I
 		CA	PN-ROW
 		TCR	PUSH
 		TCR	PRNTDIG
-		CA	NUM1
-		TS	PN-HAS
+		INCR	PN-HAS
 		TCF	PN-IF1-X
 
 PN-IF1-E	CA	NUM10
@@ -111,15 +111,11 @@ PN-LP2	CA	PN-NUM
 		CA	NUM100
 		COM
 		ADS	PN-NUM
-		CA	NUM1
-		ADS	PN-I
+		INCR	PN-I
 		TC	PN-LP2
 
 PN-LP2-X	CA	PN-I
-		TCR	PUSH
-		CA	PN-HAS
-		TCR	PUSH
-		TCR	BL-OR
+		AD	PN-HAS
 		EXTEND
 		BZF	PN-IF2-E
 		CA	PN-I
@@ -129,8 +125,7 @@ PN-LP2-X	CA	PN-I
 		CA	PN-ROW
 		TCR	PUSH
 		TCR	PRNTDIG
-		CA	NUM1
-		TS	PN-HAS
+		INCR	PN-HAS
 		TCF	PN-IF2-X
 
 PN-IF2-E	CA	NUM10
@@ -156,8 +151,7 @@ PN-LP3	CA	PN-NUM
 		CA	NUM10
 		COM
 		ADS	PN-NUM
-		CA	NUM1
-		ADS	PN-I
+		INCR	PN-I
 		TC	PN-LP3
 
 PN-LP3-X	CA	NUM10
@@ -165,10 +159,7 @@ PN-LP3-X	CA	NUM10
 		CA	PN-I
 		TCR	PUSH
 		CA	PN-I
-		TCR	PUSH
-		CA	PN-HAS
-		TCR	PUSH
-		TCR	BL-OR
+		AD	PN-HAS
 		TCR	PUSH
 		TCR	BL-COND
 		TCR	PUSH
@@ -198,7 +189,7 @@ PN-NUM	=	112
 PN-HAS	=	113
 PN-I	=	114
 
-# 100 & 10'000 also used in Random-test!!
+# Note: 100 & 10'000 also used in Random-test.agc
 NUM100	DEC	100
 NUM1000	DEC	1000
 NUM10000	DEC	10000

@@ -1,3 +1,5 @@
+# Stack functions.
+
 # Initialize the stack on boot-up.
 STACKINI	CAF	STACK-EB	# Switch to stack memory bank.
 		TS	EB

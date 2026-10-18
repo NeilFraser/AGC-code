@@ -28,7 +28,7 @@ ${number}
 \tTCR\tPUSH
 ${row}
 \tTCR\tPUSH
-\tTCR\tPRNTNUM
+\tTCR\tPN
 `;
   return code;
 };

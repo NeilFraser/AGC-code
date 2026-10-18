@@ -8,9 +8,9 @@ $Math-test.agc
 $Random-test.agc
 $Lamps-test.agc
 
+# Enter an infinite loop printing the two test patterns on the DSKY.
 TS-LOOP	NOOP
 $PrintDigit-test.agc
-
 		CA	NUM100
 		TCR	PUSH
 		TCR	SLEEP
