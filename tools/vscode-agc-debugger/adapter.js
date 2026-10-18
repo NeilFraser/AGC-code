@@ -126,28 +126,18 @@ class AgcDebugAdapter {
 
         const breakpoints = [];
         for (const requested of args.breakpoints || []) {
-            let address;
-            let resolvedLine;
-            for (let line = requested.line; line <= sourceLineCount; line++) {
-                const lineInfo = await this.runCommand(`info line ${sourceName}:${line}`);
-                const addressMatch = lineInfo.match(/Line\s+(\d+)\s+of\s+"[^"]+"\s+starts\s+at\s+address\s+(0x[0-9a-f]+)/i);
-                if (addressMatch) {
-                    resolvedLine = Number(addressMatch[1]);
-                    address = addressMatch[2];
-                    break;
-                }
-            }
-            if (!address) {
+            const resolved = await this.resolveSourceLine(sourceName, requested.line, sourceLineCount);
+            if (!resolved) {
                 breakpoints.push({ verified: false, line: requested.line, source: args.source, message: 'No instruction found on or after this line.' });
                 continue;
             }
 
-            const output = await this.runCommand(`break *${address}`);
+            const output = await this.runCommand(`break *${resolved.address}`);
             const match = output.match(/Breakpoint\s+(\d+)\s+at.*?file\s+([^,]+),\s*line\s+(\d+)/i);
             if (match) {
                 const actual = {
                     id: Number(match[1]),
-                    line: resolvedLine || Number(match[3]),
+                    line: resolved.line || Number(match[3]),
                     source: args.source
                 };
                 breakpoints.push({ id: actual.id, verified: true, line: actual.line, source: args.source });
@@ -227,12 +217,49 @@ class AgcDebugAdapter {
     }
 
     async nextRequest() {
-        const output = await this.runCommand('next');
-        this.updateLocation(output);
+        const location = this.currentLocation || {
+            file: path.basename(this.configuration.program),
+            line: 1
+        };
+        const sourceName = path.basename(location.file);
+        if (!/^[\w.-]+$/.test(sourceName)) {
+            throw new Error('Cannot step over: current source file is invalid.');
+        }
+        const sourcePath = path.join(this.configuration.sourceDirectory, sourceName);
+        if (!fs.existsSync(sourcePath)) {
+            throw new Error(`Cannot step over: source file ${sourceName} is not part of this AGC build.`);
+        }
+        const sourceLineCount = fs.readFileSync(sourcePath, 'utf8').split(/\r?\n/).length;
+        const nextLine = await this.resolveSourceLine(sourceName, location.line + 1, sourceLineCount);
+        if (!nextLine) {
+            throw new Error(`Cannot step over: no instruction found after ${sourceName}:${location.line}.`);
+        }
+
+        const breakpointOutput = await this.runCommand(`tbreak *${nextLine.address}`);
+        const breakpointMatch = breakpointOutput.match(/(?:Temporary\s+)?Breakpoint\s+(\d+)\s+at\b/i);
+        const breakpointAlreadyExists = /breakpoint already exists/i.test(breakpointOutput);
+        if (!breakpointMatch && !breakpointAlreadyExists) {
+            throw new Error(breakpointOutput.trim() || 'yaAGC did not confirm the temporary step-over breakpoint.');
+        }
+        const breakpointId = breakpointMatch ? Number(breakpointMatch[1]) : undefined;
+        try {
+            const output = await this.runCommand('cont');
+            this.updateLocation(output);
+        } finally {
+            if (breakpointId !== undefined) {
+                await this.runCommand(`delete ${breakpointId}`);
+            }
+        }
         return { allThreadsContinued: false };
     }
 
     async stepInRequest() {
+        const output = await this.runCommand('step');
+        this.updateLocation(output);
+        return { allThreadsContinued: false };
+    }
+
+    async stepOutRequest() {
         const output = await this.runCommand('step');
         this.updateLocation(output);
         return { allThreadsContinued: false };
@@ -263,7 +290,7 @@ class AgcDebugAdapter {
             this.sendEvent('initialized', {});
         } else if (command === 'configurationDone') {
             this.sendEvent('stopped', { reason: 'entry', threadId: 1, allThreadsStopped: true });
-        } else if (command === 'stepIn' || command === 'next') {
+        } else if (command === 'stepIn' || command === 'stepOut' || command === 'next') {
             this.sendEvent('stopped', { reason: 'step', threadId: 1, allThreadsStopped: true });
         }
     }
@@ -272,6 +299,17 @@ class AgcDebugAdapter {
         const next = this.commandQueue.then(() => this.executeCommand(command));
         this.commandQueue = next.catch(() => {});
         return next;
+    }
+
+    async resolveSourceLine(sourceName, startLine, sourceLineCount) {
+        for (let line = startLine; line <= sourceLineCount; line++) {
+            const lineInfo = await this.runCommand(`info line ${sourceName}:${line}`);
+            const addressMatch = lineInfo.match(/Line\s+(\d+)\s+of\s+"[^"]+"\s+starts\s+at\s+address\s+(0x[0-9a-f]+)/i);
+            if (addressMatch) {
+                return { line: Number(addressMatch[1]), address: addressMatch[2] };
+            }
+        }
+        return undefined;
     }
 
     executeCommand(command) {

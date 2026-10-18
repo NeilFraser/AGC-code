@@ -13,23 +13,30 @@ function activate(context) {
                 return undefined;
             }
 
+            const settings = vscode.workspace.getConfiguration('agc');
+            const frameworkFolder = configuration.frameworkFolder || settings.get('agc.frameworkFolder', 'framework');
             const activePath = vscode.window.activeTextEditor?.document.uri.fsPath;
             const activeIsAgc = activePath?.toLowerCase().endsWith('.agc');
-            const frameworkDirectory = path.join(workspace, 'Blockly', 'framework');
-            const sourceDirectory = activeIsAgc ? path.dirname(activePath) : frameworkDirectory;
-            const isFramework = path.resolve(sourceDirectory) === path.resolve(frameworkDirectory);
-            const programName = activeIsAgc && !isFramework
+            if (!activeIsAgc) {
+                void vscode.window.showErrorMessage('Open an AGC source file before starting the debugger.');
+                return undefined;
+            }
+            const sourceDirectory = path.dirname(activePath);
+            const isFramework = namesMatch(path.basename(sourceDirectory), frameworkFolder);
+            const programName = !isFramework
                 ? path.basename(activePath, path.extname(activePath))
                 : 'Main';
             const binDirectory = path.join(sourceDirectory, 'Bin');
+            const debuggerPath = configuration.debuggerPath || settings.get('agc.debuggerPath', '${workspaceFolder}/BareMetal/yaAGC');
+            const dskyPort = configuration.dskyPort || settings.get('agc.dskyPort', 19697);
 
             return {
                 ...configuration,
                 program: path.join(binDirectory, `${programName}.bin`),
                 symbols: path.join(binDirectory, `${programName}.symtab`),
                 sourceDirectory,
-                debuggerPath: path.join(workspace, 'BareMetal', 'yaAGC'),
-                port: Number(configuration.port) || 19697
+                debuggerPath: resolveConfiguredPath(debuggerPath, workspace),
+                port: Number(dskyPort)
             };
         }
     }));
@@ -41,6 +48,21 @@ function activate(context) {
         }
     }));
 }
+
+function resolveConfiguredPath(configuredPath, workspace) {
+    const expandedPath = String(configuredPath || '')
+        .replace(/\$\{workspaceFolder\}/g, workspace);
+    return path.isAbsolute(expandedPath)
+        ? path.normalize(expandedPath)
+        : path.resolve(workspace, expandedPath);
+}
+
+function namesMatch(first, second) {
+    return process.platform === 'win32' || process.platform === 'darwin'
+        ? first.toLowerCase() === second.toLowerCase()
+        : first === second;
+}
+
 
 function deactivate() {}
 

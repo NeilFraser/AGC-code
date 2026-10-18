@@ -2,7 +2,7 @@
   "name": "vscode-agc-debugger",
   "displayName": "Virtual AGC Debugger",
   "description": "Debug Apollo Guidance Computer programs with yaAGC.",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "publisher": "local-agc-tools",
   "repository": {},
   "engines": {
@@ -16,6 +16,26 @@
     "onDebugResolve:agc"
   ],
   "contributes": {
+    "configuration": {
+      "title": "Virtual AGC Debugger",
+      "properties": {
+        "agc.debuggerPath": {
+          "type": "string",
+          "default": "${workspaceFolder}/BareMetal/yaAGC",
+          "description": "Path to the yaAGC debugger executable. Relative paths are resolved from the workspace folder.\nCan be overriden in launch.json via `debuggerPath`"
+        },
+        "agc.dskyPort": {
+          "type": "number",
+          "default": 19697,
+          "description": "Port used by yaAGC for DSKY and peripheral connections.\nCan be overriden in launch.json via `dskyPort`"
+        },
+        "agc.frameworkFolder": {
+          "type": "string",
+          "default": "framework",
+          "description": "Folder name containing the Main.agc framework. When the active AGC source is in this folder, the debugger uses the Main image.\nCan be overriden in launch.json via `frameworkFolder`"
+        }
+      }
+    },
     "breakpoints": [
       {
         "language": "agc"
@@ -32,16 +52,27 @@
           "launch": {
             "required": [],
             "properties": {
-              "port": {
+              "debuggerPath": {
+                "type": "string",
+                "description": "Path to the yaAGC debugger executable. Relative paths are resolved from the workspace folder.",
+                "default": "${workspaceFolder}/BareMetal/yaAGC"
+              },
+              "dskyPort": {
                 "type": "number",
-                "description": "yaAGC peripheral port (default: 19697)."
+                "description": "Port used by yaAGC for DSKY and peripheral connections",
+                "default": 19697
+              },
+              "frameworkFolder": {
+                "type": "string",
+                "description": "Folder name containing the Main.agc framework. When the active AGC source is in this folder, the debugger uses the Main image.",
+                "default": "framework"
               }
             }
           }
         },
         "initialConfigurations": [
           {
-            "name": "Debug AGC program",
+            "name": "AGC Debug",
             "type": "agc",
             "request": "launch"
           }
