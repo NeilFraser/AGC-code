@@ -1,0 +1,6 @@
+Symbol "NUM100" (0) is duplicated.
+Symbol "NUM10000" (0) is duplicated.
+-> compiler happy, but program broken
+
+opens the file.bin when clicking on start debug,
+not a big problem bc it's just visually not pretty

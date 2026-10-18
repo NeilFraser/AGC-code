@@ -1,11 +1,10 @@
-{ // Debugger but not sure if it works
+{
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug AGC with yaAGC",
+            "name": "AGC Debug",
             "type": "agc",
-            "request": "launch",
-            "port": 19697
+            "request": "launch"
         }
     ]
 }

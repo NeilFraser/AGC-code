@@ -55,8 +55,8 @@ LAMP10W	# Write the new value to chanel 010.
 
 LAMP-NEG	# Negative lamp addresses go to I/O 163 or 11.
 		COM
+		TS	TEMP-VAR
 #		# Boolean: lamp '>=' 2^8
-#		TS	TEMP-VAR
 #		CA	NUM128
 #		TS	Q
 #		CA	TEMP-VAR
@@ -101,4 +101,4 @@ LAMPEND	EXTEND
 		RETURN
 
 NUM24576	DEC	24576	# 1100 0 00000 00000b
-LAMP1100	=	715
+LAMP1100	=	70
