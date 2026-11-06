@@ -45,6 +45,23 @@ ${time}
 };
 
 
+AgcGenerator['agc_timer_reset'] = function(block) {
+  const code = `
+\tCA\tNUM0
+\tTS\tT3
+`;
+  return code;
+};
+
+
+AgcGenerator['agc_timer_read'] = function(block) {
+  const code = `
+\tCA\tT3
+`;
+  return code;
+};
+
+
 AgcGenerator['agc_key_press'] = function(block) {
   const code = `
 \tTCR\tINPUT

@@ -19,7 +19,7 @@ Blockly.defineBlocksWithJsonArray([
     'output': 'Number',
     'helpUrl': '%{BKY_MATH_NUMBER_HELPURL}',
     'style': 'math_blocks',
-    'tooltip': '%{BKY_MATH_NUMBER_TOOLTIP}',
+    'tooltip': 'An integer between -16383 and 16383',
     'extensions': ['parent_tooltip_when_inline'],
   },
 

@@ -66,12 +66,7 @@ Blockly.defineBlocksWithJsonArray([
   // Block for DSKY key press.
   {
     "type": "agc_key_press",
-    "message0": "key press %1",
-    "args0": [
-      {
-        "type": "input_dummy"
-      }
-    ],
+    "message0": "key press",
     'output': 'Number',
     "colour": 20,
     "tooltip": "Waits for a DSKY key press (0-9)",
@@ -94,6 +89,28 @@ Blockly.defineBlocksWithJsonArray([
     "nextStatement": null,
     "colour": 20,
     "tooltip": "Stop execution for a set time (in centiseconds)",
+    "helpUrl": ""
+  },
+
+
+  // Block for resetting the timer to zero.
+  {
+    "type": "agc_timer_reset",
+    "message0": "reset timer",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 20,
+    "tooltip": "Reset the timer to zero.",
+    "helpUrl": ""
+  },
+
+  // Block for returning timer value.
+  {
+    "type": "agc_timer_read",
+    "message0": "read timer (cs)",
+    'output': 'Number',
+    "colour": 20,
+    "tooltip": "Time since timer was reset (in centiseconds)",
     "helpUrl": ""
   },
 

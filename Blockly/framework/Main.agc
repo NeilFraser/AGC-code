@@ -27,7 +27,7 @@ AGCSTART	CA		100MS	# Schedule T5 soon.
 		TS		T5
 		TCF		T5RUPT
 
-		# T3 (interrupt #3)
+		# T3 (interrupt #3)  Used as timer.
 		RESUME
 		NOOP
 		NOOP
@@ -84,6 +84,9 @@ START		TCR	STACKINI
 		TCR	LAMPINIT
 		# Initialize the random number generator.
 		TCR	RNDINIT
+		# Zero the timer.
+		CA	NUM0
+		TS	T3
 
 # Unit tests.
 #$Tests.agc
@@ -209,6 +212,7 @@ KEY15		=	15	# I/O Channel 15 (DSKY keypad)
 SR		=	21
 T2		=	24
 T1		=	25
+T3		=	26
 T4		=	27
 T5		=	30
 NEWJOB		=	67

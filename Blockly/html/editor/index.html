@@ -75,6 +75,18 @@
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
     <category name="AGC" colour="%{BKY_COLOUR_HUE}">
+      <block type="agc_sleep">
+        <value name="TIME">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="agc_timer_reset"></block>
+      <block type="agc_timer_read"></block>
+      <block type="agc_power"></block>
+    </category>
+    <category name="DSKY" colour="%{BKY_COLOUR_HUE}">
       <block type="agc_print_digit">
         <value name="ROW">
           <shadow type="math_number">
@@ -106,14 +118,6 @@
       </block>
       <block type="agc_key_press"></block>
       <block type="agc_lamps"></block>
-      <block type="agc_sleep">
-        <value name="TIME">
-          <shadow type="math_number">
-            <field name="NUM">100</field>
-          </shadow>
-        </value>
-      </block>
-      <block type="agc_power"></block>
     </category>
     <category name="Logic" colour="%{BKY_LOGIC_HUE}">
       <block type="logic_if"></block>
