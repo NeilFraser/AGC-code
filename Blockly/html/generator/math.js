@@ -32,6 +32,30 @@ ${argument0}
   return code;
 };
 
+AgcGenerator['math_negative'] = function(block) {
+  // Negate a number.
+  const num = AgcGenerator.valueToCode(block, 'NUM') || AgcGenerator.default1;
+  const code = `
+${num}
+\tCOM
+`;
+  return code;
+};
+
+AgcGenerator['math_absolute'] = function(block) {
+  // Absolute value of a number.
+  const num = AgcGenerator.valueToCode(block, 'NUM') || AgcGenerator.default1;
+  const labelIf = 'ABS' + AgcGenerator.getUniqueLabel();
+  let code = `
+${num}
+\tEXTEND
+\tBZMF\t${labelIf}-X
+\tCOM
+${labelIf}-X\tCOM
+`;
+  return code;
+};
+
 AgcGenerator['math_random_int_0'] = function(block) {
   const to = AgcGenerator.valueToCode(block, 'TO') || AgcGenerator.default1;
   const code = `

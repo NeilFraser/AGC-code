@@ -55,6 +55,38 @@ Blockly.defineBlocksWithJsonArray([
     'extensions': ['math_op_tooltip'],
   },
 
+  // Block for negative.
+  {
+    "type": "math_negative",
+    "message0": "- %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number",
+      },
+    ],
+    "output": "Number",
+    "style": "math_blocks",
+    "tooltip": "Return the negation of a number.",
+  },
+
+  // Block for absolute.
+  {
+    "type": "math_absolute",
+    "message0": "absolute %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number",
+      },
+    ],
+    "output": "Number",
+    "style": "math_blocks",
+    "tooltip": "Return the absolute value of a number.",
+  },
+
   // Block for random integer between 0 and [X-1].
   {
     "type": "math_random_int_0",
@@ -95,6 +127,7 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "%{BKY_MATH_RANDOM_INT_TOOLTIP}",
     "helpUrl": "%{BKY_MATH_RANDOM_INT_HELPURL}",
   },
+
   // Block for adding to a variable in place.
   {
     "type": "math_change",
