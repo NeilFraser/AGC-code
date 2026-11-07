@@ -150,7 +150,9 @@ INPUT-ZR	RETURN
 SLEEP		EXTEND
 		QXCH	QPOP
 		TCR	POP	# Pop the delay from the stack.
-		TS	L
+		EXTEND
+		BZMF	SLEEPNEG
+SLEEPPOS	TS	L
 		# We want to load 2^14 (40,000 oct).  But doing so gets treated
 		# as a negative number since it uses the 15th bit.
 		# Workaround: load 2^14-1, then increment.
@@ -171,7 +173,8 @@ SLEEPBZF	CA	SLEEPING
 		BZF	SLEEPEND	# Loop until SLEEPING flag is zero.
 		TCF	SLEEPBZF
 SLEEPEND	RETURN
-
+SLEEPNEG	CA	NUM1		# Negative or zero not possible.
+		TCF	SLEEPPOS
 
 
 # Variables in memory.
