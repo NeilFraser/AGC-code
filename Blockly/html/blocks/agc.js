@@ -73,6 +73,17 @@ Blockly.defineBlocksWithJsonArray([
     "helpUrl": ""
   },
 
+  // Block for waiting for any key.
+  {
+    "type": "agc_key_wait",
+    "message0": "wait until key press",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 20,
+    "tooltip": "Wait for any key press.  Discards the result.",
+    "helpUrl": ""
+  },
+
   // Block for stopping execution for a set time.
   {
     "type": "agc_sleep",

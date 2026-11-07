@@ -70,6 +70,9 @@ AgcGenerator['agc_key_press'] = function(block) {
 };
 
 
+AgcGenerator['agc_key_wait'] = AgcGenerator['agc_key_press'];
+
+
 AgcGenerator['agc_power'] = function(block) {
   const action = block.getFieldValue('ACTION');
   if (action === 'RESTART') {
